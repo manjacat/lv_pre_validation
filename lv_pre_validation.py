@@ -34,6 +34,9 @@ from .resources import *
 from .lv_pre_validation_dialog import lv_pre_validationDialog
 import os.path
 # TODO: import own custom file
+from .lvoh_conductor import lvoh_callMe
+from .lvug_conductor import *
+from .pole import pole_callMe
 
 class lv_pre_validation:
     """QGIS Plugin Implementation."""
@@ -194,7 +197,14 @@ class lv_pre_validation:
             self.dlg.checkBox_lvug.setChecked(False)
             self.dlg.checkBox_pole.setChecked(False)
 
+    def checkFilename(self):
+        lvoh_callMe()
+        lvug_callMe()
+        pole_callMe()
+        print('checking filename')
+
     def countFeatures(self):
+        print(lvug_error1)
         layerLVUG = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
         featLVUG = layerLVUG.getFeatures()
         countLVUG = 0
@@ -219,6 +229,87 @@ class lv_pre_validation:
         except:
             self.dlg.checkBox_lvoh.setText('LV OH Conductor (' + 'Exception Occured' + ')')
 
+    def runQaqc(self):
+        featCount = 0
+        if(self.dlg.checkBox_lvug.isChecked() == True):
+            featCount += 1
+        if(self.dlg.checkBox_lvoh.isChecked() == True):
+            featCount += 1
+        if(self.dlg.checkBox_pole.isChecked() == True):
+            featCount += 1
+
+        qaqcMsg = ' ' .join(['running QAQC now on',str(featCount),'features'])
+        #print(qaqcMsg)
+
+        #start totalError count
+        totalError = 0
+        fieldName = 'status'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'phasing'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'usage'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'label'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'length'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'dat_qty_cl'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'device_id'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+
+        fieldName = 'db_oper'
+        feat_lvug = lvug_fieldNotNull(fieldName)
+        for f in feat_lvug:
+            device_id = f.attribute('device_id')
+            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
+            print(str(eMsg))
+            totalError += 1
+        
+
+        print('total Error is',str(totalError))
+
 
     def run(self):
         """Run method that performs all the real work"""
@@ -230,7 +321,9 @@ class lv_pre_validation:
             self.dlg = lv_pre_validationDialog()
             #connect controls to function
             self.dlg.checkBox_all.stateChanged.connect(self.select_all)
+            self.dlg.pushButton_filename.clicked.connect(self.checkFilename)
             self.dlg.pushButton_count.clicked.connect(self.countFeatures)
+            self.dlg.pushButton_qaqc.clicked.connect(self.runQaqc)
 
         # show the dialog
         self.dlg.show()

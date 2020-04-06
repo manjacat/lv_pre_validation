@@ -110,7 +110,7 @@
   <widget class="QPushButton" name="pushButton_count">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>140</x>
      <y>210</y>
      <width>111</width>
      <height>23</height>
@@ -118,6 +118,32 @@
    </property>
    <property name="text">
     <string>Count Features</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_filename">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>210</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Check Filename</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_qaqc">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>210</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Run QAQC</string>
    </property>
   </widget>
  </widget>
