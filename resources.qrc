@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/lv_pre_validation" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
