@@ -7,34 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>797</width>
-    <height>652</height>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LV Pre Validation</string>
   </property>
-  <widget class="QDialogButtonBox" name="button_box">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>600</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="label_title">
    <property name="geometry">
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>231</width>
+     <width>321</width>
      <height>41</height>
     </rect>
    </property>
@@ -45,7 +29,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Pre Validation Checklist</string>
+    <string>Pre Validation Checklist - v10</string>
    </property>
   </widget>
   <widget class="Line" name="line">
@@ -60,39 +44,6 @@
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
-  </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>90</y>
-     <width>471</width>
-     <height>80</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QCheckBox" name="checkBox_lvug">
-      <property name="text">
-       <string>LV UG Conductor</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="checkBox_lvoh">
-      <property name="text">
-       <string>LV OH Conductor</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="checkBox_pole">
-      <property name="text">
-       <string>Pole</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
   </widget>
   <widget class="QCheckBox" name="checkBox_all">
    <property name="geometry">
@@ -110,8 +61,8 @@
   <widget class="QPushButton" name="pushButton_count">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>210</y>
+     <x>200</x>
+     <y>60</y>
      <width>111</width>
      <height>23</height>
     </rect>
@@ -123,8 +74,8 @@
   <widget class="QPushButton" name="pushButton_filename">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>210</y>
+     <x>90</x>
+     <y>60</y>
      <width>101</width>
      <height>23</height>
     </rect>
@@ -133,18 +84,217 @@
     <string>Check Filename</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_qaqc">
+  <widget class="Line" name="line_2">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>210</y>
-     <width>101</width>
-     <height>23</height>
+     <x>0</x>
+     <y>460</y>
+     <width>801</width>
+     <height>20</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Run QAQC</string>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
    </property>
+  </widget>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>370</y>
+     <width>471</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEdit_csv"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_csv">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_csv">
+      <property name="text">
+       <string>CSV filename:</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>480</y>
+     <width>160</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton_qaqc">
+      <property name="text">
+       <string>Run QAQC</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QDialogButtonBox" name="button_box">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Close</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="gridLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>100</y>
+     <width>471</width>
+     <height>87</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="checkBox_lvoh">
+      <property name="text">
+       <string>LV OH Conductor</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLabel" name="count_lvoh">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="err_lvug">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="checkBox_pole">
+      <property name="text">
+       <string>Pole</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="err_pole">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="count_pole">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="count_lvug">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLabel" name="err_lvoh">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkBox_lvug">
+      <property name="text">
+       <string>LV UG Conductor</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Layers</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Total</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_3">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Errors</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

@@ -196,6 +196,14 @@ class lv_pre_validation:
             self.dlg.checkBox_lvoh.setChecked(False)
             self.dlg.checkBox_lvug.setChecked(False)
             self.dlg.checkBox_pole.setChecked(False)
+            
+    def select_output_file(self):
+        filename, _filter = QFileDialog.getSaveFileName(
+            self.dlg, "Select output file ","untitled.csv",'.csv')
+        if ".csv" in filename:
+            self.dlg.lineEdit_csv.setText(filename)
+        else:
+            self.dlg.lineEdit_csv.setText(filename + '.csv')
 
     def checkFilename(self):
         lvoh_callMe()
@@ -204,30 +212,32 @@ class lv_pre_validation:
         print('checking filename')
 
     def countFeatures(self):
-        print(lvug_error1)
+        print('counting LVUG')
         layerLVUG = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
         featLVUG = layerLVUG.getFeatures()
         countLVUG = 0
         for f1 in featLVUG:
-            countLVUG = countLVUG + 1
-        self.dlg.checkBox_lvug.setText('LV UG Conductor(' + str(countLVUG) + ')')
-
+            countLVUG += 1
+        self.dlg.count_lvug.setText(str(countLVUG))
+        
+        print('counting Pole')
         layerPole = QgsProject.instance().mapLayersByName('Pole')[0]
         featPole = layerPole.getFeatures()
         countPole = 0
         for f1 in featPole:
-            countPole = countPole + 1
-        self.dlg.checkBox_pole.setText('Pole(' + str(countPole) + ')')
+            countPole += 1
+        self.dlg.count_pole.setText(str(countPole))
 
+        print('counting LVOH')
         try:
             layerLVOH = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
             featLVOH = layerLVOH.getFeatures()
             countLVOH = 0
             for f1 in featLVOH:
                 countLVOH = countLVOH + 1        
-            self.dlg.checkBox_lvoh.setText('LV OH Conductor (' + str(countLVOH) + ')')
+            self.dlg.count_lvoh.setText(str(countLVOH))
         except:
-            self.dlg.checkBox_lvoh.setText('LV OH Conductor (' + 'Exception Occured' + ')')
+            self.dlg.count_lvoh.setText('E')
 
     def runQaqc(self):
         featCount = 0
@@ -243,72 +253,94 @@ class lv_pre_validation:
 
         #start totalError count
         totalError = 0
+        # error message
+        eMsg = ''
+
+        # check for mandatory not null
         fieldName = 'status'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)
             totalError += 1
 
         fieldName = 'phasing'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'usage'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'label'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'length'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'dat_qty_cl'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'device_id'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
             totalError += 1
 
         fieldName = 'db_oper'
-        feat_lvug = lvug_fieldNotNull(fieldName)
-        for f in feat_lvug:
-            device_id = f.attribute('device_id')
-            eMsg = lvug_fieldNotNullMessage(device_id,fieldName)               
-            print(str(eMsg))
+        arr_lvug = lvug_fieldNotNull(fieldName)
+        for device_id in arr_lvug:
+            eMsg += lvug_fieldNotNullMessage(device_id,fieldName)               
+            totalError += 1
+
+        # check for incoming lvug vs in_lvdb_id
+        arr_lvug = lvug_lvdb_in()
+        for device_id in arr_lvug:
+            eMsg += lvug_lvdb_inMessage(device_id)               
+            totalError += 1
+
+        
+        # check for outgoing lvug vs out_lvdb_id
+        arr_lvug = lvug_lvdb_out()
+        for device_id in arr_lvug:
+            eMsg += lvug_lvdb_outMessage(device_id)               
             totalError += 1
         
+        #****************************************************************
+        #******************     END OF VALIDATION     *******************
+        #****************************************************************
+        #print to console
+        eMsg += 'total Error is ' + str(totalError)
+        print(eMsg)
 
-        print('total Error is',str(totalError))
+        #update label        
+        self.dlg.err_lvug.setText(str(totalError))
+
+        #write to csv file
+        filename = self.dlg.lineEdit_csv.text()
+        if(len(filename) > 4):
+            with open(filename, 'w') as output_file:
+                output_file.write(eMsg)
+            self.iface.messageBar().pushMessage(
+                  "Success", "Output file written at " + filename,
+                  level=Qgis.Success, duration=5)
+        else:
+            self.iface.messageBar().pushMessage(
+                  "Success", "Validation completed",
+                  level=Qgis.Success, duration=5)
+            
 
 
     def run(self):
@@ -321,6 +353,7 @@ class lv_pre_validation:
             self.dlg = lv_pre_validationDialog()
             #connect controls to function
             self.dlg.checkBox_all.stateChanged.connect(self.select_all)
+            self.dlg.pushButton_csv.clicked.connect(self.select_output_file)
             self.dlg.pushButton_filename.clicked.connect(self.checkFilename)
             self.dlg.pushButton_count.clicked.connect(self.countFeatures)
             self.dlg.pushButton_qaqc.clicked.connect(self.runQaqc)
