@@ -355,6 +355,27 @@ class lv_pre_validation:
         for device_id in arr_lv_ug:
             e_msg += lvug_lvdb_out_message(device_id)
             total_error += 1
+
+        # check for LVDB in out VS LVDB no
+        arr_lv_ug = lv_ug_lvdb_id_in_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_lvdb_id_check_message(device_id)
+            total_error += 1
+
+        arr_lv_ug = lv_ug_lvdb_id_out_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_lvdb_id_check_message(device_id)
+            total_error += 1
+
+        arr_lv_ug = lv_ug_lvdb_no_in_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_lvdb_no_check_message(device_id)
+            total_error += 1
+
+        arr_lv_ug = lv_ug_lvdb_no_out_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_lvdb_no_check_message(device_id)
+            total_error += 1
         
         #****************************************************************
         #******************     END OF VALIDATION     *******************

@@ -10,7 +10,8 @@ def lvug_call_me():
 
 lv_ug_field_null = 'ERR_LVUGCOND_01'
 lv_ug_enum_valid = 'ERR_LVUGCOND_02'
-lv_ug_lv_db_in_out = 'ERR_LVUGCOND_04'
+lv_ug_lv_db_in_out_geom = 'ERR_LVUGCOND_04'
+lv_ug_lvdb_in_out_col = 'ERR_LVUGCOND_03'
 
 # **********************************
 # ****** Check for Enum Value ******
@@ -100,17 +101,16 @@ def lv_ug_lv_db_in():
                                 distance = QgsDistanceArea()
                                 distance.setEllipsoid('WGS84')
                                 distance_xy = distance.measureLine(y.asPolyline()[len(y.asPolyline())-1],geom_x)
-                                if distance_xy > 0:
+                                if distance_xy > 0.001:
                                         print("WARNING: incoming distance > 0")
                                         print("Point1 (LVUG):", y.asPolyline()[len(y.asPolyline())-1])
                                         print("Point2 (LVDB):", geom_x)
                                         print("difference:", format(distance_xy,'.9f'))
-                                if distance_xy > 0.001:
                                         arr.append(device_id)
 	return arr
 
 def lv_ug_lv_db_in_message(device_id):
-	e_msg = lv_ug_lv_db_in_out + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column in_lvdb_id mismtach ' + '\n'
+	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column in_lvdb_id mismtach ' + '\n'
 	return e_msg
 
 def lv_ug_lv_db_out():
@@ -132,18 +132,93 @@ def lv_ug_lv_db_out():
 				distance = QgsDistanceArea()
 				distance.setEllipsoid('WGS84')
 				distance_xy = distance.measureLine(y.asPolyline()[0], geom_x)
-				if distance_xy > 0:
+				if distance_xy > 0.001:
                                         print("WARNING: outgoing distance > 0:")
                                         print("Point1 (LVUG):",y.asPolyline()[0])
                                         print("Point2 (LVDB):",geom_x)
                                         print("difference:", format(distance_xy, '.9f'))
-                                        if distance_xy > 0.001:
-                                                arr.append(device_id)
+                                        arr.append(device_id)
 
 	return arr
 
 def lvug_lvdb_out_message(device_id):
-	e_msg = lv_ug_lv_db_in_out + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column out_lvdb_id mismatch' + '\n'
+	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column out_lvdb_id mismatch' + '\n'
+	return e_msg
+
+# ************************************
+# ****** Check for LVDB in/out  ******
+# ************************************
+
+def lv_ug_lvdb_id_in_check():
+	arr = []
+	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat_lv_ug:
+		device_id = f.attribute('device_id')
+		in_lvdb_id = f.attribute('in_lvdb_id')
+		lvdb_in_no = f.attribute('lvdb_in_no')
+		out_lvdb_i = f.attribute('out_lvdb_i')
+		lvdb_out_no = f.attribute('lvdb_ot_no')		
+		if in_lvdb_id:
+                        if lvdb_in_no is None:
+                                arr.append(device_id)
+	return arr
+
+def lv_ug_lvdb_id_out_check():
+	arr = []
+	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat_lv_ug:
+		device_id = f.attribute('device_id')
+		in_lvdb_id = f.attribute('in_lvdb_id')
+		lvdb_in_no = f.attribute('lvdb_in_no')
+		out_lvdb_i = f.attribute('out_lvdb_i')
+		lvdb_out_no = f.attribute('lvdb_ot_no')		
+		if out_lvdb_i:
+                        if lvdb_out_no is None:
+                                arr.append(device_id)
+	return arr
+
+def lv_ug_lvdb_no_in_check():
+	arr = []
+	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
+	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat_lv_ug:
+		device_id = f.attribute('device_id')
+		in_lvdb_id = f.attribute('in_lvdb_id')
+		lvdb_in_no = f.attribute('lvdb_in_no')
+		out_lvdb_i = f.attribute('out_lvdb_i')
+		lvdb_out_no = f.attribute('lvdb_ot_no')		
+		if lvdb_in_no is None:
+                        if in_lvdb_id:
+                                arr.append(device_id)
+	return arr
+
+def lv_ug_lvdb_no_out_check():
+	arr = []
+	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
+	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat_lv_ug:
+		device_id = f.attribute('device_id')
+		in_lvdb_id = f.attribute('in_lvdb_id')
+		lvdb_in_no = f.attribute('lvdb_in_no')
+		out_lvdb_i = f.attribute('out_lvdb_i')
+		lvdb_out_no = f.attribute('lvdb_ot_no')		
+		if lvdb_out_no is None:
+                        if out_lvdb_i:
+                                arr.append(device_id)
+	return arr
+
+def lv_ug_lvdb_id_check_message(device_id):
+	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + '\n'
+	return e_msg
+
+def lv_ug_lvdb_no_check_message(device_id):
+	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + '\n'
 	return e_msg
 
 				
