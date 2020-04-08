@@ -308,7 +308,41 @@ class lv_pre_validation:
             total_error += 1
 
         # check for ENUM values
-        # TODO
+        field_name = 'status'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
+
+        field_name = 'phasing'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
+
+        field_name = 'usage'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
+
+        field_name = 'label'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
+
+        field_name = 'dat_qty_cl'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
+
+        field_name = 'db_oper'
+        arr_lv_ug = lv_ug_field_enum(field_name)
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_field_enum_message(device_id, field_name)
+            total_error += 1
 
         # check for incoming lv ug vs in_lvdb_id
         arr_lv_ug = lv_ug_lv_db_in()
@@ -339,11 +373,11 @@ class lv_pre_validation:
                 output_file.write(e_msg)
             self.iface.messageBar().pushMessage(
                   "Success", "Output file written at " + filename,
-                  level=Qgis.Success, duration=5)
+                  level=Qgis.Success, duration=3)
         else:
             self.iface.messageBar().pushMessage(
                   "Success", "Validation completed. " + str(total_error) + " ERROR(s) found.",
-                  level=Qgis.Success, duration=5)
+                  level=Qgis.Success, duration=3)
             
 
 
