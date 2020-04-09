@@ -1,5 +1,9 @@
-# Test import python file
-# tukar return type kepada array
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+All checkings related to LV UG conductor 
+ ***************************************************************************/
+"""
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
@@ -12,6 +16,7 @@ lv_ug_field_null = 'ERR_LVUGCOND_01'
 lv_ug_enum_valid = 'ERR_LVUGCOND_02'
 lv_ug_lv_db_in_out_geom = 'ERR_LVUGCOND_04'
 lv_ug_lvdb_in_out_col = 'ERR_LVUGCOND_03'
+lv_ug_length = 'ERR_LVUGCOND_05'
 
 # **********************************
 # ****** Check for Enum Value ******
@@ -45,7 +50,7 @@ def lv_ug_field_enum(field_name):
         return arr
 
 def lv_ug_field_enum_message(device_id, field_name):
-        e_msg = lv_ug_enum_valid +',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        e_msg = lv_ug_enum_valid +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
         return e_msg
 
 # **********************************
@@ -63,7 +68,7 @@ def lv_ug_field_not_null(field_name):
 	return arr
 
 def lv_ug_field_not_null_message(device_id, field_name):
-	e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
+	e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
 	return e_msg
 
 # ************************************
@@ -71,7 +76,7 @@ def lv_ug_field_not_null_message(device_id, field_name):
 # ************************************
 
 def lvug_duplicate():
-	#TODO
+	#TODO tak tau buat
 	layer_lvug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	feat_lvug = layer_lvug.getFeatures()
 	for f in feat_lvug:
@@ -110,7 +115,7 @@ def lv_ug_lv_db_in():
 	return arr
 
 def lv_ug_lv_db_in_message(device_id):
-	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column in_lvdb_id mismtach ' + '\n'
+	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column in_lvdb_id mismtach ' + '\n'
 	return e_msg
 
 def lv_ug_lv_db_out():
@@ -142,7 +147,7 @@ def lv_ug_lv_db_out():
 	return arr
 
 def lvug_lvdb_out_message(device_id):
-	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' column out_lvdb_id mismatch' + '\n'
+	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column out_lvdb_id mismatch' + '\n'
 	return e_msg
 
 # ************************************
@@ -214,13 +219,47 @@ def lv_ug_lvdb_no_out_check():
 	return arr
 
 def lv_ug_lvdb_id_check_message(device_id):
-	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + '\n'
+	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + '\n'
 	return e_msg
 
 def lv_ug_lvdb_no_check_message(device_id):
-	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor:' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + '\n'
+	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + '\n'
 	return e_msg
 
+# **********************************
+# ********* Check Length  **********
+# **********************************
+
+def lv_ug_length_check():
+	arr = []
+	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	query = '"length" is not null AND "length" <= 1.5'
+	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat_lv_ug:
+		device_id = f.attribute('device_id')
+		arr.append(device_id)
+	return arr
+
+def lv_ug_length_check_message(device_id):
+	e_msg = lv_ug_length + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' length less than 1.5' + '\n'
+	return e_msg
+
+# ********************************************
+# ****** Check for LVDB 1st/2nd Vertex  ******
+# ********************************************
+
+# TODO
+
+# *************************************************
+# ****** Buffer between LV UG must be > 0.3  ******
+# *************************************************
+
+# get all vertex of a LV UG conductor
+# check distance between this vertex and other vertex of another conductor
+
+# **********************************
+# ******* End of Validation  *******
+# **********************************
 				
 
 

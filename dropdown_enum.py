@@ -1,6 +1,13 @@
 # check dropdown values for all objects
 from qgis.core import *
 
+def dropdown_call_me():
+	print('dropdown enum is called')
+	return 0
+
+# **************************
+# *****   LV UG Enum   *****
+# **************************
 arr_status = [
         'Abandoned'
         ,'Existing'
@@ -69,8 +76,34 @@ arr_db_oper = [
         ,'Delete'
         ]
 
-def dropdown_call_me():
-	print('dropdown enum is called')
+# **************************
+# *****   LV OH Enum   *****
+# **************************
+
+# status - as lv ug
+# phasing - as lv ug
+# usage - as lv ug
+# db_oper - as lv ug
+
+arr_label_lv_oh = [
+        '3X_185+120+16_ABC_INS'
+        ,'3X_95+70+16_ABC_INS'
+        ,'3X_95+70_ABC_INS'
+        ,'3X_16+25_ABC_INS'
+        ,'1X_16+25_ABC_INS'
+        ,'4X_19/0.064"_PVC_AL'
+        ,'4X_19/0.083"_PVC_AL'
+        ,'3X_19/0.064"_PVC_AL'
+        ,'2X_19/0.064"_PVC_AL'
+        ,'2X_19/0.083"_PVC_AL'
+        ,'2X_7/0.044"_PVC_AL'
+        ,'4X_7/0.173"_BARE_AL'
+        ,'4X_7/0.122"_BARE_AL'
+        ,'2X_7/0.173"_BARE_AL'
+        ,'2X_7/0.122"_BARE_AL'
+        ,'2X_3/0.132"_BARE_AL'
+        ]
+
         
 
           

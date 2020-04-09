@@ -34,9 +34,9 @@ from .resources import *
 from .lv_pre_validation_dialog import lv_pre_validationDialog
 import os.path
 # TODO: import own custom file
-from .lvoh_conductor import lvoh_call_me
+from .lvoh_conductor import *
 from .lvug_conductor import *
-from .pole import pole_call_me
+from .pole import *
 
 
 def check_filename():
@@ -208,6 +208,7 @@ class lv_pre_validation:
     def select_output_file(self):
         filename, _filter = QFileDialog.getSaveFileName(
             self.dlg, "Select output file ","untitled.csv",'.csv')
+        self.dlg.label_message.setText('Click Run QAQC to generate CSV file')
         if ".csv" in filename:
             self.dlg.lineEdit_csv.setText(filename)
         else:
@@ -254,138 +255,321 @@ class lv_pre_validation:
         print(qa_qc_msg)
 
         #start total_error count
+        lv_ug_error = 0
+        lv_oh_error = 0
+        pole_error = 0
         total_error = 0
         # error message
         e_msg = ''
 
+        #***************************************************************
+        #***********     CHECK HOW MANY FEATURES SELECTED    ***********
+        #***************************************************************
+
+        lv_ug_flag = self.dlg.checkBox_lvug.isChecked()
+        print('lvug_flag',lv_ug_flag)
+        
+        lv_oh_flag = self.dlg.checkBox_lvoh.isChecked()
+        print('lvoh_flag',lv_oh_flag)
+
+        pole_flag = self.dlg.checkBox_pole.isChecked()
+        print('lvoh_flag',pole_flag)
+
+        #****************************************************************
+        #***************     LV UG COND VALIDATION    *******************
+        #****************************************************************
+
         # check for mandatory not null
         field_name = 'status'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        arr_lv_ug = []
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'phasing'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'usage'
         arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'label'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'length'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'dat_qty_cl'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'device_id'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'db_oper'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_not_null(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_not_null_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         # check for ENUM values
         field_name = 'status'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'phasing'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'usage'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'label'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'dat_qty_cl'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         field_name = 'db_oper'
-        arr_lv_ug = lv_ug_field_enum(field_name)
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_field_enum(field_name)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_field_enum_message(device_id, field_name)
+            lv_ug_error += 1
             total_error += 1
 
         # check for incoming lv ug vs in_lvdb_id
-        arr_lv_ug = lv_ug_lv_db_in()
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lv_db_in()
         for device_id in arr_lv_ug:
             e_msg += lv_ug_lv_db_in_message(device_id)
+            lv_ug_error += 1
             total_error += 1
 
         # check for outgoing lv ug vs out_lvdb_id
-        arr_lv_ug = lv_ug_lv_db_out()
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lv_db_out()
         for device_id in arr_lv_ug:
             e_msg += lvug_lvdb_out_message(device_id)
             total_error += 1
 
         # check for LVDB in out VS LVDB no
-        arr_lv_ug = lv_ug_lvdb_id_in_check()
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lvdb_id_in_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_lvdb_id_check_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lvdb_id_out_check()
         for device_id in arr_lv_ug:
             e_msg += lv_ug_lvdb_id_check_message(device_id)
             total_error += 1
 
-        arr_lv_ug = lv_ug_lvdb_id_out_check()
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_lvdb_id_check_message(device_id)
-            total_error += 1
-
-        arr_lv_ug = lv_ug_lvdb_no_in_check()
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lvdb_no_in_check()
         for device_id in arr_lv_ug:
             e_msg += lv_ug_lvdb_no_check_message(device_id)
+            lv_ug_error += 1
             total_error += 1
 
-        arr_lv_ug = lv_ug_lvdb_no_out_check()
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_lvdb_no_out_check()
         for device_id in arr_lv_ug:
             e_msg += lv_ug_lvdb_no_check_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+        # check for LV UG length
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_length_check()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_length_check_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+        #****************************************************************
+        #***************     LV OH COND VALIDATION     ******************
+        #****************************************************************
+
+        arr_lv_oh = []
+
+        # check for mandatory not null
+        field_name = 'status'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'phasing'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'usage'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'label'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'length'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'device_id'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_not_null(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_not_null_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        # check for ENUM values
+        field_name = 'status'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_enum(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_enum_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'phasing'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_enum(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_enum_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'usage'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_enum(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_enum_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'label'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_enum(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_enum_message(device_id, field_name)
+            lv_oh_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_field_enum(field_name)
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_field_enum_message(device_id, field_name)
+            lv_oh_error += 1
             total_error += 1
         
         #****************************************************************
         #******************     END OF VALIDATION     *******************
         #****************************************************************
         #print to console
-        e_msg += 'total Error is ' + str(total_error)
+        if lv_ug_flag == False:
+            lv_ug_error = 'Skipped'
+        if lv_oh_flag == False:
+            lv_oh_error = 'Skipped'
+        if pole_flag == False:
+            pole_error = 'Skipped'
+            
+        e_msg += 'lv_ug Error is ' + str(lv_ug_error) + '\n'
+        e_msg += 'lv_oh Error is ' + str(lv_oh_error) + '\n'
+        e_msg += 'pole Error is ' + str(pole_error) + '\n'
+        e_msg += 'total Error is ' + str(total_error) + '\n'
         print(e_msg)
+        self.dlg.label_message.setText(' ')
 
-        #update label        
-        self.dlg.err_lvug.setText(str(total_error))
+        #update error count label
+        self.dlg.err_lvug.setText(str(lv_ug_error))
+        self.dlg.err_lvoh.setText(str(lv_oh_error))
+        self.dlg.err_pole.setText(str(pole_error))
 
         #write to csv file
         filename = self.dlg.lineEdit_csv.text()
