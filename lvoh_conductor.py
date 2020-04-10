@@ -13,6 +13,7 @@ def lvoh_call_me():
 	
 lv_oh_field_null = 'ERR_LVOHCOND_01'
 lv_oh_enum_valid = 'ERR_LVOHCOND_02'
+lv_oh_length = 'ERR_LVOHCOND_07'
 
 # **********************************
 # ****** Check for Enum Value ******
@@ -63,6 +64,24 @@ def lv_oh_field_not_null(field_name):
 
 def lv_oh_field_not_null_message(device_id, field_name):
 	e_msg = lv_oh_field_null +',' + device_id + ',' + 'LV_OH_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
+	return e_msg
+
+# **********************************
+# ********* Check Length  **********
+# **********************************
+
+def lv_oh_length_check():
+	arr = []
+	layer = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+	query = '"length" <= 1.5'
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
+		device_id = f.attribute('device_id')
+		arr.append(device_id)
+	return arr
+
+def lv_oh_length_check_message(device_id):
+	e_msg = lv_oh_length + ',' + device_id + ',' + 'LV_OH_Conductor: ' + device_id + ' length less than 1.5' + '\n'
 	return e_msg
 
 # **********************************

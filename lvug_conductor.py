@@ -40,9 +40,9 @@ def lv_ug_field_enum(field_name):
         else:
                 arr_dropdown = []
         
-        layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-        feat_lv_ug = layer_lv_ug.getFeatures()
-        for f in feat_lv_ug:
+        layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+        feat = layer.getFeatures()
+        for f in feat:
                 device_id = f.attribute('device_id')
                 field_value = f.attribute(field_name)
                 if field_value not in arr_dropdown:
@@ -59,10 +59,10 @@ def lv_ug_field_enum_message(device_id, field_name):
 
 def lv_ug_field_not_null(field_name):
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		arr.append(device_id)
 	return arr
@@ -77,9 +77,9 @@ def lv_ug_field_not_null_message(device_id, field_name):
 
 def lvug_duplicate():
 	#TODO tak tau buat
-	layer_lvug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-	feat_lvug = layer_lvug.getFeatures()
-	for f in feat_lvug:
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	feat = layer.getFeatures()
+	for f in feat:
 		device_id = f.attribute('device_id')
 
 # **********************************
@@ -89,9 +89,9 @@ def lvug_duplicate():
 def lv_ug_lv_db_in():
 	#TODO
 	arr = []
-	layer_lvug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-	feat_lvug = layer_lvug.getFeatures()
-	for f in feat_lvug:
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	feat = layer.getFeatures()
+	for f in feat:
 		device_id = f.attribute('device_id')
 		lv_db_device_id = f.attribute('in_lvdb_id')
 		g_line = f.geometry()
@@ -120,9 +120,9 @@ def lv_ug_lv_db_in_message(device_id):
 
 def lv_ug_lv_db_out():
 	arr = []
-	layer_lvug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-	feat_lvug = layer_lvug.getFeatures()
-	for f in feat_lvug:
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	feat = layer.getFeatures()
+	for f in feat:
 		device_id = f.attribute('device_id')
 		g_line = f.geometry()
 		y = g_line.mergeLines()
@@ -156,10 +156,10 @@ def lvug_lvdb_out_message(device_id):
 
 def lv_ug_lvdb_id_in_check():
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		in_lvdb_id = f.attribute('in_lvdb_id')
 		lvdb_in_no = f.attribute('lvdb_in_no')
@@ -172,10 +172,10 @@ def lv_ug_lvdb_id_in_check():
 
 def lv_ug_lvdb_id_out_check():
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		in_lvdb_id = f.attribute('in_lvdb_id')
 		lvdb_in_no = f.attribute('lvdb_in_no')
@@ -188,10 +188,10 @@ def lv_ug_lvdb_id_out_check():
 
 def lv_ug_lvdb_no_in_check():
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		in_lvdb_id = f.attribute('in_lvdb_id')
 		lvdb_in_no = f.attribute('lvdb_in_no')
@@ -204,10 +204,10 @@ def lv_ug_lvdb_no_in_check():
 
 def lv_ug_lvdb_no_out_check():
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		in_lvdb_id = f.attribute('in_lvdb_id')
 		lvdb_in_no = f.attribute('lvdb_in_no')
@@ -232,10 +232,10 @@ def lv_ug_lvdb_no_check_message(device_id):
 
 def lv_ug_length_check():
 	arr = []
-	layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+	layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
 	query = '"length" is not null AND "length" <= 1.5'
-	feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-	for f in feat_lv_ug:
+	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+	for f in feat:
 		device_id = f.attribute('device_id')
 		arr.append(device_id)
 	return arr
