@@ -104,7 +104,102 @@ arr_label_lv_oh = [
         ,'2X_3/0.132"_BARE_AL'
         ]
 
-        
+# ****************************
+# *****   LV Fuse Enum   *****
+# ****************************
+
+# status - as lv ug
+# phasing - as lv ug
+# db_oper - as lv ug
+
+arr_class_lv_fuse = [
+        'LV FUSE SWITCH'
+        ,'BLACK BOX DOUBLE'
+        ,'BLACK BOX'
+        ,'Unknown'
+        ,'POLE FUSE'
+        ,'CUT OUT'
+        ,'BLACK BOX SINGLE'
+        ,'BLACK BOX TRIPLE'
+        ,'GREEN BOX'
+        ]
+
+arr_normal_sta = [
+        'CLOSED'
+        ,'OPEN'
+        ]
+
+# ***********************************
+# *****   LV Cable Joint Enum   *****
+# ***********************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_class_lv_cj = [
+        'END POINT'
+        ,'LV JOINT'
+        ,'LV POT END'
+        ,'LV TERMINAL'
+        ,'SL CABLE TERMINAL'
+        ,'SL POT END'
+        ,'Unknown'
+        ]
+
+arr_type_lv_cj = [
+        'BOLTED'
+        ,'COLD SHRINK'
+        ,'COMPOUND'
+        ,'COMPRESSION'
+        ,'HEAT SHRINK'
+        ,'MV TERMINAL'
+        ,'PIN AND SOCKET'
+        ,'POT END'
+        ,'PRE-MOULDED'
+        ,'RESIN TYPE'
+        ,'Unknown'
+        ]
+
+
+# *************************
+# *****   Pole Enum   *****
+# *************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_ares = [
+        'NO'
+        ,'Unknown'
+        ,'YES'
+        ]
+
+arr_struc_type = [
+        'CONCRETE POLE 30\'' 
+        ,'GUY STUB' 
+        ,'H POLE ANGLE P1, P2, P3, P4' 
+        ,'H POLE INTERMEDIATE'
+        ,'H POLE TERMINAL'
+        ,'MINI TOWER ANGLE' 
+        ,'MINI TOWER STRAIGHT' 
+        ,'MINI TOWER TERMINAL'
+        ,'SINGLE STEEL 35\''
+        ,'SINGLE STEEL45\''
+        ,'SPUN POLE 10.0M-5.0 KN' 
+        ,'SPUN POLE 7.5M-1.1 KN'
+        ,'SPUN POLE 7.5M-2.0 KN'
+        ,'SPUN POLE 9.0M-2.0 KN'
+        ,'UNKNOWN LV POLE'
+        ,'UNKNOWN S/L POLE'
+        ,'Unknown'
+        ,'WOODEN POLE 25\''
+        ,'WOODEN POLE 30\''
+        ]
+
+arr_lv_ptc = [
+        'YES'
+        ,'NO'
+        ]
 
           
 	

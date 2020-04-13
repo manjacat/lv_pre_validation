@@ -36,7 +36,10 @@ import os.path
 # TODO: import own custom file
 from .lvoh_conductor import *
 from .lvug_conductor import *
+from .lv_fuse import *
+from .lv_cable_joint import *
 from .pole import *
+from .feature_count import count_lv_features
 
 
 def check_filename():
@@ -194,16 +197,30 @@ class lv_pre_validation:
             self.iface.removeToolBarIcon(action)
 
     def select_all(self):
+        #list all checkbox in plugin
+        arr_chkbox = [
+            self.dlg.checkBox_lvoh
+            ,self.dlg.checkBox_lvug
+            ,self.dlg.checkBox_pole
+            ,self.dlg.checkBox_lv_fuse
+            ,self.dlg.checkBox_lv_cj
+            ,self.dlg.checkBox_lvdb_fp
+            ,self.dlg.checkBox_dmd_pt
+            ,self.dlg.checkBox_st_light
+            ,self.dlg.checkBox_manhole
+            ,self.dlg.checkBox_st_duct
+            ]
+        
         if self.dlg.checkBox_all.isChecked():
             print('select all = true')
-            self.dlg.checkBox_lvoh.setChecked(True)
-            self.dlg.checkBox_lvug.setChecked(True)
-            self.dlg.checkBox_pole.setChecked(True)
+            for chk in arr_chkbox:
+                chk.setChecked(True)
+            
         else :
             print('select all = false')
-            self.dlg.checkBox_lvoh.setChecked(False)
-            self.dlg.checkBox_lvug.setChecked(False)
-            self.dlg.checkBox_pole.setChecked(False)
+            for chk in arr_chkbox:
+                chk.setChecked(False)
+
             
     def select_output_file(self):
         filename, _filter = QFileDialog.getSaveFileName(
@@ -215,34 +232,15 @@ class lv_pre_validation:
             self.dlg.lineEdit_csv.setText(filename + '.csv')
 
     def count_features(self):
-        print('counting LV UG conductor')
-        layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-        feat_lv_ug = layer_lv_ug.getFeatures()
-        count_lv_ug = 0
-        for f1 in feat_lv_ug:
-            count_lv_ug += 1
-        self.dlg.count_lvug.setText(str(count_lv_ug))
-        
-        print('counting Pole')
-        layer_pole = QgsProject.instance().mapLayersByName('Pole')[0]
-        feat_pole = layer_pole.getFeatures()
-        count_pole = 0
-        for f1 in feat_pole:
-            count_pole += 1
-        self.dlg.count_pole.setText(str(count_pole))
-
-        print('counting LV OH conductor')
-        try:
-            layer_lv_oh = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-            feat_lv_oh = layer_lv_oh.getFeatures()
-            count_lv_oh = 0
-            for f1 in feat_lv_oh:
-                count_lv_oh += 1
-            self.dlg.count_lvoh.setText(str(count_lv_oh))
-        except:
-            self.dlg.count_lvoh.setText('E')
+        #count features moved to feature_count.py
+        count_lv_features(self)
+        return 0
 
     def run_qa_qc(self):
+        
+        # count features
+        count_lv_features(self)
+        
         featCount = 0
         if self.dlg.checkBox_lvug.isChecked():
             featCount += 1
@@ -254,10 +252,21 @@ class lv_pre_validation:
         qa_qc_msg = ' ' .join(['running QA/QC now on ',str(featCount),'features'])
         print(qa_qc_msg)
 
+        #*****************************************************
+        #***********     INITIALIZE VARIABLE    **************
+        #*****************************************************
+
         #start total_error count
         lv_ug_error = 0
         lv_oh_error = 0
+        lv_fuse_error = 0
+        lv_cj_error = 0
+        lvdb_fp_error = 0
         pole_error = 0
+        dmd_pt_error = 0
+        st_light_error = 0
+        manhole_error = 0
+        st_duct_error = 0
         total_error = 0
         # error message
         e_msg = ''
@@ -267,13 +276,24 @@ class lv_pre_validation:
         #***************************************************************
 
         lv_ug_flag = self.dlg.checkBox_lvug.isChecked()
-        print('lvug_flag',lv_ug_flag)
         
         lv_oh_flag = self.dlg.checkBox_lvoh.isChecked()
-        print('lvoh_flag',lv_oh_flag)
+
+        lv_fuse_flag = self.dlg.checkBox_lv_fuse.isChecked()
+
+        lv_cj_flag = self.dlg.checkBox_lv_cj.isChecked()
+
+        lvdb_fp_flag = self.dlg.checkBox_lvdb_fp.isChecked()
 
         pole_flag = self.dlg.checkBox_pole.isChecked()
-        print('lvoh_flag',pole_flag)
+
+        dmd_pt_flag = self.dlg.checkBox_dmd_pt.isChecked()
+
+        st_light_flag = self.dlg.checkBox_st_light.isChecked()
+
+        manhole_flag = self.dlg.checkBox_manhole.isChecked()
+
+        st_duct_flag = self.dlg.checkBox_st_duct.isChecked()
 
         #****************************************************************
         #***************     LV UG COND VALIDATION    *******************
@@ -555,6 +575,222 @@ class lv_pre_validation:
             e_msg += lv_oh_length_check_message(device_id)
             lv_oh_error += 1
             total_error += 1
+
+        #*************************************************************
+        #***************     LV Fuse VALIDATION     ******************
+        #*************************************************************
+
+        arr_lv_fuse = []
+
+        # check for mandatory not null
+        field_name = 'status'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'phasing'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'class'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'normal_sta'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'device_id'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_not_null(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+         # check for ENUM values
+        field_name = 'status'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_enum(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_enum_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'phasing'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_enum(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_enum_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'class'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_enum(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_enum_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'normal_sta'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_enum(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_enum_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_field_enum(field_name)
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_field_enum_message(device_id, field_name)
+            lv_fuse_error += 1
+            total_error += 1
+
+        #***************************************************************
+        #**************    LV Cable Joint VALIDATION     ***************
+        #***************************************************************
+
+        arr_lv_cj = []
+
+        # check for mandatory not null
+        field_name = 'status'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_not_null(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_not_null_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'class'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_not_null(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_not_null_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'type'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_not_null(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_not_null_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_not_null(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_not_null_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'device_id'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_not_null(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_not_null_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        # check for ENUM values
+        field_name = 'status'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_enum(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_enum_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'class'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_enum(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_enum_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'type'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_enum(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_enum_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        field_name = 'db_oper'
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_field_enum(field_name)
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_field_enum_message(device_id, field_name)
+            lv_cj_error += 1
+            total_error += 1
+
+        #***************************************************************
+        #******************    LVDB-FP VALIDATION     ******************
+        #***************************************************************
+
+        arr_lvdb_fp = []
+
+        #***************************************************************
+        #********************    POLE VALIDATION     *******************
+        #***************************************************************
+
+        arr_pole = []
+
+        #***************************************************************
+        #***************    DEMAND POINT VALIDATION     ****************
+        #***************************************************************
+
+        arr_dmd_pt = []
+
+        #***************************************************************
+        #***************    STREET LIGHT VALIDATION     ****************
+        #***************************************************************
+
+        arr_st_light = []
+
+        #***************************************************************
+        #******************    MANHOLE VALIDATION     ******************
+        #***************************************************************
+
+        arr_manhole = []
+
+        #***************************************************************
+        #***************     STRUCTURE DUCT VALIDATION     *************
+        #***************************************************************
+
+        arr_st_duct = []
+
+        
+
+
         
         #****************************************************************
         #******************     END OF VALIDATION     *******************
@@ -564,20 +800,41 @@ class lv_pre_validation:
             lv_ug_error = 'Skipped'
         if lv_oh_flag == False:
             lv_oh_error = 'Skipped'
+        if lv_fuse_flag == False:
+            lv_fuse_error = 'Skipped'
+        if lv_cj_flag == False:
+            lv_cj_error = 'Skipped'
+        if lvdb_fp_flag == False:
+            lvdb_fp_error = 'Skipped'
         if pole_flag == False:
             pole_error = 'Skipped'
+        if dmd_pt_flag == False:
+            dmd_pt_error = 'Skipped'
+        if st_light_flag == False:
+            st_light_error = 'Skipped'
+        if manhole_flag == False:
+            manhole_error = 'Skipped'
+        if st_duct_flag == False:
+            st_duct_error = 'Skipped'
             
-        e_msg += 'lv_ug Error is ' + str(lv_ug_error) + '\n'
-        e_msg += 'lv_oh Error is ' + str(lv_oh_error) + '\n'
-        e_msg += 'pole Error is ' + str(pole_error) + '\n'
-        e_msg += 'total Error is ' + str(total_error) + '\n'
+        #e_msg += 'lv_ug Error is ' + str(lv_ug_error) + '\n'
+        #e_msg += 'lv_oh Error is ' + str(lv_oh_error) + '\n'
+        #e_msg += 'pole Error is ' + str(pole_error) + '\n'
+        #e_msg += 'total Error is ' + str(total_error) + '\n'
         print(e_msg)
         self.dlg.label_message.setText(' ')
 
         #update error count label
         self.dlg.err_lvug.setText(str(lv_ug_error))
         self.dlg.err_lvoh.setText(str(lv_oh_error))
+        self.dlg.err_lv_fuse.setText(str(lv_fuse_error))
+        self.dlg.err_lv_cj.setText(str(lv_cj_error))
+        self.dlg.err_lvdb_fp.setText(str(lvdb_fp_error))
         self.dlg.err_pole.setText(str(pole_error))
+        self.dlg.err_dmd_pt.setText(str(dmd_pt_error))
+        self.dlg.err_st_light.setText(str(st_light_error))
+        self.dlg.err_manhole.setText(str(manhole_error))
+        self.dlg.err_st_duct.setText(str(st_duct_error))
 
         #write to csv file
         filename = self.dlg.lineEdit_csv.text()
@@ -611,6 +868,8 @@ class lv_pre_validation:
 
         # show the dialog
         self.dlg.show()
+        # test: count features on load
+        count_lv_features(self)
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed

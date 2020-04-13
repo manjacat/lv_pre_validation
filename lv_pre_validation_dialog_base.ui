@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>532</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Pre Validation Checklist - v10</string>
+    <string>Pre Validation Checklist - v11</string>
    </property>
   </widget>
   <widget class="Line" name="line">
@@ -88,7 +88,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>460</y>
+     <y>560</y>
      <width>801</width>
      <height>20</height>
     </rect>
@@ -101,7 +101,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>480</y>
+     <y>590</y>
      <width>160</width>
      <height>41</height>
     </rect>
@@ -132,19 +132,12 @@
      <x>30</x>
      <y>100</y>
      <width>471</width>
-     <height>87</height>
+     <height>248</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="2" column="0">
-     <widget class="QCheckBox" name="checkBox_lvoh">
-      <property name="text">
-       <string>LV OH Conductor</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="count_lvoh">
+    <item row="1" column="1">
+     <widget class="QLabel" name="count_lvug">
       <property name="font">
        <font>
         <weight>50</weight>
@@ -156,48 +149,36 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="err_lvug">
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
+    <item row="9" column="0">
+     <widget class="QCheckBox" name="checkBox_manhole">
       <property name="text">
-       <string>0</string>
+       <string>Manhole</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="6" column="0">
      <widget class="QCheckBox" name="checkBox_pole">
       <property name="text">
        <string>Pole</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="err_pole">
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLabel" name="count_pole">
+    <item row="0" column="0">
+     <widget class="QLabel" name="title_layers">
       <property name="font">
        <font>
-        <weight>50</weight>
-        <bold>false</bold>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>0</string>
+       <string>Layers</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="count_lvug">
+    <item row="2" column="1">
+     <widget class="QLabel" name="count_lvoh">
       <property name="font">
        <font>
         <weight>50</weight>
@@ -216,43 +197,15 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QCheckBox" name="checkBox_lvug">
+    <item row="5" column="0">
+     <widget class="QCheckBox" name="checkBox_lvdb_fp">
       <property name="text">
-       <string>LV UG Conductor</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Layers</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="label_2">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Total</string>
+       <string>LVDB-FP</string>
       </property>
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="title_errors">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -265,13 +218,291 @@
       </property>
      </widget>
     </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="err_lvug">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="title_total">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Total</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QCheckBox" name="checkBox_st_light">
+      <property name="text">
+       <string>Street Light</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="checkBox_lv_fuse">
+      <property name="text">
+       <string>LV Fuse</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCheckBox" name="checkBox_lvug">
+      <property name="text">
+       <string>LV UG Conductor</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="checkBox_lvoh">
+      <property name="text">
+       <string>LV OH Conductor</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QLabel" name="err_pole">
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="checkBox_lv_cj">
+      <property name="text">
+       <string>LV Cable Joint</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QCheckBox" name="checkBox_dmd_pt">
+      <property name="text">
+       <string>Demand Point</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="count_pole">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QCheckBox" name="checkBox_st_duct">
+      <property name="text">
+       <string>Structure Duct</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="count_lv_fuse">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="count_lv_cj">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="count_lvdb_fp">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLabel" name="count_dmd_pt">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLabel" name="count_st_light">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QLabel" name="count_manhole">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QLabel" name="count_st_duct">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="err_lv_fuse">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="err_lv_cj">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QLabel" name="err_lvdb_fp">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLabel" name="err_dmd_pt">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2">
+     <widget class="QLabel" name="err_st_light">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QLabel" name="err_manhole">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="2">
+     <widget class="QLabel" name="err_st_duct">
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>430</y>
+     <y>530</y>
      <width>471</width>
      <height>31</height>
     </rect>
@@ -293,7 +524,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>340</y>
+     <y>440</y>
      <width>471</width>
      <height>80</height>
     </rect>
