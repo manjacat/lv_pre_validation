@@ -160,6 +160,30 @@ arr_type_lv_cj = [
         ,'Unknown'
         ]
 
+# ********************************
+# *******   LVDB-FP Enum   *******
+# ********************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_lvdb_loc = [
+        'INDOOR'
+        ,'OUTDOOR'
+        ,'Unknown'
+        ]
+
+arr_design_lvdb = [
+        'FP 1600 A - 2 in 8 out'
+        ,'FP 800 A - 2 in 5 out'
+        ,'FP 160000 A - 2 in 8 out (PE)'
+        ,'LVDB 1600 A - 2 in 10 out (CS)'
+        ,'LVDB 1600 A - 2 in 8 out'
+        ,'LVDB 800 A - 2 in 6 out (CS)'
+        ,'LVDB 800 A - 2 in 5 out (CS)'
+        ,'MINI FP 400 A - 2 in 6 out'
+        ]
+
 
 # *************************
 # *****   Pole Enum   *****
@@ -197,9 +221,111 @@ arr_struc_type = [
         ]
 
 arr_lv_ptc = [
-        'YES'
-        ,'NO'
+        'Yes'
+        ,'No'
         ]
 
+# *********************************
+# *****   Demand Point Enum   *****
+# *********************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+# *********************************
+# *****   Street Light Enum   *****
+# *********************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_phasing_st_light = [
+        'R'
+        ,'Y'
+        ,'B'
+        ,'Unknown'
+        ]
+
+arr_cont_dev = [
+        'NONE'
+        ,'PANEL'
+        ,'PHOTO CELL'
+        ,'TIME SWITCH'
+        ,'Unknown'
+        ]
+
+# ****************************
+# *****   Manhole Enum   *****
+# ****************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_type_manhole = [
+        'Corner Manhole'
+        ,'Straight Manhole'
+        ,'T Manhole'
+        ,'Type L'
+        ,'Type M'
+        ,'Type N'
+        ,'Type O'
+        ,'Unknown'
+        ]
+
+# ***********************************
+# *****   Structure Duct Enum   *****
+# ***********************************
+
+# status - as lv ug
+# db_oper - as lv ug
+
+arr_size_st_duct = [
+        '4"'
+        ,'6"'
+        ,'8"'
+        ,'Unknown'
+        ]
+
+arr_method_st_duct = [
+        'Cable Bridge'
+        ,'Common Utility Tunnel'
+        ,'HDD'
+        ,'Micro Tunnelling'
+        ,'Open Cut'
+        ,'Pipe Jacking'
+        ,'Unknown'
+        ]
+
+arr_way_st_duct = [
+        '1'
+        ,'10'
+        ,'11'
+        ,'12'
+        ,'13'
+        ,'14'
+        ,'15'
+        ,'16'
+        ,'17'
+        ,'18'
+        ,'19'
+        ,'2'
+        ,'20'
+        ,'24'
+        ,'3'
+        ,'36'
+        ,'4'
+        ,'5'
+        ,'6'
+        ,'66'
+        ,'7'
+        ,'8'
+        ,'9'
+        ,'HDD'
+        ,'Open Cut'
+        ]
+
+# *******************************
+# *****   END of All Enum   *****
+# *******************************
           
 	

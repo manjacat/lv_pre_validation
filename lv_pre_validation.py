@@ -33,12 +33,17 @@ from .resources import *
 # Import the code for the dialog
 from .lv_pre_validation_dialog import lv_pre_validationDialog
 import os.path
-# TODO: import own custom file
+# TODO: import own custom python file
 from .lvoh_conductor import *
 from .lvug_conductor import *
 from .lv_fuse import *
 from .lv_cable_joint import *
+from .lvdb_fp import *
 from .pole import *
+from .demand_point import *
+from .street_light import *
+from .manhole import *
+from .st_duct import *
 from .feature_count import count_lv_features
 
 
@@ -246,8 +251,23 @@ class lv_pre_validation:
             featCount += 1
         if self.dlg.checkBox_lvoh.isChecked():
             featCount += 1
+        if self.dlg.checkBox_lv_fuse.isChecked():
+            featCount += 1
+        if self.dlg.checkBox_lv_cj.isChecked():
+            featCount += 1
+        if self.dlg.checkBox_lvdb_fp.isChecked():
+            featCount += 1
         if self.dlg.checkBox_pole.isChecked():
             featCount += 1
+        if self.dlg.checkBox_dmd_pt.isChecked():
+            featCount += 1
+        if self.dlg.checkBox_st_light.isChecked():
+            featCount += 1
+        if self.dlg.checkBox_manhole.isChecked():
+            featCount += 1
+        if self.dlg.checkBox_st_duct.isChecked():
+            featCount += 1
+        
 
         qa_qc_msg = ' ' .join(['running QA/QC now on ',str(featCount),'features'])
         print(qa_qc_msg)
@@ -300,118 +320,44 @@ class lv_pre_validation:
         #****************************************************************
 
         # check for mandatory not null
-        field_name = 'status'
         arr_lv_ug = []
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
 
-        field_name = 'phasing'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'usage'
-        arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'label'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'length'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'dat_qty_cl'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'device_id'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_not_null(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_not_null_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'usage'
+            ,'length'
+            ,'label'
+            ,'dat_qty_cl'
+            ,'device_id'
+            ,'db_oper'
+            ]
+        
+        for field_name in field_name_arr: 
+            if lv_ug_flag:
+                arr_lv_ug = lv_ug_field_not_null(field_name)
+            for device_id in arr_lv_ug:
+                e_msg += lv_ug_field_not_null_message(device_id, field_name)
+                lv_ug_error += 1
+                total_error += 1
 
         # check for ENUM values
-        field_name = 'status'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'phasing'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'usage'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'label'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'dat_qty_cl'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_ug_flag:
-            arr_lv_ug = lv_ug_field_enum(field_name)
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_field_enum_message(device_id, field_name)
-            lv_ug_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'usage'
+            ,'label'
+            ,'dat_qty_cl'
+            ,'db_oper'
+            ]
+        
+        for field_name in field_name_arr:           
+            if lv_ug_flag:
+                arr_lv_ug = lv_ug_field_enum(field_name)
+            for device_id in arr_lv_ug:
+                e_msg += lv_ug_field_enum_message(device_id, field_name)
+                lv_ug_error += 1
+                total_error += 1
 
         # check for incoming lv ug vs in_lvdb_id
         if lv_ug_flag:
@@ -471,103 +417,42 @@ class lv_pre_validation:
         arr_lv_oh = []
 
         # check for mandatory not null
-        field_name = 'status'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'phasing'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'usage'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'label'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'length'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'device_id'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_not_null(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_not_null_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'usage'
+            ,'label'
+            ,'length'
+            ,'device_id'
+            ,'db_oper'
+            ]
+        
+        for field_name in field_name_arr: 
+            if lv_oh_flag:
+                arr_lv_oh = lv_oh_field_not_null(field_name)
+            for device_id in arr_lv_oh:
+                e_msg += lv_oh_field_not_null_message(device_id, field_name)
+                lv_oh_error += 1
+                total_error += 1
 
         # check for ENUM values
-        field_name = 'status'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_enum(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_enum_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'usage'
+            ,'label'
+            ,'db_oper'
+            ]
+        
+        for field_name in field_name_arr: 
+            if lv_oh_flag:
+                arr_lv_oh = lv_oh_field_enum(field_name)
+            for device_id in arr_lv_oh:
+                e_msg += lv_oh_field_enum_message(device_id, field_name)
+                lv_oh_error += 1
+                total_error += 1
 
-        field_name = 'phasing'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_enum(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_enum_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'usage'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_enum(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_enum_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'label'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_enum(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_enum_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_oh_flag:
-            arr_lv_oh = lv_oh_field_enum(field_name)
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_field_enum_message(device_id, field_name)
-            lv_oh_error += 1
-            total_error += 1
-
+        
         # check for LV UG length
         if lv_oh_flag:
             arr_lv_oh = lv_oh_length_check()
@@ -583,94 +468,38 @@ class lv_pre_validation:
         arr_lv_fuse = []
 
         # check for mandatory not null
-        field_name = 'status'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'class'
+            ,'normal_sta'
+            ,'device_id'            
+            ,'db_oper'
+            ]
 
-        field_name = 'phasing'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'class'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'normal_sta'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'device_id'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_not_null(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_not_null_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-         # check for ENUM values
-        field_name = 'status'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_enum(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_enum_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'phasing'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_enum(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_enum_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'class'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_enum(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_enum_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'normal_sta'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_enum(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_enum_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_fuse_flag:
-            arr_lv_fuse = lv_fuse_field_enum(field_name)
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_field_enum_message(device_id, field_name)
-            lv_fuse_error += 1
-            total_error += 1
+        for field_name in field_name_arr: 
+            if lv_fuse_flag:
+                arr_lv_fuse = lv_fuse_field_not_null(field_name)
+            for device_id in arr_lv_fuse:
+                e_msg += lv_fuse_field_not_null_message(device_id, field_name)
+                lv_fuse_error += 1
+                total_error += 1
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'class'
+            ,'normal_sta'
+            ,'db_oper'
+            ]
+         
+        for field_name in field_name_arr: 
+            if lv_fuse_flag:
+                arr_lv_fuse = lv_fuse_field_enum(field_name)
+            for device_id in arr_lv_fuse:
+                e_msg += lv_fuse_field_enum_message(device_id, field_name)
+                lv_fuse_error += 1
+                total_error += 1
 
         #***************************************************************
         #**************    LV Cable Joint VALIDATION     ***************
@@ -679,78 +508,37 @@ class lv_pre_validation:
         arr_lv_cj = []
 
         # check for mandatory not null
-        field_name = 'status'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_not_null(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_not_null_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'class'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_not_null(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_not_null_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'type'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_not_null(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_not_null_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_not_null(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_not_null_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'device_id'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_not_null(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_not_null_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'class'
+            ,'type'
+            ,'db_oper'
+            ,'device_id'
+            ]
+        
+        for field_name in field_name_arr: 
+            if lv_cj_flag:
+                arr_lv_cj = lv_cj_field_not_null(field_name)
+            for device_id in arr_lv_cj:
+                e_msg += lv_cj_field_not_null_message(device_id, field_name)
+                lv_cj_error += 1
+                total_error += 1
 
         # check for ENUM values
-        field_name = 'status'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_enum(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_enum_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
+        field_name_arr = [
+            'status'
+            ,'class'
+            ,'type'
+            ,'db_oper'
+            ]
 
-        field_name = 'class'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_enum(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_enum_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'type'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_enum(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_enum_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
-
-        field_name = 'db_oper'
-        if lv_cj_flag:
-            arr_lv_cj = lv_cj_field_enum(field_name)
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_field_enum_message(device_id, field_name)
-            lv_cj_error += 1
-            total_error += 1
+        for field_name in field_name_arr: 
+            if lv_cj_flag:
+                arr_lv_cj = lv_cj_field_enum(field_name)
+            for device_id in arr_lv_cj:
+                e_msg += lv_cj_field_enum_message(device_id, field_name)
+                lv_cj_error += 1
+                total_error += 1
 
         #***************************************************************
         #******************    LVDB-FP VALIDATION     ******************
@@ -758,11 +546,83 @@ class lv_pre_validation:
 
         arr_lvdb_fp = []
 
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'lvdb_loc'
+            ,'design'
+            ,'device_id'
+            ,'db_oper'
+            ,'lvdb_angle'
+            ]
+
+        for field_name in field_name_arr: 
+            if lvdb_fp_flag:
+                arr_lvdb_fp = lvdb_fp_field_not_null(field_name)
+            for device_id in arr_lvdb_fp:
+                e_msg += lvdb_fp_field_not_null_message(device_id, field_name)
+                lvdb_fp_error += 1
+                total_error += 1
+
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'lvdb_loc'
+            ,'design'
+            ,'db_oper'
+            ]
+            
+        for field_name in field_name_arr:    
+            if lvdb_fp_flag:
+                arr_lvdb_fp = lvdb_fp_field_enum(field_name)
+            for device_id in arr_lvdb_fp:
+                e_msg += lvdb_fp_field_enum_message(device_id, field_name)
+                lvdb_fp_error += 1
+                total_error += 1
+
+        
+
         #***************************************************************
         #********************    POLE VALIDATION     *******************
         #***************************************************************
 
         arr_pole = []
+
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'light_ares'
+            ,'struc_type'
+            ,'pole_no'
+            ,'device_id'
+            ,'db_oper'
+            ,'lv_ptc'
+            ]
+
+        for field_name in field_name_arr: 
+            if pole_flag:
+                arr_pole = pole_field_not_null(field_name)
+            for device_id in arr_pole:
+                e_msg += pole_field_not_null_message(device_id, field_name)
+                pole_error += 1
+                total_error += 1
+
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'light_ares'
+            ,'struc_type'
+            ,'db_oper'
+            ,'lv_ptc'
+            ]
+            
+        for field_name in field_name_arr:    
+            if pole_flag:
+                arr_pole = pole_field_enum(field_name)
+            for device_id in arr_pole:
+                e_msg += pole_field_enum_message(device_id, field_name)
+                pole_error += 1
+                total_error += 1
 
         #***************************************************************
         #***************    DEMAND POINT VALIDATION     ****************
@@ -770,11 +630,78 @@ class lv_pre_validation:
 
         arr_dmd_pt = []
 
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'device_id'
+            ,'db_oper'
+            ,'dist_tranx'
+            ,'house_no'
+            ,'str_name'
+            ]
+
+        for field_name in field_name_arr: 
+            if dmd_pt_flag:
+                arr_dmd_pt = dmd_pt_field_not_null(field_name)
+            for device_id in arr_dmd_pt:
+                e_msg += dmd_pt_field_not_null_message(device_id, field_name)
+                dmd_pt_error += 1
+                total_error += 1
+
+        # check for ENUM values
+        field_name_arr = [
+            'status'         
+            ,'db_oper'
+            ]
+            
+        for field_name in field_name_arr:    
+            if dmd_pt_flag:
+                arr_dmd_pt = dmd_pt_field_enum(field_name)
+            for device_id in arr_dmd_pt:
+                e_msg += dmd_pt_field_enum_message(device_id, field_name)
+                dmd_pt_error += 1
+                total_error += 1
+
         #***************************************************************
         #***************    STREET LIGHT VALIDATION     ****************
         #***************************************************************
 
         arr_st_light = []
+
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'db_oper'
+            ,'stl_angle'
+            ,'cont_dev'
+            ,'device_id'
+            ]
+
+        for field_name in field_name_arr: 
+            if st_light_flag:
+                arr_st_light = st_light_field_not_null(field_name)
+            for device_id in arr_st_light:
+                e_msg += st_light_field_not_null_message(device_id, field_name)
+                st_light_error += 1
+                total_error += 1
+
+        
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'db_oper'
+            ,'cont_dev'
+            ]
+            
+        for field_name in field_name_arr:    
+            if st_light_flag:
+                arr_st_light = st_light_field_enum(field_name)
+            for device_id in arr_st_light:
+                e_msg += st_light_field_enum_message(device_id, field_name)
+                st_light_error += 1
+                total_error += 1
 
         #***************************************************************
         #******************    MANHOLE VALIDATION     ******************
@@ -782,19 +709,85 @@ class lv_pre_validation:
 
         arr_manhole = []
 
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'db_oper'
+            ,'stl_angle'
+            ,'cont_dev'
+            ,'device_id'
+            ]
+
+        for field_name in field_name_arr: 
+            if manhole_flag:
+                arr_manhole = manhole_field_not_null(field_name)
+            for device_id in arr_manhole:
+                e_msg += manhole_field_not_null_message(device_id, field_name)
+                manhole_error += 1
+                total_error += 1
+
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'phasing'
+            ,'db_oper'
+            ,'cont_dev'
+            ]
+            
+        for field_name in field_name_arr:    
+            if manhole_flag:
+                arr_manhole = manhole_field_enum(field_name)
+            for device_id in arr_manhole:
+                e_msg += manhole_field_enum_message(device_id, field_name)
+                manhole_error += 1
+                total_error += 1
+
         #***************************************************************
         #***************     STRUCTURE DUCT VALIDATION     *************
         #***************************************************************
 
         arr_st_duct = []
 
-        
+        # check for mandatory not null
+        field_name_arr = [
+            'status'
+            ,'size'
+            ,'method'
+            ,'way'
+            ,'device_id'
+            ,'db_oper'
+            ]
 
+        for field_name in field_name_arr: 
+            if st_duct_flag:
+                arr_st_duct = st_duct_field_not_null(field_name)
+            for device_id in arr_st_duct:
+                e_msg += st_duct_field_not_null_message(device_id, field_name)
+                arr_st_duct_error += 1
+                total_error += 1
 
+        # check for ENUM values
+        field_name_arr = [
+            'status'
+            ,'size'
+            ,'method'
+            ,'way'
+            ,'db_oper'
+            ]
+            
+        for field_name in field_name_arr:    
+            if st_duct_flag:
+                arr_st_duct = st_light_field_enum(field_name)
+            for device_id in arr_st_duct:
+                e_msg += st_duct_field_enum_message(device_id, field_name)
+                st_duct_error += 1
+                total_error += 1
         
         #****************************************************************
         #******************     END OF VALIDATION     *******************
         #****************************************************************
+                
         #print to console
         if lv_ug_flag == False:
             lv_ug_error = 'Skipped'
@@ -824,7 +817,7 @@ class lv_pre_validation:
         print(e_msg)
         self.dlg.label_message.setText(' ')
 
-        #update error count label
+        # update error count label
         self.dlg.err_lvug.setText(str(lv_ug_error))
         self.dlg.err_lvoh.setText(str(lv_oh_error))
         self.dlg.err_lv_fuse.setText(str(lv_fuse_error))
@@ -835,8 +828,10 @@ class lv_pre_validation:
         self.dlg.err_st_light.setText(str(st_light_error))
         self.dlg.err_manhole.setText(str(manhole_error))
         self.dlg.err_st_duct.setText(str(st_duct_error))
+        # update total
+        self.dlg.err_total.setText(str(total_error))
 
-        #write to csv file
+        # write to csv file
         filename = self.dlg.lineEdit_csv.text()
         if len(filename) > 4:
             with open(filename, 'w') as output_file:

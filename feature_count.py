@@ -48,7 +48,7 @@ def count_lv_features(self):
 
     # print('counting LVDB-FP')
     try:
-        layer_lvdb_fp = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
+        layer_lvdb_fp = QgsProject.instance().mapLayersByName('LVDB-FP')[0]
         feat_lvdb_fp = layer_lvdb_fp.getFeatures()
         count_lvdb_fp = 0
         for f1 in feat_lvdb_fp:
