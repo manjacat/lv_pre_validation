@@ -7,16 +7,70 @@ All checkings related to LV UG conductor
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
+# regex
+import re
 
 def lvug_call_me():
 	print('lv ug_conductor is called')
 
-
+layer_name = 'LV_UG_Conductor'
 lv_ug_field_null = 'ERR_LVUGCOND_01'
 lv_ug_enum_valid = 'ERR_LVUGCOND_02'
 lv_ug_lv_db_in_out_geom = 'ERR_LVUGCOND_04'
 lv_ug_lvdb_in_out_col = 'ERR_LVUGCOND_03'
 lv_ug_length = 'ERR_LVUGCOND_05'
+lv_ug_duplicate_code = 'ERR_DUPLICATEID'
+lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def lv_ug_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def lv_ug_device_id_format_message(device_id):
+        e_msg = lv_ug_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
+
+# **********************************
+# ****** Check for Duplicates ******
+# **********************************
+
+def lv_ug_duplicate():
+        arr = []
+        arr_device_id = []
+        arr_seen = []
+        arr_dupes = []
+
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                arr_device_id.append(device_id)
+
+        for device_id in arr_device_id:
+                # check if device id is seen before
+                if device_id in arr_seen and device_id not in arr_dupes:
+                        arr.append(device_id)
+                        # arr_dupes.append(device_id)
+                else:
+                        arr_seen.append(device_id)
+
+        # print(arr_seen)
+        # print(arr_device_id)
+        # print(arr_dupes)
+
+        return arr
+
+def lv_ug_duplicate_message(device_id):
+        e_msg = lv_ug_duplicate_code +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        return e_msg
+
+
 
 # **********************************
 # ****** Check for Enum Value ******
@@ -40,7 +94,7 @@ def lv_ug_field_enum(field_name):
         else:
                 arr_dropdown = []
         
-        layer = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
         for f in feat:
                 device_id = f.attribute('device_id')

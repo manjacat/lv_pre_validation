@@ -319,9 +319,25 @@ class lv_pre_validation:
         #***************     LV UG COND VALIDATION    *******************
         #****************************************************************
 
-        # check for mandatory not null
         arr_lv_ug = []
 
+        # check for duplicates
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_duplicate()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_duplicate_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+        # check for device_id format
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_device_id_format()
+            for device_id in arr_lv_ug:
+                e_msg += lv_ug_device_id_format_message(device_id)
+                lv_ug_error += 1
+                total_error += 1
+
+        # check for mandatory not null
         field_name_arr = [
             'status'
             ,'phasing'
@@ -416,6 +432,14 @@ class lv_pre_validation:
 
         arr_lv_oh = []
 
+        # check for duplicates
+        if lv_oh_flag:
+            arr_lv_oh = lv_oh_duplicate()
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_duplicate_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -467,6 +491,14 @@ class lv_pre_validation:
 
         arr_lv_fuse = []
 
+        # check for duplicates
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_duplicate()
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_duplicate_message(device_id)
+            lv_fuse_error += 1
+            total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -507,6 +539,14 @@ class lv_pre_validation:
 
         arr_lv_cj = []
 
+        # check for duplicates
+        if lv_cj_flag:
+            arr_lv_cj = lv_cj_duplicate()
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_duplicate_message(device_id)
+            lv_cj_error += 1
+            total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -546,6 +586,14 @@ class lv_pre_validation:
 
         arr_lvdb_fp = []
 
+        # check for duplicates
+        if lvdb_fp_flag:
+            arr_lvdb_fp = lvdb_fp_duplicate()
+        for device_id in arr_lvdb_fp:
+            e_msg += lvdb_fp_duplicate_message(device_id)
+            lvdb_fp_error += 1
+            total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -580,6 +628,25 @@ class lv_pre_validation:
                 lvdb_fp_error += 1
                 total_error += 1
 
+        # check for remarks/db_oper mismatch
+        if lvdb_fp_flag:
+            arr_lvdb_fp = lvdb_fp_remarks_db_oper()
+            for device_id in arr_lvdb_fp:
+                e_msg += lvdb_fp_remarks_db_oper_message(device_id)
+                lvdb_fp_error += 1
+                total_error += 1
+
+        # check for lvf/design mismatch
+        if lvdb_fp_flag:
+            arr_lvdb_fp = lvdb_fp_lvf_design()
+            for device_id in arr_lvdb_fp:
+                e_msg += lvdb_fp_lvf_design_message(device_id)
+                lvdb_fp_error += 1
+                total_error += 1
+            
+            
+        
+
         
 
         #***************************************************************
@@ -587,6 +654,14 @@ class lv_pre_validation:
         #***************************************************************
 
         arr_pole = []
+
+        # check for duplicates
+        if pole_flag:
+            arr_pole = pole_duplicate()
+        for device_id in arr_pole:
+            e_msg += pole_duplicate_message(device_id)
+            pole_error += 1
+            total_error += 1
 
         # check for mandatory not null
         field_name_arr = [
@@ -630,6 +705,14 @@ class lv_pre_validation:
 
         arr_dmd_pt = []
 
+        # check for duplicates
+        if dmd_pt_flag:
+            arr_dmd_pt = dmd_pt_duplicate()
+            for device_id in arr_dmd_pt:
+                e_msg += dmd_pt_duplicate_message(device_id)
+                dmd_pt_error += 1
+                total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -668,6 +751,14 @@ class lv_pre_validation:
 
         arr_st_light = []
 
+        # check for duplicates
+        if st_light_flag:
+            arr_st_light = st_light_duplicate()
+            for device_id in arr_st_light:
+                e_msg += st_light_duplicate_message(device_id)
+                st_light_error += 1
+                total_error += 1
+
         # check for mandatory not null
         field_name_arr = [
             'status'
@@ -690,7 +781,6 @@ class lv_pre_validation:
         # check for ENUM values
         field_name_arr = [
             'status'
-            ,'phasing'
             ,'db_oper'
             ,'cont_dev'
             ]
@@ -703,11 +793,28 @@ class lv_pre_validation:
                 st_light_error += 1
                 total_error += 1
 
+        # check for phasing must be 'R'   
+        if st_light_flag:
+            arr_st_light = st_light_phasing()
+            for device_id in arr_st_light:
+                e_msg += st_light_phasing_message(device_id)
+                st_light_error += 1
+                total_error += 1
+        
+
         #***************************************************************
         #******************    MANHOLE VALIDATION     ******************
         #***************************************************************
 
         arr_manhole = []
+
+        #check for duplicate
+        if manhole_flag:
+            arr_manhole = manhole_duplicate()
+            for device_id in arr_manhole:
+                e_msg += manhole_duplicate_message(device_id)
+                manhole_error += 1
+                total_error += 1
 
         # check for mandatory not null
         field_name_arr = [
@@ -748,6 +855,13 @@ class lv_pre_validation:
         #***************************************************************
 
         arr_st_duct = []
+        # check for duplicates
+        if st_duct_flag:
+            arr_st_duct = st_duct_duplicate()
+            for device_id in arr_st_duct:
+                e_msg += st_duct_duplicate_message(device_id)
+                st_duct_error += 1
+                total_error += 1
 
         # check for mandatory not null
         field_name_arr = [

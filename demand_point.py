@@ -11,6 +11,41 @@ from .dropdown_enum import *
 layer_name = 'Demand_Point'	
 dmd_pt_field_null = 'ERR_DEMANDPT_01'
 dmd_pt_enum_valid = 'ERR_DEMANDPT_02'
+dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
+
+# **********************************
+# ****** Check for Duplicates ******
+# **********************************
+
+def dmd_pt_duplicate():
+        arr = []
+        arr_device_id = []
+        arr_seen = []
+        arr_dupes = []
+
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                arr_device_id.append(device_id)
+
+        for device_id in arr_device_id:
+                # check if device id is seen before
+                if device_id in arr_seen and device_id not in arr_dupes:
+                        arr.append(device_id)
+                        # arr_dupes.append(device_id)
+                else:
+                        arr_seen.append(device_id)
+
+        # print(arr_seen)
+        # print(arr_device_id)
+        # print(arr_dupes)
+
+        return arr
+
+def dmd_pt_duplicate_message(device_id):
+        e_msg = dmd_pt_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        return e_msg
 
 
 # **********************************

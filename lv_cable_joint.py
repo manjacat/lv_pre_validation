@@ -8,8 +8,44 @@ from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
 	
+layer_name = 'LV_Cable_Joint'
 lv_cj_field_null = 'ERR_LVCJOINT_01'
 lv_cj_enum_valid = 'ERR_LVCJOINT_02'
+lv_cj_duplicate_code = 'ERR_DUPLICATE_ID'
+
+# **********************************
+# ****** Check for Duplicates ******
+# **********************************
+
+def lv_cj_duplicate():
+        arr = []
+        arr_device_id = []
+        arr_seen = []
+        arr_dupes = []
+
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                arr_device_id.append(device_id)
+
+        for device_id in arr_device_id:
+                # check if device id is seen before
+                if device_id in arr_seen and device_id not in arr_dupes:
+                        arr.append(device_id)
+                        # arr_dupes.append(device_id)
+                else:
+                        arr_seen.append(device_id)
+
+        # print(arr_seen)
+        # print(arr_device_id)
+        # print(arr_dupes)
+
+        return arr
+
+def lv_cj_duplicate_message(device_id):
+        e_msg = lv_cj_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        return e_msg
 
 # **********************************
 # ****** Check for Enum Value ******

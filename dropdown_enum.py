@@ -239,11 +239,9 @@ arr_lv_ptc = [
 # status - as lv ug
 # db_oper - as lv ug
 
+# phasing in st_light should only be 'R', so other values 'Y','B','Unknown' are ignored.        
 arr_phasing_st_light = [
         'R'
-        ,'Y'
-        ,'B'
-        ,'Unknown'
         ]
 
 arr_cont_dev = [
