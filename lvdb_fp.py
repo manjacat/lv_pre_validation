@@ -7,6 +7,7 @@ All checkings related to LVDB-FP
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 # regex
 import re
 
@@ -16,6 +17,20 @@ lvdb_fp_enum_valid = 'ERR_LVDBFP_02'
 lvdb_fp_remarks_db_oper_code = 'ERR_LVDBFP_03'
 lvdb_fp_lvf_design_code = 'ERR_LVDBFP_04'
 lvdb_fp_duplicate_code = 'ERR_DUPLICATE_ID'
+lvdb_fp_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def lvdb_fp_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def lvdb_fp_device_id_format_message(device_id):
+        e_msg = lvdb_fp_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******
@@ -104,6 +119,14 @@ def lvdb_fp_field_not_null_message(device_id, field_name):
 # ********* REMARKS/DB OPER MISMATCH  **********
 # **********************************************
 
+'''
+# Quote shahid:
+# all LVDB are existing, in the remarks column, SW_ID is added.
+# all FP are new. in the remarks column, there is no SW_ID information.
+# hence, we check if there is SW_ID information in the remarks column.
+# if got SW_ID, [db_oper] is Update. otherwise, [db_oper] is Insert.
+'''
+
 def lvdb_fp_remarks_db_oper():
         arr = []
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
@@ -120,7 +143,9 @@ def lvdb_fp_remarks_db_oper():
                 elif not check and db_oper == 'Update':
                         arr.append(device_id)
                 else :
-                        print('pattern match:' + device_id + ': ' + remarks + ', ' + db_oper)
+                        # do nothing
+                        rem2 = f.attribute('remarks')
+                        # print('pattern match:' + device_id + ': ' + remarks + ', ' + db_oper)
         return arr
 
 def lvdb_fp_remarks_db_oper_message(device_id):
@@ -130,6 +155,12 @@ def lvdb_fp_remarks_db_oper_message(device_id):
 # ********************************************************************
 # ********* Number of LVF columns filled must match Design  **********
 # ********************************************************************
+
+'''
+# check [design] column. if it says 2 in 8 out,
+# then all lv in columns ([lvs_1], [lvs_2]) must not be null
+# similarly, all lv out columns ([lvf_1] to [lvs_8]) must not be null
+'''
 
 def lvdb_fp_lvf_design():
         arr = []
@@ -158,18 +189,18 @@ def lvdb_fp_lvf_design():
                 lv_out = get_lv_out_number(design)
                 count_out = 0
                 count_in = 0
-                print('checking values for device_id ' + device_id + ', design = ', design)
+                # print('checking values for device_id ' + device_id + ', design = ', design)
                 # check null values in lvs (in)
                 for index_in in range(lv_in):
                         lvs = arr_lvs[index_in]
-                        print('lvs_'+ str(index_in + 1) +' value is = ' + str(lvs))
+                        # print('lvs_'+ str(index_in + 1) +' value is = ' + str(lvs))
                         if lvs :
                                 count_in += 1
                                 
                 # check null values in lvf (out)
                 for index_out in range(lv_out):
                         lvf = arr_lvf[index_out]
-                        print('lvf_'+ str(index_out + 1) +' value is = ' + str(lvf))
+                        # print('lvf_'+ str(index_out + 1) +' value is = ' + str(lvf))
                         if lvf :
                                 count_out += 1
                 

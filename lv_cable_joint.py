@@ -7,11 +7,26 @@ All checkings related to LV Cable Joint
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 	
 layer_name = 'LV_Cable_Joint'
 lv_cj_field_null = 'ERR_LVCJOINT_01'
 lv_cj_enum_valid = 'ERR_LVCJOINT_02'
 lv_cj_duplicate_code = 'ERR_DUPLICATE_ID'
+lv_cj_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def lv_cj_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def lv_cj_device_id_format_message(device_id):
+        e_msg = lv_cj_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******

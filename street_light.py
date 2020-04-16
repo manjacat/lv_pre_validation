@@ -7,12 +7,27 @@ All checkings related to Street Light
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 
 layer_name = 'Street_Light'	
 st_light_field_null = 'ERR_STLIGHT_01'
 st_light_enum_valid = 'ERR_STLIGHT_02'
 st_light_phasing_code = 'ERR_STLIGHT_04'
 st_light_duplicate_code = 'ERR_DUPLICATE_ID'
+st_light_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def st_light_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def st_light_device_id_format_message(device_id):
+        e_msg = st_light_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******

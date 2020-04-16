@@ -11,9 +11,6 @@ from .rps_utility import rps_device_id_format
 # regex
 import re
 
-def lvug_call_me():
-	print('lv ug_conductor is called')
-
 layer_name = 'LV_UG_Conductor'
 lv_ug_field_null = 'ERR_LVUGCOND_01'
 lv_ug_enum_valid = 'ERR_LVUGCOND_02'

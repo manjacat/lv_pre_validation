@@ -7,13 +7,27 @@ All checkings related to LV OH conductor
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 	
 layer_name = 'LV_OH_Conductor'
 lv_oh_field_null = 'ERR_LVOHCOND_01'
 lv_oh_enum_valid = 'ERR_LVOHCOND_02'
 lv_oh_length = 'ERR_LVOHCOND_07'
 lv_oh_duplicate_code = 'ERR_DUPLICATE_ID'
+lv_oh_device_id_format_code = 'ERR_DEVICE_ID'
 
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def lv_oh_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def lv_oh_device_id_format_message(device_id):
+        e_msg = lv_oh_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 # **********************************
 # ****** Check for Duplicates ******
 # **********************************

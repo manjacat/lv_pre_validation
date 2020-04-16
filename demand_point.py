@@ -7,11 +7,26 @@ All checkings related to Demand Point
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 
 layer_name = 'Demand_Point'	
 dmd_pt_field_null = 'ERR_DEMANDPT_01'
 dmd_pt_enum_valid = 'ERR_DEMANDPT_02'
 dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
+dmd_pt_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def dmd_pt_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def dmd_pt_device_id_format_message(device_id):
+        e_msg = dmd_pt_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******

@@ -7,11 +7,26 @@ All checkings related to LV Fuse
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 
 layer_name = 'LV_Fuse'	
 lv_fuse_field_null = 'ERR_LVFUSE_01'
 lv_fuse_enum_valid = 'ERR_LVFUSE_02'
 lv_fuse_duplicate_code = 'ERR_DUPLICATE_ID'
+lv_fuse_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def lv_fuse_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def lv_fuse_device_id_format_message(device_id):
+        e_msg = lv_fuse_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******

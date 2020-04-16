@@ -7,11 +7,26 @@ All checkings related to Manhole
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
+from .rps_utility import rps_device_id_format
 
 layer_name = 'Manhole'	
 manhole_field_null = 'ERR_MANHOLE_01'
 manhole_enum_valid = 'ERR_MANHOLE_02'
 manhole_duplicate_code = 'ERR_DUPLICATE_ID'
+manhole_device_id_format_code = 'ERR_DEVICE_ID'
+
+# ****************************************
+# ****** Check for Device_Id Format ******
+# ****************************************
+
+def manhole_device_id_format():
+        arr = []
+        arr = rps_device_id_format(layer_name)
+        return arr
+
+def manhole_device_id_format_message(device_id):
+        e_msg = manhole_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Duplicates ******
