@@ -800,6 +800,14 @@ class lv_pre_validation:
                     dmd_pt_error += 1
                     total_error += 1
 
+        # check for Remarks
+        if dmd_pt_flag:
+            arr_dmd_pt = dmd_pt_remarks()
+            for device_id in arr_dmd_pt:
+                e_msg += dmd_pt_remarks_message(device_id)
+                dmd_pt_error += 1
+                total_error += 1
+
         #***************************************************************
         #***************    STREET LIGHT VALIDATION     ****************
         #***************************************************************
@@ -863,7 +871,14 @@ class lv_pre_validation:
                 e_msg += st_light_phasing_message(device_id)
                 st_light_error += 1
                 total_error += 1
-        
+
+        # check for Control Device
+        if st_light_flag:
+            arr_st_light = st_light_cont_dev()
+            for device_id in arr_st_light:
+                e_msg += st_light_cont_dev_message(device_id)
+                st_light_error += 1
+                total_error += 1
 
         #***************************************************************
         #******************    MANHOLE VALIDATION     ******************

@@ -15,6 +15,7 @@ st_light_enum_valid = 'ERR_STLIGHT_02'
 st_light_phasing_code = 'ERR_STLIGHT_04'
 st_light_duplicate_code = 'ERR_DUPLICATE_ID'
 st_light_device_id_format_code = 'ERR_DEVICE_ID'
+st_light_cont_dev_code = 'ERR_STLIGHT_03'
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -91,6 +92,32 @@ def st_light_field_enum(field_name):
 
 def st_light_field_enum_message(device_id, field_name):
         e_msg = st_light_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        return e_msg
+
+# ********************************************
+# ****** Check for Street Light Panel   ******
+# ********************************************
+
+'''
+# If dmd_pnt_it is not null, Street Light control device (cont_dev) should be 'PANEL'
+# at the same time, the demand point's remarks should be 'STREET LIGHT PANEL'
+'''
+
+def st_light_cont_dev():
+        arr = []
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                dmd_pnt_id = f.attribute('dmd_pnt_id')                
+                if dmd_pnt_id:
+                        cont_dev = f.attribute('cont_dev')
+                        if cont_dev != 'PANEL':                        
+                                arr.append(device_id)
+        return arr
+        
+def st_light_cont_dev_message(device_id):
+        e_msg = st_light_cont_dev_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' cont_device should be PANEL if dmd_pnt_id is not null \n'
         return e_msg
 
 # **********************************

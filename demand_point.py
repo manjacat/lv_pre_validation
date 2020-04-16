@@ -14,6 +14,7 @@ dmd_pt_field_null = 'ERR_DEMANDPT_01'
 dmd_pt_enum_valid = 'ERR_DEMANDPT_02'
 dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
 dmd_pt_device_id_format_code = 'ERR_DEVICE_ID'
+dmd_pt_remarks_code = 'ERR_DMDCOND_04'
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -108,10 +109,45 @@ def dmd_pt_field_not_null_message(device_id, field_name):
 	e_msg = dmd_pt_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
 	return e_msg
 
-# **********************************
-# ********* TODO  **********
-# **********************************
+# ***************************************
+# ********* Check for Remarks  **********
+# ***************************************
 
+'''
+# Step 1 : list down all demand point device id from Street Light
+# Step 2 : check Demand Point where Device Id in arr_device_id
+# Step 3 : check Remarks column. Remarks must be == 'STREET LIGHT PANEL'
+'''
+
+def dmd_pt_remarks():
+        arr = []
+        arr_dmd_pnt_id = get_dmd_pnt_id()
+        # print(arr_dmd_pnt_id)
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                if device_id in arr_dmd_pnt_id:
+                        remarks = f.attribute('remarks')
+                        if remarks != 'STREET LIGHT PANEL':
+                                arr.append(device_id)
+        return arr
+
+def get_dmd_pnt_id():
+        arr_dmd_pnt_id = []
+        layer = QgsProject.instance().mapLayersByName('Street_Light')[0]
+        query = '"dmd_pnt_id" is not null'
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                dmd_pnt_id = f.attribute('dmd_pnt_id')
+                arr_dmd_pnt_id.append(dmd_pnt_id)
+
+        return arr_dmd_pnt_id;
+        
+
+def dmd_pt_remarks_message(device_id):
+	e_msg = dmd_pt_remarks_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks must be STREET LIGHT PANEL \n'
+	return e_msg
 
 # **********************************
 # ******* End of Validation  *******
