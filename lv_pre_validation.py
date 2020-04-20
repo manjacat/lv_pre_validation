@@ -432,6 +432,14 @@ class lv_pre_validation:
                 lv_ug_error += 1
                 total_error += 1
 
+        # check for coincidence geometry
+        if lv_ug_flag:
+            arr_lv_ug = lv_ug_coin()
+            for device_id in arr_lv_ug:
+                e_msg += lv_ug_coin_message(device_id)
+                lv_ug_error += 1
+                total_error += 1
+
         #****************************************************************
         #***************     LV OH COND VALIDATION     ******************
         #****************************************************************
@@ -877,6 +885,14 @@ class lv_pre_validation:
             arr_st_light = st_light_cont_dev()
             for device_id in arr_st_light:
                 e_msg += st_light_cont_dev_message(device_id)
+                st_light_error += 1
+                total_error += 1
+
+        # Geom check: Street Light overlap Pole
+        if st_light_flag:
+            arr_st_light = st_light_overlap_pole()
+            for device_id in arr_st_light:
+                e_msg += st_light_overlap_pole_message(device_id)
                 st_light_error += 1
                 total_error += 1
 

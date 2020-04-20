@@ -12,10 +12,12 @@ from .rps_utility import rps_device_id_format
 layer_name = 'Street_Light'	
 st_light_field_null = 'ERR_STLIGHT_01'
 st_light_enum_valid = 'ERR_STLIGHT_02'
-st_light_phasing_code = 'ERR_STLIGHT_04'
+st_light_cont_dev_code = 'ERR_STLIGHT_03'
+st_light_overlap_pole_code = 'ERR_STLIGHT_04'
+st_light_phasing_code = 'ERR_STLIGHT_05'
 st_light_duplicate_code = 'ERR_DUPLICATE_ID'
 st_light_device_id_format_code = 'ERR_DEVICE_ID'
-st_light_cont_dev_code = 'ERR_STLIGHT_03'
+max_distance_m = 0.001
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -160,6 +162,54 @@ def st_light_phasing():
 def st_light_phasing_message(device_id):
 	e_msg = st_light_phasing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' phasing should be "R" \n'
 	return e_msg
+
+# ********************************************************
+# ********* Street Light not overlap with Pole  **********
+# ********************************************************
+
+'''
+# Step 1: list all Pole Geom
+# Step 2: list all Street Light Geom
+# Step 3: check if distance between Street Light Geom && Pole Geom > allowable distance
+'''
+
+def st_light_overlap_pole():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        
+        #get pole geom
+        arr_geom_pole = []
+        layer_pole = QgsProject.instance().mapLayersByName('Pole')[0]
+        feat_pole = layer_pole.getFeatures()
+        for f in feat_pole:
+                geom_pole = f.geometry()
+                geom_pole_x = geom_pole.asPoint()
+                arr_geom_pole.append(geom_pole_x)
+
+        #get street light geom
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                # compare with geom pole array
+                if geom_pole_x in arr_geom_pole:
+                        geom_st_light = f.geometry()
+                        geom_st_light_x = geom_st_light.asPoint()
+                        # print('geom pole is :', geom_pole_x)
+                        # print('geom st_light is :',geom_st_light_x)
+                        m = distance.measureLine(geom_pole_x, geom_st_light_x)
+                        if m < max_distance_m:
+                                print('Only ' + str(m) + 'm between street light ' + device_id + ' and pole')                        
+                                arr.append(device_id)
+                                
+        return arr
+
+def st_light_overlap_pole_message(device_id):
+        e_msg = st_light_overlap_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Street Light cannot overlap Pole \n'
+        return e_msg
+        
 
 
 # **********************************
