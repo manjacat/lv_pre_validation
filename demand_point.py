@@ -14,7 +14,8 @@ dmd_pt_field_null = 'ERR_DEMANDPT_01'
 dmd_pt_enum_valid = 'ERR_DEMANDPT_02'
 dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
 dmd_pt_device_id_format_code = 'ERR_DEVICE_ID'
-dmd_pt_remarks_code = 'ERR_DMDCOND_04'
+dmd_pt_remarks_code = 'ERR_DEMANDPT_04'
+dmd_pt_snapping_code = 'ERR_DEMANDPT_03'
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -147,6 +148,61 @@ def get_dmd_pnt_id():
 
 def dmd_pt_remarks_message(device_id):
 	e_msg = dmd_pt_remarks_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks must be STREET LIGHT PANEL \n'
+	return e_msg
+
+# **********************************************************************
+# ********* Check for Demand Point not in end point/snapping  **********
+# **********************************************************************
+
+'''
+# Step 1: Get geometry of all conductors (LV UG, LV OH)
+# Step 2: Get last vertext of all geometry of Step 1
+# Step 3: Get geometry of all demand point
+# Step 4: Geometry of demand point must snap to at least one of LV UG/LV OH
+# Step 5: if not snap to any cable == error
+'''
+
+def dmd_pt_snapping():
+        arr = []
+        arr_lv_vertex = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+
+        # Get geometry of LV OH, LV UG
+        arr_layer_name = ['LV_OH_Conductor','LV_UG_Conductor']
+        for lyr in arr_layer_name:
+                layer_lv_01 = QgsProject.instance().mapLayersByName(lyr)[0]
+                feat_lv_01 = layer_lv_01.getFeatures()
+                for f in feat_lv_01:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        # Get last vertex
+                        arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline())-1])
+        print('total array:',len(arr_lv_vertex))
+
+        # Get geometry of Demand point and check distance
+        print('layer_name is:',layer_name)
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                # new arr_snapping each loop
+                arr_snapping = []
+                # loop through all LV OH & LV UG
+                for geom_lv in arr_lv_vertex:
+                        geom_x = geom.asPoint()
+                        m = distance.measureLine(geom_lv, geom_x)
+                        # print('distance in meters',m)
+                        if m < 0.001:
+                                arr_snapping.append(device_id)
+                if len(arr_snapping) == 0:
+                        arr.append(device_id)        
+        return arr
+
+def dmd_pt_snapping_message(device_id):
+	e_msg = dmd_pt_snapping_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' hanging \n'
 	return e_msg
 
 # **********************************

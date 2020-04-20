@@ -564,6 +564,14 @@ class lv_pre_validation:
                     lv_fuse_error += 1
                     total_error += 1
 
+        # check for nearby Pole
+        if lv_fuse_flag:
+            arr_lv_fuse = lv_fuse_pole_distance()
+            for device_id in arr_lv_fuse:
+                e_msg += lv_fuse_pole_distance_message(device_id)
+                lv_fuse_error += 1
+                total_error += 1
+
         #***************************************************************
         #**************    LV Cable Joint VALIDATION     ***************
         #***************************************************************
@@ -813,6 +821,14 @@ class lv_pre_validation:
             arr_dmd_pt = dmd_pt_remarks()
             for device_id in arr_dmd_pt:
                 e_msg += dmd_pt_remarks_message(device_id)
+                dmd_pt_error += 1
+                total_error += 1
+
+        # check for demand point snapping
+        if dmd_pt_flag:
+            arr_dmd_pt = dmd_pt_snapping()
+            for device_id in arr_dmd_pt:
+                e_msg += dmd_pt_snapping_message(device_id)
                 dmd_pt_error += 1
                 total_error += 1
 
