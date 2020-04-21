@@ -18,7 +18,7 @@ code_lv_oh = 'ohc'
 code_lv_fuse = 'fus'
 code_lv_cj = 'lcj'
 code_lvdb_fp = 'lvdb'
-code_pole = 'pole'
+code_pole = 'pol'
 code_dmd_pt = 'dmd'
 code_st_light = 'stl'
 code_manhole = 'man'
@@ -59,7 +59,7 @@ def rps_device_id_format(layer_name):
 
         vendor_code = 'R'
         station_code = '([1-9][0-9]{0,3})' # accepts 1 - 9999
-        running_number = '([0-9]{0,3})' # accepts 000 - 999
+        running_number = '([0-9]{0,6})' # accepts 000 - 999999
         pattern = '^' + vendor_code + station_code + object_code + running_number + '$'
         # print(pattern)
 

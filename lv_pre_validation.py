@@ -218,12 +218,12 @@ class lv_pre_validation:
             ]
         
         if self.dlg.checkBox_all.isChecked():
-            print('select all = true')
+            # print('select all = true')
             for chk in arr_chkbox:
                 chk.setChecked(True)
             
         else :
-            print('select all = false')
+            # print('select all = false')
             for chk in arr_chkbox:
                 chk.setChecked(False)
 

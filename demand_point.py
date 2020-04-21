@@ -179,10 +179,10 @@ def dmd_pt_snapping():
                         y = geom.mergeLines()
                         # Get last vertex
                         arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline())-1])
-        print('total array:',len(arr_lv_vertex))
+        # print('total array:',len(arr_lv_vertex))
 
         # Get geometry of Demand point and check distance
-        print('layer_name is:',layer_name)
+        # print('layer_name is:',layer_name)
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
         for f in feat:
