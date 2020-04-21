@@ -13,6 +13,7 @@ layer_name = 'LV_Fuse'
 lv_fuse_field_null = 'ERR_LVFUSE_01'
 lv_fuse_enum_valid = 'ERR_LVFUSE_02'
 lv_fuse_pole_distance_code = 'ERR_LVFUSE_03'
+lv_fuse_snapping_code = 'ERR_LVFUSE_04'
 lv_fuse_duplicate_code = 'ERR_DUPLICATE_ID'
 lv_fuse_device_id_format_code = 'ERR_DEVICE_ID'
 
@@ -152,7 +153,7 @@ def lv_fuse_pole_distance():
                         # print('distance in meters',m)
                         if m >= 2.4 and m <= 2.6:
                                 arr_snapping.append(device_id)
-                                print('distance between lv fuse:' + device_id + ' to nearby pole: ' + str(m) + 'm')
+                                # print('distance between lv fuse:' + device_id + ' to nearby pole: ' + str(m) + 'm')
                 if len(arr_snapping) == 0:
                         print('NO POLE is nearby ', device_id)
                         arr.append(device_id)
@@ -162,6 +163,127 @@ def lv_fuse_pole_distance_message(device_id):
 	e_msg = lv_fuse_pole_distance_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' No nearby pole within range: \n'
 	return e_msg
 
+# ********************************************************
+# ********* LV Fuse(Blackbox) Snapping Error    **********
+# ********************************************************
+'''
+# LV Fuse should always interact with LV OH Conductor. It should be digitized on top of the lv oh conductor
+# Step 1: list all geometry of LV OH (no need LV UG)
+# Step 2: list all geom of LV Fuse
+# Step 3: at least ONE LV Fuse must have distance between it and LV OH == 0
+# Step 4: if LV Fuse is not nearby LV OH Vectors, then error.
+'''
+
+def try_lukis_line():
+
+        points = []
+
+        layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+        query = '"device_id" = \'R6142ohc220\''
+        feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        temp_device_id = ''
+        for f in feat_01:
+                geom = f.geometry()                
+                y = geom.mergeLines()
+                # my_buffer = y.buffer(0.001, 5)
+                polyline_y = y.asPolyline()
+                for a in polyline_y:
+                        # print('point = ',a)
+                        points.append(a)
+
+        layer =  QgsVectorLayer('LineString', 'Garisanku' , "memory")
+        pr = layer.dataProvider()
+        line = QgsFeature()
+        line.setGeometry(QgsGeometry.fromPolylineXY(points))
+        pr.addFeatures([line])
+        layer.updateExtents()
+        QgsProject.instance().addMapLayers([layer])
+
+        return 0
+        
+
+def try_lukis_polygon():
+        points = []
+
+        layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+        query = '"device_id" = \'R6142ohc220\''
+        feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        temp_device_id = ''
+        for f in feat_01:
+                geom = f.geometry()                
+                y = geom.mergeLines()
+                # my_buffer = y.buffer(0.001, 5)
+                polyline_y = y.asPolyline()
+                for a in polyline_y:
+                        # print('point = ',a)
+                        points.append(a)
+
+        # try lukis
+        layer =  QgsVectorLayer('Polygon', 'LukisanKu' , "memory")
+        pr = layer.dataProvider()
+        poly = QgsFeature()
+        poly.setGeometry(QgsGeometry.fromPolygonXY([points]))
+        pr.addFeatures([poly])
+        layer.updateExtents()
+        QgsProject.instance().addMapLayers([layer])
+        return 0
+
+
+def lv_fuse_snapping():
+
+        # trylukis()
+        # try_lukis_line()
+        
+        arr = []
+        arr_lv = []
+        arr_pole_geom = []
+        #qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+
+        layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+        # query = '"device_id" = \'R6142ohc220\''
+        # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        feat_01 = layerLV_01.getFeatures()        
+        for f in feat_01:
+                geom = f.geometry()                
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                for geom_02 in polyline_y:
+                        arr_lv.append(geom_02)
+
+        # print(arr_lv)
+
+        # get geom of lv fuse layer
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        # query = '"device_id" = \'R6142fus02\''
+        # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                # print('device_id insert:', device_id)
+                geom_lvf = f.geometry()
+                geom_x = geom_lvf.asPoint()
+                # my_buffer = geom_lvf.buffer(0.1, 5)
+                # print(geom_lvf)
+                # print(geom_lvf)
+                # new arr_snapping each loop
+                arr_snapping = []
+                for geom_lv in arr_lv:
+                        m = distance.measureLine(geom_lv, geom_x)
+                        if m < 0.25:
+                                # print('distance is '+  str(m) + 'm')                        
+                                arr_snapping.append(device_id)
+                                # print('LV fuse ' + device_id + ' is touching lv oh vector!!')
+                if len(arr_snapping) == 0:
+                        # print(arr_snapping)
+                        arr.append(device_id)
+        
+        return arr
+
+def lv_fuse_snapping_message(device_id):
+        e_msg = lv_fuse_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LV Fuse is hanging \n'
+        return e_msg
 
 # **********************************
 # ******* End of Validation  *******

@@ -16,6 +16,7 @@ lvdb_fp_field_null = 'ERR_LVDVFP_01'
 lvdb_fp_enum_valid = 'ERR_LVDBFP_02'
 lvdb_fp_remarks_db_oper_code = 'ERR_LVDBFP_03'
 lvdb_fp_lvf_design_code = 'ERR_LVDBFP_04'
+lvdb_fp_snapping_code = 'ERR_LVDBFP_05'
 lvdb_fp_duplicate_code = 'ERR_DUPLICATE_ID'
 lvdb_fp_device_id_format_code = 'ERR_DEVICE_ID'
 
@@ -233,6 +234,70 @@ def get_lv_out_number(design):
 def lvdb_fp_lvf_design_message(device_id):
 	e_msg = lvdb_fp_lvf_design_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' number of lvf/lvs columns does not match IN/OUT design \n'
 	return e_msg
+
+# **************************************
+# ********* LVDB-FP Snapping  **********
+# **************************************
+'''
+# The newly inserted LVDB-FP should be connected to at least one Conductor.
+# Step 1: list all vectors of LV OH/LV UG
+# Step 2: list all geom of LVDB-FP where db_oper = 'Insert'
+# Step 3: at least ONE LVDB-FP must have distance between it and LV OH/LV UG == 0
+# Step 4: if LVDB-FP is not nearby LV UG/LV OH Vectors, then error.
+'''
+
+def lvdb_fp_snapping():
+        arr = []
+        arr_lv = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+
+        layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+        feat_01 = layerLV_01.getFeatures()
+        for f in feat_01:
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # loop all vertex in this line
+                for geom_01 in polyline_y:
+                       arr_lv.append(geom_01)
+
+        layerLV_02 = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+        feat_02 = layerLV_02.getFeatures()
+        for f in feat_02:
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                #loop all vertex in this line
+                for geom_02 in polyline_y:
+                        arr_lv.append(geom_02)
+        # print(arr_lv)
+
+        # get geom of lvdb-fp layer
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"db_oper" =  \'Insert\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                device_id = f.attribute('device_id')
+                # print('device_id insert:', device_id)
+                geom = f.geometry()
+                geom_x = geom.asPoint()
+                # new arr_snapping each loop
+                arr_snapping = []
+                for geom_lv in arr_lv:
+                        m = distance.measureLine(geom_lv, geom_x)
+                        if m < 0.001:
+                                arr_snapping.append(device_id)
+                if len(arr_snapping) == 0:
+                        arr.append(device_id)
+        
+        return arr
+
+def lvdb_fp_snapping_message():
+        e_msg = lvdb_fp_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LVDB-FP is hanging \n'
+        return e_msg
+
 
 # **********************************
 # ******* End of Validation  *******
