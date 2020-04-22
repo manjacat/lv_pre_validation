@@ -31,7 +31,8 @@ from .feature_count import count_lv_features
 
 def exec_validation(self):
 
-    print('Hello from new python file')
+    # test calling from new python file
+    # print('Hello from new python file')
     
     # count features
     count_lv_features(self)
@@ -116,6 +117,14 @@ def exec_validation(self):
     #****************************************************************
 
     arr_lv_ug = []
+
+    # check z-m shapefile
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_z_m_shapefile()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_z_m_shapefile_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
 
     # check for duplicates
     if lv_ug_flag:
@@ -235,6 +244,14 @@ def exec_validation(self):
     #****************************************************************
 
     arr_lv_oh = []
+    
+    # check z-m shapefile
+    if lv_oh_flag:
+        arr_lv_oh = lv_oh_z_m_shapefile()
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_z_m_shapefile_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
 
     # check for duplicates
     if lv_oh_flag:
@@ -302,6 +319,14 @@ def exec_validation(self):
     #*************************************************************
 
     arr_lv_fuse = []
+
+    # check for z-m value
+    if lv_fuse_flag:
+        arr_lv_fuse = lv_fuse_z_m_shapefile()
+        for device_id in arr_lv_fuse:
+            e_msg += lv_fuse_z_m_shapefile_message(device_id)
+            lv_fuse_error += 1
+            total_error += 1
 
     # check for duplicates
     if lv_fuse_flag:
@@ -376,6 +401,14 @@ def exec_validation(self):
 
     arr_lv_cj = []
 
+    # check for z-m value
+    if lv_cj_flag:
+        arr_lv_cj = lv_cj_z_m_shapefile()
+        for device_id in arr_lv_cj:
+            e_msg += lv_cj_z_m_shapefile_message(device_id)
+            lv_cj_error += 1
+            total_error += 1
+
     # check for duplicates
     if lv_cj_flag:
         arr_lv_cj = lv_cj_duplicate()
@@ -439,6 +472,14 @@ def exec_validation(self):
     #***************************************************************
 
     arr_lvdb_fp = []
+
+    # check for z-m value
+    if lvdb_fp_flag:
+        arr_lvdb_fp = lvdb_fp_z_m_shapefile()
+        for device_id in arr_lvdb_fp:
+            e_msg += lvdb_fp_z_m_shapefile_message(device_id)
+            lvdb_fp_error += 1
+            total_error += 1
 
     # check for duplicates
     if lvdb_fp_flag:
@@ -520,6 +561,14 @@ def exec_validation(self):
 
     arr_pole = []
 
+    # check for z-m value
+    if pole_flag:
+        arr_pole = pole_z_m_shapefile()
+        for device_id in arr_pole:
+            e_msg += pole_z_m_shapefile_message(device_id)
+            pole_error += 1
+            total_error += 1
+
     # check for duplicates
     if pole_flag:
         arr_pole = pole_duplicate()
@@ -577,6 +626,14 @@ def exec_validation(self):
     #***************************************************************
 
     arr_dmd_pt = []
+
+    # check z-m shapefile
+    if dmd_pt_flag:
+        arr_dmd_pt = dmd_pt_z_m_shapefile()
+        for device_id in arr_dmd_pt:
+            e_msg += dmd_pt_z_m_shapefile_message(device_id)
+            dmd_pt_error += 1
+            total_error += 1
 
     # check for duplicates
     if dmd_pt_flag:
@@ -647,6 +704,14 @@ def exec_validation(self):
     #***************************************************************
 
     arr_st_light = []
+
+    # check for duplicates
+    if st_light_flag:
+        arr_st_light = st_light_z_m_shapefile()
+        for device_id in arr_st_light:
+            e_msg += st_light_z_m_shapefile_message(device_id)
+            st_light_error += 1
+            total_error += 1
 
     # check for duplicates
     if st_light_flag:
@@ -727,6 +792,14 @@ def exec_validation(self):
     #***************************************************************
 
     arr_manhole = []
+
+    #check for z-m value
+    if manhole_flag:
+        arr_manhole = manhole_z_m_shapefile()
+        for device_id in arr_manhole:
+            e_msg += manhole_z_m_shapefile_message(device_id)
+            manhole_error += 1
+            total_error += 1
 
     #check for duplicate
     if manhole_flag:

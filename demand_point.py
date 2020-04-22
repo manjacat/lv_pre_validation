@@ -7,7 +7,7 @@ All checkings related to Demand Point
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
-from .rps_utility import rps_device_id_format
+from .rps_utility import *
 
 layer_name = 'Demand_Point'	
 dmd_pt_field_null = 'ERR_DEMANDPT_01'
@@ -16,6 +16,20 @@ dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
 dmd_pt_device_id_format_code = 'ERR_DEVICE_ID'
 dmd_pt_remarks_code = 'ERR_DEMANDPT_04'
 dmd_pt_snapping_code = 'ERR_DEMANDPT_03'
+dmd_pt_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+
+# *****************************************
+# ****** Check Z-M Value in shapefile *****
+# *****************************************
+
+def dmd_pt_z_m_shapefile():
+        arr = []
+        arr = rps_z_m_shapefile(layer_name)
+        return arr
+
+def dmd_pt_z_m_shapefile_message(geom_name):
+        e_msg = dmd_pt_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        return e_msg
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -35,29 +49,7 @@ def dmd_pt_device_id_format_message(device_id):
 # **********************************
 
 def dmd_pt_duplicate():
-        arr = []
-        arr_device_id = []
-        arr_seen = []
-        arr_dupes = []
-
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        feat = layer.getFeatures()
-        for f in feat:
-                device_id = f.attribute('device_id')
-                arr_device_id.append(device_id)
-
-        for device_id in arr_device_id:
-                # check if device id is seen before
-                if device_id in arr_seen and device_id not in arr_dupes:
-                        arr.append(device_id)
-                        # arr_dupes.append(device_id)
-                else:
-                        arr_seen.append(device_id)
-
-        # print(arr_seen)
-        # print(arr_device_id)
-        # print(arr_dupes)
-
+        arr = rps_duplicate_device_id(layer_name)
         return arr
 
 def dmd_pt_duplicate_message(device_id):

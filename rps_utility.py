@@ -31,7 +31,7 @@ code_st_duct = 'std'
 '''
 
 def rps_device_id_format(layer_name):
-        arr = []
+        arr = []        
         object_code = ''
         if layer_name == 'LV_UG_Conductor':
                 object_code = code_lv_ug
@@ -87,7 +87,7 @@ def rps_device_id_format(layer_name):
 # Step 4: store all duplicate device_id in [arr_dupes]
 # Step 5: skip step 4 :D
 '''
-def duplicate_device_id(layer_name):
+def rps_duplicate_device_id(layer_name):
         arr = []
         arr_device_id = []
         arr_seen = []
@@ -112,6 +112,42 @@ def duplicate_device_id(layer_name):
         # print(arr_dupes)
 
         return arr
+
+
+# ********************************************
+# ********* Check for Z-M Geometry  **********
+# ********************************************
+'''
+# TODO: move to this function
+# Step 1: check geometry column
+# Step 2: type must be correct
+'''
+
+def rps_z_m_shapefile(layer_name):
+        arr = []
+        wkb_type = ''
+        arr_line_type = ['LV_UG_Conductor','LV_OH_Conductor']
+        arr_point_type = ['LV_Fuse','LV_Cable_Joint','LVDB-FP','Pole','Demand_Point','Street_Light','Manhole','Structure_Duct']
+        if layer_name in arr_line_type:
+                wkb_type = 'MultiLineString'
+        elif layer_name in arr_point_type:
+                wkb_type = 'Point'
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        # run once only
+        check = 0
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                if check == 0:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        # print('geometry type is ', geom_type)
+                        if geom_type != wkb_type:
+                                arr.append(geom_type)
+                        check += 1
+                
+        return arr
+
 
 # **********************************
 # ******* End of Validation  *******

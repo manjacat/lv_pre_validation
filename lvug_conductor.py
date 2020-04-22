@@ -7,7 +7,7 @@ All checkings related to LV UG conductor
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
-from .rps_utility import rps_device_id_format
+from .rps_utility import *
 # regex
 import re
 
@@ -20,6 +20,21 @@ lv_ug_length = 'ERR_LVUGCOND_05'
 lv_ug_duplicate_code = 'ERR_DUPLICATEID'
 lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
 lv_ug_coin_code = 'ERR_LVUGCOND_06'
+lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+
+# *****************************************
+# ****** Check Z-M Value in shapefile *****
+# *****************************************
+
+def lv_ug_z_m_shapefile():
+        arr = []
+        arr = rps_z_m_shapefile(layer_name)
+        return arr
+
+def lv_ug_z_m_shapefile_message(geom_name):
+        e_msg = lv_ug_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        return e_msg
+        
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -31,7 +46,7 @@ def lv_ug_device_id_format():
         return arr
 
 def lv_ug_device_id_format_message(device_id):
-        e_msg = lv_ug_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        e_msg = lv_ug_device_id_format_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
         return e_msg
 
 # **********************************
@@ -40,28 +55,7 @@ def lv_ug_device_id_format_message(device_id):
 
 def lv_ug_duplicate():
         arr = []
-        arr_device_id = []
-        arr_seen = []
-        arr_dupes = []
-
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        feat = layer.getFeatures()
-        for f in feat:
-                device_id = f.attribute('device_id')
-                arr_device_id.append(device_id)
-
-        for device_id in arr_device_id:
-                # check if device id is seen before
-                if device_id in arr_seen and device_id not in arr_dupes:
-                        arr.append(device_id)
-                        # arr_dupes.append(device_id)
-                else:
-                        arr_seen.append(device_id)
-
-        # print(arr_seen)
-        # print(arr_device_id)
-        # print(arr_dupes)
-
+        arr = rps_duplicate_device_id(layer_name)
         return arr
 
 def lv_ug_duplicate_message(device_id):
@@ -122,16 +116,6 @@ def lv_ug_field_not_null(field_name):
 def lv_ug_field_not_null_message(device_id, field_name):
 	e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
 	return e_msg
-
-# ************************************
-# ****** Check for Duplicate ID ******
-# ************************************
-
-def lvug_duplicate():
-	#TODO tak tau buat
-    arr = []
-    return arr
-
 
 # **********************************
 # ****** Check for LVDB Flow  ******

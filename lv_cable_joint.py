@@ -7,7 +7,7 @@ All checkings related to LV Cable Joint
 from qgis.core import *
 # import own custom file
 from .dropdown_enum import *
-from .rps_utility import rps_device_id_format
+from .rps_utility import *
 	
 layer_name = 'LV_Cable_Joint'
 lv_cj_field_null = 'ERR_LVCJOINT_01'
@@ -15,6 +15,21 @@ lv_cj_enum_valid = 'ERR_LVCJOINT_02'
 lv_cj_snapping_code = 'ERR_LVCJOINT_04'
 lv_cj_duplicate_code = 'ERR_DUPLICATE_ID'
 lv_cj_device_id_format_code = 'ERR_DEVICE_ID'
+
+lv_cj_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+
+# *****************************************
+# ****** Check Z-M Value in shapefile *****
+# *****************************************
+
+def lv_cj_z_m_shapefile():
+        arr = []
+        arr = rps_z_m_shapefile(layer_name)
+        return arr
+
+def lv_cj_z_m_shapefile_message(geom_name):
+        e_msg = lv_cj_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        return e_msg
 
 # ****************************************
 # ****** Check for Device_Id Format ******
@@ -35,27 +50,7 @@ def lv_cj_device_id_format_message(device_id):
 
 def lv_cj_duplicate():
         arr = []
-        arr_device_id = []
-        arr_seen = []
-        arr_dupes = []
-
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        feat = layer.getFeatures()
-        for f in feat:
-                device_id = f.attribute('device_id')
-                arr_device_id.append(device_id)
-
-        for device_id in arr_device_id:
-                # check if device id is seen before
-                if device_id in arr_seen and device_id not in arr_dupes:
-                        arr.append(device_id)
-                        # arr_dupes.append(device_id)
-                else:
-                        arr_seen.append(device_id)
-
-        # print(arr_seen)
-        # print(arr_device_id)
-        # print(arr_dupes)
+        arr = rps_duplicate_device_id(layer_name)
 
         return arr
 
