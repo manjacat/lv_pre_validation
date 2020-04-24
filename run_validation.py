@@ -306,11 +306,19 @@ def exec_validation(self):
                 total_error += 1
 
     
-    # check for LV UG length
+    # check for LV OH length
     if lv_oh_flag:
         arr_lv_oh = lv_oh_length_check()
         for device_id in arr_lv_oh:
             e_msg += lv_oh_length_check_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
+
+    # check LV OH self intersect
+    if lv_oh_flag:
+        arr_lv_oh = lv_oh_self_intersect()
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_self_intersect_message(device_id)
             lv_oh_error += 1
             total_error += 1
 

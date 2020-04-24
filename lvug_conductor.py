@@ -287,7 +287,13 @@ def lv_ug_length_check_message(device_id):
 # ****** Check for LVDB 1st/2nd Vertex  ******
 # ********************************************
 
-# TODO
+'''
+# Step 1: get LV UG device ID which are connected to LVDB
+# Step 2: get nearest Vertex to LVDB. this will be Vertex [0] / Last vertex
+# Step 3: get the 2nd nearest vertex. this will be Vertex [1] / 2nd last vertex
+# Step 4: get distance between these 2 points
+# Step 5: if distance < 1m, then error
+'''
 
 # *************************************************
 # ****** Buffer between LV UG must be > 0.3  ******
@@ -296,6 +302,9 @@ def lv_ug_length_check_message(device_id):
 # get all vertex of a LV UG conductor
 # check distance between this vertex and other vertex of another conductor
 
+'''
+# buat last
+'''
 
 # ********************************************
 # ****** Check for Coincidence Geometry ******

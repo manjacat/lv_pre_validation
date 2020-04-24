@@ -158,13 +158,14 @@ def st_light_phasing_message(device_id):
 	return e_msg
 
 # ********************************************************
-# ********* Street Light not overlap with Pole  **********
+# ********* Street Light MUST overlap with Pole  **********
 # ********************************************************
 
 '''
 # Step 1: list all Pole Geom
 # Step 2: list all Street Light Geom
 # Step 3: check if distance between Street Light Geom && Pole Geom > allowable distance
+# FIXED: actual rule is Street Light must overlap pole
 '''
 
 def st_light_overlap_pole():
@@ -179,29 +180,38 @@ def st_light_overlap_pole():
         feat_pole = layer_pole.getFeatures()
         for f in feat_pole:
                 geom_pole = f.geometry()
-                geom_pole_x = geom_pole.asPoint()
-                arr_geom_pole.append(geom_pole_x)
+                arr_geom_pole.append(geom_pole)
+        print('total arr_geom_pole is ', str(len(arr_geom_pole)))
 
-        #get street light geom
+        # get street light geom
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
+        # query = '"device_id" = \'R6142stl020\''
+        # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        
         for f in feat:
+                no_touches = 0
                 device_id = f.attribute('device_id')
                 # compare with geom pole array
-                if geom_pole_x in arr_geom_pole:
+                for geom_p in arr_geom_pole:
                         geom_st_light = f.geometry()
-                        geom_st_light_x = geom_st_light.asPoint()
-                        # print('geom pole is :', geom_pole_x)
-                        # print('geom st_light is :',geom_st_light_x)
-                        m = distance.measureLine(geom_pole_x, geom_st_light_x)
+                        # print('geom pole is :', geom_p)
+                        # print('geom st_light is :',geom_st_light)
+                        m = distance.measureLine(geom_p.asPoint(), geom_st_light.asPoint())
+                        touches1 = QgsGeometry.touches(geom_p, geom_st_light)
+                        if touches1:
+                                print('geom pole is :', geom_p)
+                                print('geom st_light is :',geom_st_light)
+                                no_touches += 1
                         if m < max_distance_m:
-                                print('Only ' + str(m) + 'm between street light ' + device_id + ' and pole')                        
-                                arr.append(device_id)
-                                
+                                no_touches += 1
+                # print('total touches ' + device_id + ': ' + str(no_touches))
+                if no_touches == 0:
+                        arr.append(device_id)
         return arr
 
 def st_light_overlap_pole_message(device_id):
-        e_msg = st_light_overlap_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Street Light cannot overlap Pole \n'
+        e_msg = st_light_overlap_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Street Light MUST overlap Pole \n'
         return e_msg
         
 
