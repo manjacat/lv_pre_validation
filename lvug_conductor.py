@@ -21,6 +21,7 @@ lv_ug_duplicate_code = 'ERR_DUPLICATEID'
 lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
 lv_ug_coin_code = 'ERR_LVUGCOND_06'
 lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+lv_ug_self_intersect_code = 'ERR_LVUGCOND_10'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -294,6 +295,58 @@ def lv_ug_length_check_message(device_id):
 # Step 4: get distance between these 2 points
 # Step 5: if distance < 1m, then error
 '''
+
+# ***************************************************
+# ********* Check self Intersect  *******************
+# ***************************************************
+'''
+# Step 1: convert geom to polyline
+# Step 2: extract all vectors
+# Step 3: create lines using vector[i] and vector[i+1]
+# Step 4: check each line against all other lines (loop)
+# Step 5: count intersection
+# Step 6: if intersection >= 3, means self intersect
+'''
+def lv_ug_self_intersect():
+        arr = []
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyLine_y = y.asPolyline()
+
+                arr_line = []
+                for i in range(len(polyLine_y)):
+                        geom_i = polyLine_y[i]
+                        if i < len(polyLine_y) - 1:
+                                geom_i2 = polyLine_y[i+1]
+                                arr_temp_line = [QgsPoint(geom_i), QgsPoint(geom_i2)]
+                                new_line = QgsGeometry.fromPolyline(arr_temp_line)
+                                arr_line.append(new_line)
+
+                # print(str(len(polyLine_y)) + ' vector(s) found, with ' + str(len(arr_line)) + ' total lines')   
+                for h in range(len(arr_line)):
+                        arr_temp = []
+                        arr_temp.extend(arr_line)
+                        arr_temp.remove(arr_line[h])
+                        no_of_intersect = 0
+                        for i in range(len(arr_temp)):
+                                intersect = QgsGeometry.intersection(arr_line[h], arr_temp[i])
+                                if intersect:
+                                        no_of_intersect += 1
+                        # print('intersect: ' + str(no_of_intersect))
+                        if no_of_intersect > 2:
+                                arr.append(device_id)
+                        
+        return arr
+
+def lv_ug_self_intersect_message(device_id):
+        e_msg = lv_ug_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + '\n'
+        return e_msg
+
 
 # *************************************************
 # ****** Buffer between LV UG must be > 0.3  ******

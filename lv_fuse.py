@@ -149,12 +149,12 @@ def lv_fuse_pole_distance():
                                 arr_snapping.append(device_id)
                                 # print('distance between lv fuse:' + device_id + ' to nearby pole: ' + str(m) + 'm')
                 if len(arr_snapping) == 0:
-                        print('NO POLE is nearby ', device_id)
+                        # print('NO POLE is nearby ', device_id)
                         arr.append(device_id)
         return arr
 
 def lv_fuse_pole_distance_message(device_id):
-	e_msg = lv_fuse_pole_distance_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' No nearby pole within range: \n'
+	e_msg = lv_fuse_pole_distance_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' A pole must be within 2.5m range. \n'
 	return e_msg
 
 # ********************************************************
@@ -229,24 +229,29 @@ def lv_fuse_snapping():
         # try_lukis_line()
         
         arr = []
-        arr_lv = []
+        arr_lv_vector = []
+        arr_lv_line = []
         arr_pole_geom = []
         #qgis distanceArea
         distance = QgsDistanceArea()
         distance.setEllipsoid('WGS84')
 
         layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-        # query = '"device_id" = \'R6142ohc220\''
+        # query = '"device_id" = \'R6142ohc120\''
         # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         feat_01 = layerLV_01.getFeatures()        
         for f in feat_01:
                 geom = f.geometry()                
                 y = geom.mergeLines()
+                arr_lv_line.append(geom)
                 polyline_y = y.asPolyline()
                 for geom_02 in polyline_y:
-                        arr_lv.append(geom_02)
+                        arr_lv_vector.append(geom_02)
 
-        # print(arr_lv)
+        #print('arr lv line')
+        #print(arr_lv_line)
+        #print('arr lv vector')
+        #print(arr_lv_vector)
 
         # get geom of lv fuse layer
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
@@ -263,9 +268,9 @@ def lv_fuse_snapping():
                 # print(geom_lvf)
                 # new arr_snapping each loop
                 arr_snapping = []
-                for geom_lv in arr_lv:
+                for geom_lv in arr_lv_vector:
                         m = distance.measureLine(geom_lv, geom_x)
-                        if m < 0.25:
+                        if m < 0.35:
                                 # print('distance is '+  str(m) + 'm')                        
                                 arr_snapping.append(device_id)
                                 # print('LV fuse ' + device_id + ' is touching lv oh vector!!')
@@ -276,7 +281,7 @@ def lv_fuse_snapping():
         return arr
 
 def lv_fuse_snapping_message(device_id):
-        e_msg = lv_fuse_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LV Fuse is hanging \n'
+        e_msg = lv_fuse_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LV Fuse is not near LV OH vertex  \n'
         return e_msg
 
 # **********************************

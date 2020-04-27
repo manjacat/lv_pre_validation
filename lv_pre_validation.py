@@ -47,7 +47,7 @@ from .st_duct import *
 # moved feature count function to new file
 from .feature_count import count_lv_features
 # moved main button function to new file
-from .run_validation import exec_validation
+from .run_validation import exec_validation, exec_clear_errors
 
 
 def check_filename():
@@ -226,6 +226,11 @@ class lv_pre_validation:
             # print('select all = false')
             for chk in arr_chkbox:
                 chk.setChecked(False)
+        return 0
+
+    def clear_errors(self):
+        exec_clear_errors(self)
+        return 0
 
             
     def select_output_file(self):
@@ -261,7 +266,7 @@ class lv_pre_validation:
             self.dlg.checkBox_all.stateChanged.connect(self.select_all)
             self.dlg.pushButton_csv.clicked.connect(self.select_output_file)
             self.dlg.pushButton_filename.clicked.connect(check_filename)
-            self.dlg.pushButton_count.clicked.connect(self.count_features)
+            self.dlg.pushButton_clear.clicked.connect(self.clear_errors)
             self.dlg.pushButton_qaqc.clicked.connect(self.run_qa_qc)
 
         # show the dialog

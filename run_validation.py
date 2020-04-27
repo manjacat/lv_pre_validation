@@ -231,11 +231,19 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
+    # check for self intersect geometry
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_self_intersect()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_coin_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
     # check for coincidence geometry
     if lv_ug_flag:
         arr_lv_ug = lv_ug_coin()
         for device_id in arr_lv_ug:
-            e_msg += lv_ug_coin_message(device_id)
+            e_msg += lv_ug_self_intersect_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
@@ -629,6 +637,14 @@ def exec_validation(self):
                 pole_error += 1
                 total_error += 1
 
+    # check for Pole/LV OH vertex
+    if pole_flag:
+        arr_pole = pole_lv_oh_vertex()
+        for device_id in arr_pole:
+            e_msg += pole_lv_oh_vertex_message(device_id)
+            pole_error += 1
+            total_error += 1
+
     #***************************************************************
     #***************    DEMAND POINT VALIDATION     ****************
     #***************************************************************
@@ -920,7 +936,7 @@ def exec_validation(self):
     #******************     END OF VALIDATION     *******************
     #****************************************************************
             
-    #print to console
+    #change label in GUI
     if lv_ug_flag == False:
         lv_ug_error = 'Skipped'
     if lv_oh_flag == False:
@@ -942,12 +958,6 @@ def exec_validation(self):
     if st_duct_flag == False:
         st_duct_error = 'Skipped'
         
-    #e_msg += 'lv_ug Error is ' + str(lv_ug_error) + '\n'
-    #e_msg += 'lv_oh Error is ' + str(lv_oh_error) + '\n'
-    #e_msg += 'pole Error is ' + str(pole_error) + '\n'
-    #e_msg += 'total Error is ' + str(total_error) + '\n'
-    print(e_msg)
-    print('total Error(s):', str(total_error))
     self.dlg.label_message.setText(' ')
 
     # update error count label
@@ -964,8 +974,14 @@ def exec_validation(self):
     # update total
     self.dlg.err_total.setText(str(total_error))
 
+    #****************************************************************
+    #******************     WRITE TO CSV FILE     *******************
+    #****************************************************************
+
     # write to csv file
     filename = self.dlg.lineEdit_csv.text()
+    # if output to csv file, will not print to console.
+    # print to console only if no csv filename is specified
     if len(filename) > 4:
         with open(filename, 'w') as output_file:
             output_file.write(e_msg)
@@ -973,7 +989,39 @@ def exec_validation(self):
               "Success", "Output file written at " + filename,
               level=Qgis.Success, duration=3)
     else:
+        print(e_msg)
+        print('total Error(s):', str(total_error))
         self.iface.messageBar().pushMessage(
               "Success", "Validation completed. " + str(total_error) + " ERROR(s) found.",
               level=Qgis.Success, duration=3)
     return 0
+
+def exec_clear_errors(self):
+    #start total_error count
+    lv_ug_error = 0
+    lv_oh_error = 0
+    lv_fuse_error = 0
+    lv_cj_error = 0
+    lvdb_fp_error = 0
+    pole_error = 0
+    dmd_pt_error = 0
+    st_light_error = 0
+    manhole_error = 0
+    st_duct_error = 0
+    total_error = 0
+    
+    # update error count label
+    self.dlg.err_lvug.setText(str(lv_ug_error))
+    self.dlg.err_lvoh.setText(str(lv_oh_error))
+    self.dlg.err_lv_fuse.setText(str(lv_fuse_error))
+    self.dlg.err_lv_cj.setText(str(lv_cj_error))
+    self.dlg.err_lvdb_fp.setText(str(lvdb_fp_error))
+    self.dlg.err_pole.setText(str(pole_error))
+    self.dlg.err_dmd_pt.setText(str(dmd_pt_error))
+    self.dlg.err_st_light.setText(str(st_light_error))
+    self.dlg.err_manhole.setText(str(manhole_error))
+    self.dlg.err_st_duct.setText(str(st_duct_error))
+    # update total
+    self.dlg.err_total.setText(str(total_error))
+    return 0
+

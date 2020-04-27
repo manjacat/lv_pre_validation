@@ -181,7 +181,7 @@ def st_light_overlap_pole():
         for f in feat_pole:
                 geom_pole = f.geometry()
                 arr_geom_pole.append(geom_pole)
-        print('total arr_geom_pole is ', str(len(arr_geom_pole)))
+        # print('total arr_geom_pole is ', str(len(arr_geom_pole)))
 
         # get street light geom
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]

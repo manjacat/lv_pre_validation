@@ -15,6 +15,7 @@ pole_enum_valid = 'ERR_POLE_02'
 pole_duplicate_code = 'ERR_DUPLICATE_ID'
 pole_device_id_format_code = 'ERR_DEVICE_ID'
 pole_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+pole_lv_oh_vertex_code = 'ERR_POLE_03'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -107,10 +108,59 @@ def pole_field_not_null_message(device_id, field_name):
 	e_msg = pole_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
 	return e_msg
 
-# **********************************
-# ********* TODO  **********
-# **********************************
+# ************************************************************
+# ********* All Pole must have LV OH vertex nearby  **********
+# ************************************************************
+'''
+# each Pole must be close to lv oh vertex (0.9m < x 1.1m)
+# 
+'''
 
+def get_lv_oh_vertex():
+        arr = []
+        layer = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+        feat = layer.getFeatures()
+        # arr_exclude_usage = ['5 FOOT WAYS']
+        arr_exclude_usage = ['SILAP BUAT']
+        for f in feat:
+                device_id = f.attribute('device_id')
+                usage = f.attribute('usage')
+                if usage not in arr_exclude_usage:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        for g in y.asPolyline():
+                                arr.append(g)
+        return arr
+
+def pole_lv_oh_vertex():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        arr_lv_oh = get_lv_oh_vertex()
+        # print('total lv oh vertex is :', len(arr_lv_oh))
+
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+        for f in feat:
+                arr_snapping = []
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                geom_pole = geom.asPoint()
+                for vertex in arr_lv_oh:
+                        m = distance.measureLine(geom_pole, vertex)
+                        if m >= 0.85 and m <= 1.15:
+                                arr_snapping.append(device_id)
+                        elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
+                                print('WARNING: ' + device_id + ' distance is ' + str(m) + 'm')
+                if len(arr_snapping) == 0:
+                        print(device_id + ' arr_snapping is ' + str(len(arr_snapping)))
+                        arr.append(device_id)
+        return arr
+
+def pole_lv_oh_vertex_message(device_id):
+        e_msg = pole_lv_oh_vertex_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is not near to LV OH vertex ' + '\n'
+        return e_msg        
 
 # **********************************
 # ******* End of Validation  *******
