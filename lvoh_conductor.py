@@ -18,6 +18,7 @@ lv_oh_device_id_format_code = 'ERR_DEVICE_ID'
 lv_oh_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 lv_oh_vertex_pole_code = 'ERR_LVOHCOND_04'
 lv_oh_self_intersect_code = 'ERR_LVOHCOND_08'
+lv_oh_hanging_code = 'ERR_LVOHCOND_05'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -225,13 +226,127 @@ def lv_oh_self_intersect():
                                 if intersect:
                                         no_of_intersect += 1
                         # print('intersect: ' + str(no_of_intersect))
-                        if no_of_intersect > 2:
+                        # remove duplicate device_id
+                        if no_of_intersect > 2 and device_id not in arr:
                                 arr.append(device_id)
                         
         return arr
 
 def lv_oh_self_intersect_message(device_id):
         e_msg = lv_oh_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + '\n'
+        return e_msg
+
+# *******************************
+# ****** Hanging Geometry  ******
+# *******************************
+
+'''
+# Get vertex[0] and vertex[last] from LV OH Conductor
+# List down all possible vertext that these two might connect to:
+# - all other vectors in LV OH
+# - vector[0] and vector[last] in LV UG
+# - Demand Point
+# - LV Cable Joint
+# check if the vertex[0] is connected to any of those above.
+# check if the vertex[last] is connected to any of those above.
+# if not connected to anything, return error
+'''
+
+def lv_oh_hanging():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        # query = '"device_id" = \'' + 'R6142ugc017' + '\''
+        # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                v_one = polyline_y[0]
+                v_last = polyline_y[len(polyline_y) - 1]
+                # print('len polyline is ', len(polyline_y))
+                # print(v_one)
+
+                # get other vertex of LV OH
+                arr_point = []
+                arr_device_id = []
+                layer_lv_oh = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" != \'' + device_id + '\''
+                feat_lv_oh = layer_lv_oh.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+                for g in feat_lv_oh:
+                        device_temp = g.attribute('device_id')
+                        arr_device_id.append(device_temp)
+                        geom_g = g.geometry()
+                        y_g = geom_g.mergeLines()
+                        polyline_y_g = y_g.asPolyline()
+                        for g1 in range(len(polyline_y_g)):
+                                if polyline_y_g[g1] not in arr_point:
+                                        arr_point.append(polyline_y_g[g1])                                
+                # print(arr_device_id)
+                # print(arr_point)
+
+                # get lv ug vector: (1st point and last point is enough)
+                layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+                feat_lv_ug = layer_lv_ug.getFeatures()
+                for h in feat_lv_ug:
+                        device_temp = g.attribute('device_id')
+                        geom_h = h.geometry()
+                        y_h = geom_h.mergeLines()
+                        polyline_y = y_h.asPolyline()
+                        v1_one = polyline_y[0]
+                        v1_last = polyline_y[len(polyline_y) - 1]
+                        arr_point.append(v1_one)
+                        arr_point.append(v1_last)
+
+                # get demand point point
+                layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+                feat_dmd_pt = layer_dmd_pt.getFeatures()
+                for j in feat_dmd_pt:
+                        devide_temp = j.attribute('device_id')
+                        geom_j = j.geometry()
+                        j_point = geom_j.asPoint()
+                        arr_point.append(j_point)
+
+                # get LV Cable Joint
+                layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
+                feat_lv_cj = layer_lv_cj.getFeatures()
+                for j in feat_lv_cj:
+                        devide_temp = j.attribute('device_id')
+                        geom_j = j.geometry()
+                        j_point = geom_j.asPoint()
+                        arr_point.append(j_point)
+                       
+                                        
+                # print('arr point is:' + str(len(arr_point)))
+
+                # check distance between v_one / v_last with arr_point
+                arr_snap_v_one = []
+                arr_snap_v_last = []
+                for v_point in arr_point:
+                        distance_v_one = distance.measureLine(v_one, v_point)
+                        if distance_v_one <= 0.001:
+                                # print(j)
+                                # print('distance is ' + format(distance_xy,'.9f') + 'm')
+                                arr_snap_v_one.append(device_id)
+                        # print('v point to check:' + str(v_point))
+                        distance_v_last = distance.measureLine(v_last, v_point)
+                        if distance_v_last <= 0.001:
+                                # print('v last is ' + str(v_last))
+                                # print('lv point is ' + str(v_point))
+                                # print('distance is ' + format(distance_v_last,'.9f') + 'm')
+                                arr_snap_v_last.append(device_id)                                
+                # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
+                        arr.append(device_id)
+        return arr
+
+def lv_oh_hanging_message(device_id):
+        e_msg = lv_oh_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + '\n'
         return e_msg
 
 # **********************************

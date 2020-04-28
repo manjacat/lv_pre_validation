@@ -353,6 +353,14 @@ def exec_validation(self):
             lv_oh_error += 1
             total_error += 1
 
+    # check LV OH hanging
+    if lv_oh_flag:
+        arr_lv_oh = lv_oh_hanging()
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_hanging_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
+
     #*************************************************************
     #***************     LV Fuse VALIDATION     ******************
     #*************************************************************

@@ -405,6 +405,7 @@ def lv_ug_self_intersect():
                 for h in range(len(arr_line)):
                         arr_temp = []
                         arr_temp.extend(arr_line)
+                        # remove self
                         arr_temp.remove(arr_line[h])
                         no_of_intersect = 0
                         for i in range(len(arr_temp)):
@@ -412,7 +413,8 @@ def lv_ug_self_intersect():
                                 if intersect:
                                         no_of_intersect += 1
                         # print('intersect: ' + str(no_of_intersect))
-                        if no_of_intersect > 2:
+                        # remove duplicate device_id
+                        if no_of_intersect > 2 and device_id not in arr:
                                 arr.append(device_id)
                         
         return arr
@@ -436,6 +438,18 @@ def lv_ug_self_intersect_message(device_id):
 # *******************************
 # ****** Hanging Geometry  ******
 # *******************************
+
+'''
+# Get vertex[0] and vertex[last] from LV UG Conductor
+# List down all possible vertext that these two might connect to:
+# - all other vectors in LV UG
+# - vector[0] and vector[last] in LV OH
+# - Demand Point
+# - LV Cable Joint
+# check if the vertex[0] is connected to any of those above.
+# check if the vertex[last] is connected to any of those above.
+# if not connected to anything, return error
+'''
 
 def lv_ug_hanging():
         arr = []
