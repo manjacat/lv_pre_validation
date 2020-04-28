@@ -235,7 +235,30 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_self_intersect()
         for device_id in arr_lv_ug:
-            e_msg += lv_ug_coin_message(device_id)
+            e_msg += lv_ug_self_intersect_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+    # check for distance between 2nd vertex to LVDB-FP
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_1_2_incoming()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_1_2_incoming_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_1_2_outgoing()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_1_2_outgoing_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
+    # check for LV UG hanging
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_hanging()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_hanging_message(device_id)
             lv_ug_error += 1
             total_error += 1
 

@@ -22,6 +22,9 @@ lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
 lv_ug_coin_code = 'ERR_LVUGCOND_06'
 lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 lv_ug_self_intersect_code = 'ERR_LVUGCOND_10'
+lv_ug_1_2_incoming_code = 'ERR_LVUGCOND_08'
+lv_ug_1_2_outgoing_code = 'ERR_LVUGCOND_08'
+lv_ug_hanging_code = 'ERR_LVUGCOND_07'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -296,6 +299,77 @@ def lv_ug_length_check_message(device_id):
 # Step 5: if distance < 1m, then error
 '''
 
+def get_lvdb_by_device_id(device_id):
+        layer = QgsProject.instance().mapLayersByName('LVDB-FP')[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+        return geom
+
+def lv_ug_1_2_incoming():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()        
+        for f in feat:
+                device_id = f.attribute('device_id')
+                # get geometry of LV UG
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # get incoming and outgoing distance
+                # distance_0 = distance.measureLine(polyline_y[0],polyline_y[1])
+                distance_n = distance.measureLine(polyline_y[len(polyline_y) - 1],polyline_y[len(polyline_y) - 2])                
+                # get incoming/outgoing lvdb, if any
+                in_lv_db_device_id = f.attribute('in_lvdb_id')
+                out_lv_db_device_id = f.attribute('out_lvdb_i')
+                if in_lv_db_device_id:
+                        geom_lvdb = get_lvdb_by_device_id(in_lv_db_device_id)                        
+                        if distance_n < 1:
+                                # print(device_id + '/' + in_lv_db_device_id + ' incoming dist is ' + str(distance_n))
+                                arr.append(device_id)
+        return arr
+
+def lv_ug_1_2_incoming_message(device_id):
+        e_msg = lv_ug_1_2_incoming_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' INCOMING vertex to LVDB is less than 1.0m' + '\n'
+        return e_msg
+
+def lv_ug_1_2_outgoing():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()        
+        for f in feat:
+                device_id = f.attribute('device_id')
+                # get geometry of LV UG
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # get incoming and outgoing distance
+                distance_0 = distance.measureLine(polyline_y[0],polyline_y[1])
+                # distance_n = distance.measureLine(polyline_y[len(polyline_y) - 1],polyline_y[len(polyline_y) - 2])                
+                # get incoming/outgoing lvdb, if any
+                in_lv_db_device_id = f.attribute('in_lvdb_id')
+                out_lv_db_device_id = f.attribute('out_lvdb_i')
+                if out_lv_db_device_id:
+                        geom_lvdb = get_lvdb_by_device_id(out_lv_db_device_id)                        
+                        if distance_0 < 1:
+                                # print(device_id + '/' + out_lv_db_device_id + ' outgoing distance is ' + str(distance_0))
+                                arr.append(device_id)
+        return arr
+
+def lv_ug_1_2_outgoing_message(device_id):
+        e_msg = lv_ug_1_2_outgoing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' OUTGOING vertex to LVDB-FP is less than 1.0m' + '\n'
+        return e_msg
+
 # ***************************************************
 # ********* Check self Intersect  *******************
 # ***************************************************
@@ -358,6 +432,98 @@ def lv_ug_self_intersect_message(device_id):
 '''
 # buat last
 '''
+
+# *******************************
+# ****** Hanging Geometry  ******
+# *******************************
+
+def lv_ug_hanging():
+        arr = []
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+        
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        # query = '"device_id" = \'' + 'R6142ugc017' + '\''
+        # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        feat = layer.getFeatures()
+        for f in feat:
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                v_one = polyline_y[0]
+                v_last = polyline_y[len(polyline_y) - 1]
+                # print('len polyline is ', len(polyline_y))
+
+                # print(v_one)
+
+                # get other vertex
+                arr_point = []
+                arr_device_id = []
+                layer_lv_ug = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" != \'' + device_id + '\''
+                feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+                for g in feat_lv_ug:
+                        device_temp = g.attribute('device_id')
+                        arr_device_id.append(device_temp)
+                        geom_g = g.geometry()
+                        y_g = geom_g.mergeLines()
+                        polyline_y_g = y_g.asPolyline()
+                        for g1 in range(len(polyline_y_g)):
+                                if polyline_y_g[g1] not in arr_point:
+                                        arr_point.append(polyline_y_g[g1])                                
+                # print(arr_device_id)
+                # print(arr_point)
+
+                layer_lv_oh = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+                feat_lv_oh = layer_lv_oh.getFeatures()
+                for h in feat_lv_oh:
+                        device_temp = g.attribute('device_id')
+                        geom_h = h.geometry()
+                        y_h = geom_h.mergeLines()
+                        polyline_y = y_h.asPolyline()
+                        v1_one = polyline_y[0]
+                        v1_last = polyline_y[len(polyline_y) - 1]
+                        arr_point.append(v1_one)
+                        arr_point.append(v1_last)
+
+                layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+                feat_dmd_pt = layer_dmd_pt.getFeatures()
+                for j in feat_dmd_pt:
+                        devide_temp = j.attribute('device_id')
+                        geom_j = j.geometry()
+                        j_point = geom_j.asPoint()
+                        arr_point.append(j_point)
+                       
+                                        
+                # print('arr point is:' + str(len(arr_point)))
+
+                # check distance between v_one / v_last with arr_point
+                arr_snap_v_one = []
+                arr_snap_v_last = []
+                for v_point in arr_point:
+                        distance_v_one = distance.measureLine(v_one, v_point)
+                        if distance_v_one <= 0.001:
+                                # print(j)
+                                # print('distance is ' + format(distance_xy,'.9f') + 'm')
+                                arr_snap_v_one.append(device_id)
+                        # print('v point to check:' + str(v_point))
+                        distance_v_last = distance.measureLine(v_last, v_point)
+                        if distance_v_last <= 0.001:
+                                # print('v last is ' + str(v_last))
+                                # print('lv point is ' + str(v_point))
+                                # print('distance is ' + format(distance_v_last,'.9f') + 'm')
+                                arr_snap_v_last.append(device_id)                                
+                # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0:
+                        arr.append(device_id)
+        return arr
+
+def lv_ug_hanging_message(device_id):
+        e_msg = lv_ug_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + '\n'
+        return e_msg
+        
 
 # ********************************************
 # ****** Check for Coincidence Geometry ******
