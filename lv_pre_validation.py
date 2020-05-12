@@ -50,11 +50,6 @@ from .feature_count import count_lv_features
 from .run_validation import exec_validation, exec_clear_errors
 
 
-def check_filename():
-    # TODO
-    print('checking filename')
-
-
 class lv_pre_validation:
     """QGIS Plugin Implementation."""
 
@@ -235,7 +230,7 @@ class lv_pre_validation:
             
     def select_output_file(self):
         filename, _filter = QFileDialog.getSaveFileName(
-            self.dlg, "Select output file ","untitled.csv",'.csv')
+            self.dlg, "Select output file ","error_list.csv",'.csv')
         self.dlg.label_message.setText('Click Run QAQC to generate CSV file')
         if ".csv" in filename:
             self.dlg.lineEdit_csv.setText(filename)
@@ -265,7 +260,6 @@ class lv_pre_validation:
             #connect controls to function
             self.dlg.checkBox_all.stateChanged.connect(self.select_all)
             self.dlg.pushButton_csv.clicked.connect(self.select_output_file)
-            self.dlg.pushButton_filename.clicked.connect(check_filename)
             self.dlg.pushButton_clear.clicked.connect(self.clear_errors)
             self.dlg.pushButton_qaqc.clicked.connect(self.run_qa_qc)
 

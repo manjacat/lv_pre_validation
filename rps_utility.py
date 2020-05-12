@@ -80,7 +80,7 @@ def rps_device_id_format(layer_name):
 # ***************************************************
 
 '''
-# TODO: move to this function
+# moved duplicate id checking (all features) to this function
 # Step 1: store all device_id in array (arr_device_id)
 # Step 2: loop through all [arr_device_id] and put into new array, [arr_seen]
 # Step 3: if items in [arr_device_id] is already in [arr_seen], means its a duplicate
@@ -118,7 +118,7 @@ def rps_duplicate_device_id(layer_name):
 # ********* Check for Z-M Geometry  **********
 # ********************************************
 '''
-# TODO: move to this function
+# moved all Z-M checking to this function
 # Step 1: check geometry column
 # Step 2: type must be correct
 '''

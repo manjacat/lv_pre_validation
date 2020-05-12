@@ -37,7 +37,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Pre Validation Checklist - v15</string>
+    <string>Pre Validation Checklist</string>
    </property>
   </widget>
   <widget class="Line" name="line">
@@ -56,7 +56,7 @@
   <widget class="QPushButton" name="pushButton_clear">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>30</x>
      <y>540</y>
      <width>111</width>
      <height>23</height>
@@ -64,19 +64,6 @@
    </property>
    <property name="text">
     <string>Reset Errors</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_filename">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>540</y>
-     <width>101</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Check Filename</string>
    </property>
   </widget>
   <widget class="Line" name="line_2">

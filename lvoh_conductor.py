@@ -19,6 +19,7 @@ lv_oh_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 lv_oh_vertex_pole_code = 'ERR_LVOHCOND_04'
 lv_oh_self_intersect_code = 'ERR_LVOHCOND_08'
 lv_oh_hanging_code = 'ERR_LVOHCOND_05'
+lv_oh_buffer_code = 'ERR_LVOHCOND_06'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -30,7 +31,9 @@ def lv_oh_z_m_shapefile():
         return arr
 
 def lv_oh_z_m_shapefile_message(geom_name):
-        e_msg = lv_oh_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        longitude = 0
+        latitude = 0
+        e_msg = lv_oh_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ****************************************
@@ -43,7 +46,10 @@ def lv_oh_device_id_format():
         return arr
 
 def lv_oh_device_id_format_message(device_id):
-        e_msg = lv_oh_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_oh_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 # **********************************
 # ****** Check for Duplicates ******
@@ -56,7 +62,10 @@ def lv_oh_duplicate():
         return arr
 
 def lv_oh_duplicate_message(device_id):
-        e_msg = lv_oh_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -89,7 +98,10 @@ def lv_oh_field_enum(field_name):
         return arr
 
 def lv_oh_field_enum_message(device_id, field_name):
-        e_msg = lv_oh_enum_valid +',' + device_id + ',' + layer_name +': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_enum_valid +',' + device_id + ',' + layer_name +': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -107,8 +119,11 @@ def lv_oh_field_not_null(field_name):
 	return arr
 
 def lv_oh_field_not_null_message(device_id, field_name):
-	e_msg = lv_oh_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_oh_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************
 # ********* Check Length  **********
@@ -125,8 +140,11 @@ def lv_oh_length_check():
 	return arr
 
 def lv_oh_length_check_message(device_id):
-	e_msg = lv_oh_length_check_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' length less than 1.5' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_oh_length_check_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' length less than 1.5' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ********************************************************************
 # ********* All LV OH Vertex must has Pole nearby  *******************
@@ -173,15 +191,18 @@ def lv_oh_vertex_pole():
                                         m = distance.measureLine(pole_geom, vertex)
                                         if m <= 1.1:
                                                 arr_vertex.append(vertex)
-                                        elif m > 1.1 and m < 4:
-                                                print('WARNING: ' + device_id + ': vertex [' + str(i) + ']- distance pole to vertex is ' + str(round(m,3)) + 'm (more than 1.0m!!)')                        
+                                        # elif m > 1.1 and m < 4:
+                                        #       print('WARNING: ' + device_id + ': vertex [' + str(i) + ']- distance pole to vertex is ' + str(round(m,3)) + 'm (more than 1.0m!!)')                        
                         if total_vertex != len(arr_vertex):
                                 print('total vertex:' + str(total_vertex) + ', vertex near pole: ' + str(len(arr_vertex)))
                                 arr.append(device_id)
         return arr
 
 def lv_oh_vertex_pole_message(device_id):
-        e_msg = lv_oh_vertex_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has vertex not near a pole ' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_vertex_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has vertex not near a pole ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 # ***************************************************
@@ -233,7 +254,10 @@ def lv_oh_self_intersect():
         return arr
 
 def lv_oh_self_intersect_message(device_id):
-        e_msg = lv_oh_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # *******************************
@@ -346,8 +370,82 @@ def lv_oh_hanging():
         return arr
 
 def lv_oh_hanging_message(device_id):
-        e_msg = lv_oh_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
+
+# **************************************
+# ********* Check Buffer 0.3  **********
+# **************************************
+
+def lv_oh_buffer():
+        arr = []
+        arr_lv_oh = []
+
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+
+        # get vectors of all LV OH (for comparison)
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat =  layer.getFeatures()
+        for f in feat:
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                for geom_y in polyline_y:
+                        arr_lv_oh.append(geom_y)
+
+        # main function
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat =  layer.getFeatures()
+        for f in feat:
+                # reset array values
+                arr_temp = []
+                arr_temp.extend(arr_lv_oh)
+                arr_cur_lv_oh = []
+
+                # get arr_cur_lv_oh (list of vectors to in one deviceid)
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                for geom_y in polyline_y:
+                        arr_cur_lv_oh.append(geom_y)
+
+                #remove own vector from arr_temp
+                for cur_lv_oh in arr_cur_lv_oh:
+                        arr_temp.remove(cur_lv_oh)
+
+                arr_too_close = []
+                arr_too_far = []
+
+                for i in range(len(arr_cur_lv_oh)):
+                        # remove first and last vertex from checking
+                        if i > 0 and i < len(arr_cur_lv_oh) - 1:
+                                for vector_all in arr_temp:
+                                        vector = arr_cur_lv_oh[i]
+                                        m = distance.measureLine(vector, vector_all)
+                                        if m < 0.29 and m > 0.005:
+                                                # print(device_id + '[' + str(i + 1) + '/' + str(len(arr_cur_lv_oh)) + ']' + ' is too close to another conductor!')
+                                                arr_too_close.append(device_id)
+                                        elif m > 0.31 and m < 0.5:
+                                                # print(device_id + ' is too far from another conductor')
+                                                arr_too_far.append(device_id)
+                if(len(arr_too_close) > 0):
+                        arr.append(device_id)
+                        
+        return arr
+
+def lv_oh_buffer_message(device_id):
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_oh_buffer_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is too close to another conductor! (distance < 0.3m) ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
+
 
 # **********************************
 # ******* End of Validation  *******

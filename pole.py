@@ -27,7 +27,9 @@ def pole_z_m_shapefile():
         return arr
 
 def pole_z_m_shapefile_message(geom_name):
-        e_msg = pole_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        longitude = 0
+        latitude = 0
+        e_msg = pole_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ****************************************
@@ -40,7 +42,17 @@ def pole_device_id_format():
         return arr
 
 def pole_device_id_format_message(device_id):
-        e_msg = pole_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = pole_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -54,7 +66,17 @@ def pole_duplicate():
         return arr
 
 def pole_duplicate_message(device_id):
-        e_msg = pole_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = pole_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -87,7 +109,17 @@ def pole_field_enum(field_name):
         return arr
 
 def pole_field_enum_message(device_id, field_name):
-        e_msg = pole_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = pole_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -105,8 +137,18 @@ def pole_field_not_null(field_name):
 	return arr
 
 def pole_field_not_null_message(device_id, field_name):
-	e_msg = pole_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))        
+        longitude = 0
+        latitude = 0
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = pole_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ************************************************************
 # ********* All Pole must have LV OH vertex nearby  **********
@@ -159,7 +201,17 @@ def pole_lv_oh_vertex():
         return arr
 
 def pole_lv_oh_vertex_message(device_id):
-        e_msg = pole_lv_oh_vertex_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is not near to LV OH vertex ' + '\n'
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        longitude = 0
+        latitude = 0
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = pole_lv_oh_vertex_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' distance to LV OH vertex not within 1.0m (too close/too far)' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg        
 
 # **********************************

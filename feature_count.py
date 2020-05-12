@@ -1,5 +1,8 @@
 # Test import python file
 from qgis.core import *
+
+# for testing purposes
+from .analysis import *
 	
 def count_lv_features(self):
     # print('counting LV UG conductor')
@@ -111,7 +114,10 @@ def count_lv_features(self):
         self.dlg.count_st_duct.setText(str(count_st_duct))
     except:
         self.dlg.count_st_duct.setText('Skipped')
-        
+
+    # try_lukis_line()
+    # try_lukis_polygon()
+    # test_buffer()  
     # end the function
     return 0
 

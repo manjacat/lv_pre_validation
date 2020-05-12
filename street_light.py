@@ -43,7 +43,17 @@ def st_light_device_id_format():
         return arr
 
 def st_light_device_id_format_message(device_id):
-        e_msg = st_light_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -57,7 +67,17 @@ def st_light_duplicate():
         return arr
 
 def st_light_duplicate_message(device_id):
-        e_msg = st_light_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -87,7 +107,17 @@ def st_light_field_enum(field_name):
         return arr
 
 def st_light_field_enum_message(device_id, field_name):
-        e_msg = st_light_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ********************************************
@@ -113,7 +143,17 @@ def st_light_cont_dev():
         return arr
         
 def st_light_cont_dev_message(device_id):
-        e_msg = st_light_cont_dev_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' cont_device should be PANEL if dmd_pnt_id is not null \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_cont_dev_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' cont_device should be PANEL if dmd_pnt_id is not null' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -131,8 +171,18 @@ def st_light_field_not_null(field_name):
 	return arr
 
 def st_light_field_not_null_message(device_id, field_name):
-	e_msg = st_light_field_null + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_field_null + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # *******************************************
 # ********* Phasing should be 'R'  **********
@@ -154,8 +204,19 @@ def st_light_phasing():
         return arr
 
 def st_light_phasing_message(device_id):
-	e_msg = st_light_phasing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' phasing should be "R" \n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+
+        e_msg = st_light_phasing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' phasing should be "R" ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ********************************************************
 # ********* Street Light MUST overlap with Pole  **********
@@ -211,7 +272,17 @@ def st_light_overlap_pole():
         return arr
 
 def st_light_overlap_pole_message(device_id):
-        e_msg = st_light_overlap_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Street Light MUST overlap Pole \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query)) 
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = st_light_overlap_pole_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Street Light MUST overlap Pole ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 

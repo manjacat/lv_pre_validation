@@ -262,6 +262,14 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
+    # check for LV UG buffer
+    if lv_ug_flag:
+        arr_lv_ug = lv_ug_buffer()
+        for device_id in arr_lv_ug:
+            e_msg += lv_ug_buffer_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
     # check for coincidence geometry
     if lv_ug_flag:
         arr_lv_ug = lv_ug_coin()
@@ -360,6 +368,15 @@ def exec_validation(self):
             e_msg += lv_oh_hanging_message(device_id)
             lv_oh_error += 1
             total_error += 1
+
+    # check for LV OH buffer
+    if lv_oh_flag:
+        arr_lv_oh = lv_oh_buffer()
+        for device_id in arr_lv_oh:
+            e_msg += lv_oh_buffer_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
+    
 
     #*************************************************************
     #***************     LV Fuse VALIDATION     ******************
@@ -1015,6 +1032,9 @@ def exec_validation(self):
     # print to console only if no csv filename is specified
     if len(filename) > 4:
         with open(filename, 'w') as output_file:
+            # Add header to e_msg
+            header = 'Error Code, Feature Name, Error Message, Longitude, Latitude \n'
+            e_msg = header + e_msg            
             output_file.write(e_msg)
         self.iface.messageBar().pushMessage(
               "Success", "Output file written at " + filename,

@@ -25,6 +25,7 @@ lv_ug_self_intersect_code = 'ERR_LVUGCOND_10'
 lv_ug_1_2_incoming_code = 'ERR_LVUGCOND_08'
 lv_ug_1_2_outgoing_code = 'ERR_LVUGCOND_08'
 lv_ug_hanging_code = 'ERR_LVUGCOND_07'
+lv_ug_buffer_code = 'ERR_LVUGCOND_09'
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
@@ -36,7 +37,10 @@ def lv_ug_z_m_shapefile():
         return arr
 
 def lv_ug_z_m_shapefile_message(geom_name):
-        e_msg = lv_ug_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 
@@ -50,7 +54,10 @@ def lv_ug_device_id_format():
         return arr
 
 def lv_ug_device_id_format_message(device_id):
-        e_msg = lv_ug_device_id_format_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_device_id_format_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -63,7 +70,10 @@ def lv_ug_duplicate():
         return arr
 
 def lv_ug_duplicate_message(device_id):
-        e_msg = lv_ug_duplicate_code +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_duplicate_code +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
@@ -100,8 +110,11 @@ def lv_ug_field_enum(field_name):
         return arr
 
 def lv_ug_field_enum_message(device_id, field_name):
-    e_msg = lv_ug_enum_valid +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
-    return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_enum_valid +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************
 # ****** Check for Not Null   ******
@@ -118,8 +131,11 @@ def lv_ug_field_not_null(field_name):
 	return arr
 
 def lv_ug_field_not_null_message(device_id, field_name):
-	e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************
 # ****** Check for LVDB Flow  ******
@@ -162,8 +178,11 @@ def lv_ug_lv_db_in():
     return arr
 
 def lv_ug_lv_db_in_message(device_id):
-	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column in_lvdb_id mismtach ' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column in_lvdb_id mismtach ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 def lv_ug_lv_db_out():
 	#TODO
@@ -195,8 +214,11 @@ def lv_ug_lv_db_out():
     return arr
 
 def lvug_lvdb_out_message(device_id):
-	e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column out_lvdb_id mismatch' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column out_lvdb_id mismatch' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ************************************
 # ****** Check for LVDB in/out  ******
@@ -267,12 +289,18 @@ def lv_ug_lvdb_no_out_check():
     return arr
 
 def lv_ug_lvdb_id_check_message(device_id):
-	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 def lv_ug_lvdb_no_check_message(device_id):
-	e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************
 # ********* Check Length  **********
@@ -284,8 +312,11 @@ def lv_ug_length_check():
 	return arr
 
 def lv_ug_length_check_message(device_id):
-	e_msg = lv_ug_length + ',' + device_id + ',' + layer_name + ': ' + device_id + ' length less than 1.5' + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_length + ',' + device_id + ',' + layer_name + ': ' + device_id + ' length less than 1.5' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ********************************************
 # ****** Check for LVDB 1st/2nd Vertex  ******
@@ -336,7 +367,10 @@ def lv_ug_1_2_incoming():
         return arr
 
 def lv_ug_1_2_incoming_message(device_id):
-        e_msg = lv_ug_1_2_incoming_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' INCOMING vertex to LVDB is less than 1.0m' + '\n'
+        longitude = 0
+        latitude = 0
+
+        e_msg = lv_ug_1_2_incoming_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' INCOMING vertex to LVDB is less than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 def lv_ug_1_2_outgoing():
@@ -367,7 +401,10 @@ def lv_ug_1_2_outgoing():
         return arr
 
 def lv_ug_1_2_outgoing_message(device_id):
-        e_msg = lv_ug_1_2_outgoing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' OUTGOING vertex to LVDB-FP is less than 1.0m' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_1_2_outgoing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' OUTGOING vertex from LVDB-FP is less than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ***************************************************
@@ -420,20 +457,11 @@ def lv_ug_self_intersect():
         return arr
 
 def lv_ug_self_intersect_message(device_id):
-        e_msg = lv_ug_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
-
-
-# *************************************************
-# ****** Buffer between LV UG must be > 0.3  ******
-# *************************************************
-
-# get all vertex of a LV UG conductor
-# check distance between this vertex and other vertex of another conductor
-
-'''
-# buat last
-'''
 
 # *******************************
 # ****** Hanging Geometry  ******
@@ -535,7 +563,10 @@ def lv_ug_hanging():
         return arr
 
 def lv_ug_hanging_message(device_id):
-        e_msg = lv_ug_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + '\n'
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 
@@ -545,29 +576,112 @@ def lv_ug_hanging_message(device_id):
 # ********************************************
 
 def lv_ug_coin():
-    arr = []
-    arr_geom = []
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    feat = layer.getFeatures()
-    # create 1st loop to store all geom
-    for f in feat:
-        geom = f.geometry()
-        geom_f = geom.mergeLines()
-        arr_geom.append(geom_f)
-    #create another loop
-    for g in feat:
-        device_id = g.attribute('device_id')
-        geom = g.geometry()
-        geom_g = geom.mergeLines()
-        for geom2 in arr_geom:
-            # check for overlap
-            if geom_g.overlaps(geom_2):
-                arr.append(device_id)
-    return arr
+        arr = []
+        arr_geom = []
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat = layer.getFeatures()
+
+        # create 1st loop to store all geom
+        for f in feat:
+                geom = f.geometry()
+                geom_f = geom.mergeLines()
+                arr_geom.append(geom_f)
+
+                #create another loop
+                for g in feat:
+                        device_id = g.attribute('device_id')
+                        geom = g.geometry()
+                        geom_g = geom.mergeLines()
+                        for geom_2 in arr_geom:
+                                # check for overlap
+                                if geom_g.overlaps(geom_2):
+                                        arr.append(device_id)
+        return arr
 
 def lv_ug_coin_message(device_id):
-    e_msg = lv_ug_coin_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has coincidence geometry \n'
-    return e_msg        
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_coin_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has coincidence geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
+
+# *************************************************
+# ****** Buffer between LV UG must be > 0.3  ******
+# *************************************************
+
+# get all vertex of a LV UG conductor
+# check distance between this vertex and other vertex of another conductor
+
+'''
+# buat last
+'''
+
+def lv_ug_buffer():
+        arr = []
+        arr_lv_ug = []
+
+        # qgis distanceArea
+        distance = QgsDistanceArea()
+        distance.setEllipsoid('WGS84')
+
+        # get vectors of all LV OH (for comparison)
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat =  layer.getFeatures()
+        for f in feat:
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                for geom_y in polyline_y:
+                        arr_lv_ug.append(geom_y)
+
+        # main function
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        feat =  layer.getFeatures()
+        for f in feat:
+                # reset array values
+                arr_temp = []
+                arr_temp.extend(arr_lv_ug)
+                arr_cur_lv_ug = []
+
+                # get arr_cur_lv_ug (list of vectors to in one deviceid)
+                device_id = f.attribute('device_id')
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                for geom_y in polyline_y:
+                        arr_cur_lv_ug.append(geom_y)
+
+                #remove own vector from arr_temp
+                for cur_lv_ug in arr_cur_lv_ug:
+                        arr_temp.remove(cur_lv_ug)
+
+                arr_too_close = []
+                arr_too_far = []
+
+                for i in range(len(arr_cur_lv_ug)):
+                        # remove first and last vertex from checking
+                        if i > 0 and i < len(arr_cur_lv_ug) - 1:
+                                for vector_all in arr_temp:
+                                        vector = arr_cur_lv_ug[i]
+                                        m = distance.measureLine(vector, vector_all)
+                                        if m < 0.29 and m > 0.005:
+                                                # print(device_id + '[' + str(i + 1) + '/' + str(len(arr_cur_lv_oh)) + ']' + ' is too close to another conductor!')
+                                                arr_too_close.append(device_id)
+                                        elif m > 0.31 and m < 0.5:
+                                                # print(device_id + ' is too far from another conductor')
+                                                arr_too_far.append(device_id)
+                if(len(arr_too_close) > 0):
+                        arr.append(device_id)
+
+        return arr
+
+def lv_ug_buffer_message(device_id):
+        longitude = 0
+        latitude = 0
+        
+        e_msg = lv_ug_buffer_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is too close to another conductor! (distance < 0.3m) ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
+
 
 # **********************************
 # ******* End of Validation  *******

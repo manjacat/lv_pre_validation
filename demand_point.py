@@ -28,7 +28,9 @@ def dmd_pt_z_m_shapefile():
         return arr
 
 def dmd_pt_z_m_shapefile_message(geom_name):
-        e_msg = dmd_pt_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        longitude = 0
+        latitude = 0
+        e_msg = dmd_pt_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ****************************************
@@ -41,7 +43,17 @@ def dmd_pt_device_id_format():
         return arr
 
 def dmd_pt_device_id_format_message(device_id):
-        e_msg = dmd_pt_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = dmd_pt_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -53,7 +65,17 @@ def dmd_pt_duplicate():
         return arr
 
 def dmd_pt_duplicate_message(device_id):
-        e_msg = dmd_pt_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = dmd_pt_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
@@ -81,7 +103,17 @@ def dmd_pt_field_enum(field_name):
         return arr
 
 def dmd_pt_field_enum_message(device_id, field_name):
-        e_msg = dmd_pt_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = dmd_pt_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -99,8 +131,18 @@ def dmd_pt_field_not_null(field_name):
 	return arr
 
 def dmd_pt_field_not_null_message(device_id, field_name):
-	e_msg = dmd_pt_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = dmd_pt_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ***************************************
 # ********* Check for Remarks  **********
@@ -139,8 +181,19 @@ def get_dmd_pnt_id():
         
 
 def dmd_pt_remarks_message(device_id):
-	e_msg = dmd_pt_remarks_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks must be STREET LIGHT PANEL \n'
-	return e_msg
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        longitude = 0
+        latitude = 0
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+
+        e_msg = dmd_pt_remarks_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks must be STREET LIGHT PANEL' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************************************************
 # ********* Check for Demand Point not in end point/snapping  **********
@@ -194,8 +247,18 @@ def dmd_pt_snapping():
         return arr
 
 def dmd_pt_snapping_message(device_id):
-	e_msg = dmd_pt_snapping_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' hanging \n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        e_msg = dmd_pt_snapping_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' hanging' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************
 # ******* End of Validation  *******

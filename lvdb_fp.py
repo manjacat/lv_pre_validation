@@ -31,7 +31,9 @@ def lvdb_fp_z_m_shapefile():
         return arr
 
 def lvdb_fp_z_m_shapefile_message(geom_name):
-        e_msg = lvdb_fp_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+        longitude = 0
+        latitude = 0
+        e_msg = lvdb_fp_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ****************************************
@@ -44,7 +46,18 @@ def lvdb_fp_device_id_format():
         return arr
 
 def lvdb_fp_device_id_format_message(device_id):
-        e_msg = lvdb_fp_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error \n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        
+        e_msg = lvdb_fp_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -58,7 +71,18 @@ def lvdb_fp_duplicate():
         return arr
 
 def lvdb_fp_duplicate_message(device_id):
-        e_msg = lvdb_fp_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        
+        e_msg = lvdb_fp_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -89,7 +113,18 @@ def lvdb_fp_field_enum(field_name):
         return arr
 
 def lvdb_fp_field_enum_message(device_id, field_name):
-        e_msg = lvdb_fp_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + '\n'
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        
+        e_msg = lvdb_fp_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -107,8 +142,19 @@ def lvdb_fp_field_not_null(field_name):
 	return arr
 
 def lvdb_fp_field_not_null_message(device_id, field_name):
-	e_msg = lvdb_fp_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + '\n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+                
+        e_msg = lvdb_fp_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **********************************************
 # ********* REMARKS/DB OPER MISMATCH  **********
@@ -144,8 +190,19 @@ def lvdb_fp_remarks_db_oper():
         return arr
 
 def lvdb_fp_remarks_db_oper_message(device_id):
-	e_msg = lvdb_fp_remarks_db_oper_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks and db_oper MISMATCH \n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+                
+        e_msg = lvdb_fp_remarks_db_oper_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks and db_oper MISMATCH ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # ********************************************************************
 # ********* Number of LVF columns filled must match Design  **********
@@ -226,8 +283,19 @@ def get_lv_out_number(design):
         
 
 def lvdb_fp_lvf_design_message(device_id):
-	e_msg = lvdb_fp_lvf_design_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' number of lvf/lvs columns does not match IN/OUT design \n'
-	return e_msg
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+
+        e_msg = lvdb_fp_lvf_design_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' number of lvf/lvs columns does not match IN/OUT design ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        return e_msg
 
 # **************************************
 # ********* LVDB-FP Snapping  **********
@@ -288,8 +356,19 @@ def lvdb_fp_snapping():
         
         return arr
 
-def lvdb_fp_snapping_message():
-        e_msg = lvdb_fp_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LVDB-FP is hanging \n'
+def lvdb_fp_snapping_message(device_id):
+        longitude = 0
+        latitude = 0
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + device_id + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+                geom = f.geometry()
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+
+        e_msg = lvdb_fp_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LVDB-FP is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
