@@ -1033,7 +1033,7 @@ def exec_validation(self):
     if len(filename) > 4:
         with open(filename, 'w') as output_file:
             # Add header to e_msg
-            header = 'Error Code, Feature Name, Error Message, Longitude, Latitude \n'
+            header = 'Error Code, Device Id, Error Message, Longitude, Latitude \n'
             e_msg = header + e_msg            
             output_file.write(e_msg)
         self.iface.messageBar().pushMessage(
