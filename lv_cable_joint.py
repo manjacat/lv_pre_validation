@@ -164,7 +164,7 @@ def lv_cj_field_not_null_message(device_id, field_name):
 # Step 4: if LV Cable Joint is not nearby LV UG/LV OH Vectors, then error.
 '''
 
-def lv_cj_snapping():
+def lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         arr = []
         arr_lv = []
         # qgis distanceArea
@@ -174,22 +174,26 @@ def lv_cj_snapping():
         layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
         feat_01 = layerLV_01.getFeatures()
         for f in feat_01:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # loop all vertex in this line
-                for geom_01 in polyline_y:
-                       arr_lv.append(geom_01)
+                device_temp = f.attribute('device_id')
+                if device_temp not in arr_lv_oh_exclude_geom:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # loop all vertex in this line
+                        for geom_01 in polyline_y:
+                               arr_lv.append(geom_01)
 
         layerLV_02 = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
         feat_02 = layerLV_02.getFeatures()
         for f in feat_02:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                #loop all vertex in this line
-                for geom_02 in polyline_y:
-                        arr_lv.append(geom_02)
+                device_temp = f.attribute('device_id')
+                if device_temp not in arr_lv_ug_exclude_geom:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        #loop all vertex in this line
+                        for geom_02 in polyline_y:
+                                arr_lv.append(geom_02)
         # print(arr_lv)
         # print('total vertex:',len(arr_lv))
 

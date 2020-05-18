@@ -57,7 +57,7 @@ def rps_device_id_format(layer_name):
                 object_code = 'MMM'
                 
 
-        vendor_code = 'R'
+        vendor_code = 'RPS'
         station_code = '([1-9][0-9]{0,3})' # accepts 1 - 9999
         running_number = '([0-9]{0,6})' # accepts 000 - 999999
         pattern = '^' + vendor_code + station_code + object_code + running_number + '$'
@@ -126,6 +126,7 @@ def rps_duplicate_device_id(layer_name):
 def rps_z_m_shapefile(layer_name):
         arr = []
         wkb_type = ''
+        
         arr_line_type = ['LV_UG_Conductor','LV_OH_Conductor']
         arr_point_type = ['LV_Fuse','LV_Cable_Joint','LVDB-FP','Pole','Demand_Point','Street_Light','Manhole','Structure_Duct']
         if layer_name in arr_line_type:
@@ -134,18 +135,25 @@ def rps_z_m_shapefile(layer_name):
                 wkb_type = 'Point'
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
-        # run once only
-        check = 0
         for f in feat:
                 device_id = f.attribute('device_id')
                 geom = f.geometry()
-                if check == 0:
-                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
-                        # print('geometry type is ', geom_type)
-                        if geom_type != wkb_type:
-                                arr.append(geom_type)
-                        check += 1
-                
+                geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                # print('geometry type is ', geom_type)
+                if geom_type != wkb_type:
+                        # print('found one mismatch! ' + device_id)
+                        arr.append(device_id)
+                elif geom_type == 'MultiLineString':                        
+                        try:
+                                # try merge as polyline
+                                y = geom.mergeLines()
+                                polyline_y = y.asPolyline()
+                        except:
+                                # print('ah hah! caught you finally! ' + device_id)
+                                arr.append(device_id)
+
+        # print(arr_device_id)
+                                        
         return arr
 
 # ********************************************
@@ -154,25 +162,31 @@ def rps_z_m_shapefile(layer_name):
 
 def rps_get_midpoint(layer_name, device_id):
 
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
-        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        try:
 
-        vector_midpoint = None
+                layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" = \'' + device_id + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f in feat:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # get total no of vectors
-                total = len(polyline_y)
-                # print('total is ', total)
-                # get midpoint (no need to + 1 since the index is zero based)
-                midpoint = (total // 2)
-                # print('midpoint is ', divide2)
-                vector_midpoint = polyline_y[midpoint]
+                vector_midpoint = None
 
-        return vector_midpoint
+                for f in feat:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # get total no of vectors
+                        total = len(polyline_y)
+                        # print('total is ', total)
+                        # get midpoint (no need to + 1 since the index is zero based)
+                        midpoint = (total // 2)
+                        # print('midpoint is ', divide2)
+                        vector_midpoint = polyline_y[midpoint]
+
+                return vector_midpoint
+
+        except:
+                return QgsPoint(0,0)
+
 
 # ********************************************
 # ********* Get Vector Zero of Line  **********
@@ -180,23 +194,28 @@ def rps_get_midpoint(layer_name, device_id):
 
 def rps_get_firstpoint(layer_name, device_id):
 
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
-        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        try:
 
-        vector_firstpoint = None
+                layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" = \'' + device_id + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f in feat:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # get total no of vectors
-                total = len(polyline_y)
-                firstpoint = 0
-                # print('midpoint is ', divide2)
-                vector_firstpoint = polyline_y[firstpoint]
+                vector_firstpoint = None
 
-        return vector_firstpoint
+                for f in feat:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # get total no of vectors
+                        total = len(polyline_y)
+                        firstpoint = 0
+                        # print('midpoint is ', divide2)
+                        vector_firstpoint = polyline_y[firstpoint]
+
+                return vector_firstpoint
+        except:
+                return QgsPoint(0,0)
+                
 
 # ********************************************
 # ********* Get Second Point of Line  **********
@@ -204,23 +223,29 @@ def rps_get_firstpoint(layer_name, device_id):
 
 def rps_get_secondpoint(layer_name, device_id):
 
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
-        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        try:
 
-        vector_second_point = None
+                layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" = \'' + device_id + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f in feat:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # get total no of vectors
-                total = len(polyline_y)
-                second_point = 1
-                # print('midpoint is ', divide2)
-                vector_second_point = polyline_y[second_point]
+                vector_second_point = None
 
-        return vector_second_point
+                for f in feat:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # get total no of vectors
+                        total = len(polyline_y)
+                        second_point = 1
+                        # print('midpoint is ', divide2)
+                        vector_second_point = polyline_y[second_point]
+
+                return vector_second_point
+        
+        except:
+                return QgsPoint(0,0)
+                
 
 # ********************************************
 # ********* Get Last Point of Line  **********
@@ -228,23 +253,27 @@ def rps_get_secondpoint(layer_name, device_id):
 
 def rps_get_lastpoint(layer_name, device_id):
 
-        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
-        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        try:
 
-        vector_lastpoint = None
+                layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+                query = '"device_id" = \'' + device_id + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f in feat:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # get total no of vectors
-                total = len(polyline_y)
-                lastpoint = total - 1
-                # print('midpoint is ', divide2)
-                vector_lastpoint = polyline_y[lastpoint]
+                vector_lastpoint = None
 
-        return vector_lastpoint
+                for f in feat:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # get total no of vectors
+                        total = len(polyline_y)
+                        lastpoint = total - 1
+                        # print('midpoint is ', divide2)
+                        vector_lastpoint = polyline_y[lastpoint]
+
+                return vector_lastpoint
+        except:
+                return QgsPoint(0,0)
 
 # **********************************
 # ******* End of Validation  *******

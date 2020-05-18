@@ -158,7 +158,7 @@ def pole_field_not_null_message(device_id, field_name):
 # 
 '''
 
-def get_lv_oh_vertex():
+def get_lv_oh_vertex(arr_lv_oh_exclude_geom):
         arr = []
         layer = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
         feat = layer.getFeatures()
@@ -166,20 +166,21 @@ def get_lv_oh_vertex():
         arr_exclude_usage = ['SILAP BUAT']
         for f in feat:
                 device_id = f.attribute('device_id')
-                usage = f.attribute('usage')
-                if usage not in arr_exclude_usage:
-                        geom = f.geometry()
-                        y = geom.mergeLines()
-                        for g in y.asPolyline():
-                                arr.append(g)
+                if device_id not in arr_lv_oh_exclude_geom:
+                        usage = f.attribute('usage')
+                        if usage not in arr_exclude_usage:
+                                geom = f.geometry()
+                                y = geom.mergeLines()
+                                for g in y.asPolyline():
+                                        arr.append(g)
         return arr
 
-def pole_lv_oh_vertex():
+def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
         arr = []
         # qgis distanceArea
         distance = QgsDistanceArea()
         distance.setEllipsoid('WGS84')
-        arr_lv_oh = get_lv_oh_vertex()
+        arr_lv_oh = get_lv_oh_vertex(arr_lv_oh_exclude_geom)
         # print('total lv oh vertex is :', len(arr_lv_oh))
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
@@ -196,7 +197,7 @@ def pole_lv_oh_vertex():
                         elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
                                 print('WARNING: ' + device_id + ' distance is ' + str(m) + 'm')
                 if len(arr_snapping) == 0:
-                        print(device_id + ' arr_snapping is ' + str(len(arr_snapping)))
+                        # print(device_id + ' arr_snapping is ' + str(len(arr_snapping)))
                         arr.append(device_id)
         return arr
 

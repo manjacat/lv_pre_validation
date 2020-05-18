@@ -176,17 +176,18 @@ def lvdb_fp_remarks_db_oper():
                 device_id = f.attribute('device_id')
                 remarks = f.attribute('remarks')
                 db_oper = f.attribute('db_oper')
-                #9 digit pattern: SW ID
-                pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-                check = re.search(pattern, remarks)
-                if check and db_oper == 'Insert':
-                        arr.append(device_id)
-                elif not check and db_oper == 'Update':
-                        arr.append(device_id)
-                else :
-                        # do nothing
-                        rem2 = f.attribute('remarks')
-                        # print('pattern match:' + device_id + ': ' + remarks + ', ' + db_oper)
+                if remarks:
+                        #9 digit pattern: SW ID
+                        pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+                        check = re.search(pattern, remarks)
+                        if check and db_oper == 'Insert':
+                                arr.append(device_id)
+                        elif not check and db_oper == 'Update':
+                                arr.append(device_id)
+                        else :
+                                # do nothing
+                                rem2 = f.attribute('remarks')
+                                # print('pattern match:' + device_id + ': ' + remarks + ', ' + db_oper)
         return arr
 
 def lvdb_fp_remarks_db_oper_message(device_id):
@@ -308,7 +309,7 @@ def lvdb_fp_lvf_design_message(device_id):
 # Step 4: if LVDB-FP is not nearby LV UG/LV OH Vectors, then error.
 '''
 
-def lvdb_fp_snapping():
+def lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         arr = []
         arr_lv = []
         # qgis distanceArea
@@ -318,22 +319,26 @@ def lvdb_fp_snapping():
         layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
         feat_01 = layerLV_01.getFeatures()
         for f in feat_01:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # loop all vertex in this line
-                for geom_01 in polyline_y:
-                       arr_lv.append(geom_01)
+                device_temp = f.attribute('device_id')
+                if device_temp not in arr_lv_oh_exclude_geom:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        # loop all vertex in this line
+                        for geom_01 in polyline_y:
+                               arr_lv.append(geom_01)
 
         layerLV_02 = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
         feat_02 = layerLV_02.getFeatures()
         for f in feat_02:
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                #loop all vertex in this line
-                for geom_02 in polyline_y:
-                        arr_lv.append(geom_02)
+                device_temp = f.attribute('device_id')
+                if device_temp not in arr_lv_ug_exclude_geom:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyline_y = y.asPolyline()
+                        #loop all vertex in this line
+                        for geom_02 in polyline_y:
+                                arr_lv.append(geom_02)
         # print(arr_lv)
 
         # get geom of lvdb-fp layer

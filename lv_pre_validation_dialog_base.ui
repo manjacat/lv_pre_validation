@@ -24,9 +24,15 @@
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>321</width>
+     <width>471</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -62,6 +68,12 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="text">
     <string>Reset Errors</string>
    </property>
@@ -82,15 +94,27 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>289</x>
      <y>540</y>
-     <width>160</width>
-     <height>41</height>
+     <width>211</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QPushButton" name="pushButton_qaqc">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Run QAQC</string>
       </property>
@@ -98,6 +122,12 @@
     </item>
     <item>
      <widget class="QDialogButtonBox" name="button_box">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -117,9 +147,21 @@
      <height>263</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="1" column="2">
      <widget class="QLabel" name="err_lvug">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -136,6 +178,12 @@
     </item>
     <item row="3" column="2">
      <widget class="QLabel" name="err_lv_fuse">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -152,6 +200,12 @@
     </item>
     <item row="8" column="1">
      <widget class="QLabel" name="count_st_light">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -168,6 +222,12 @@
     </item>
     <item row="1" column="1">
      <widget class="QLabel" name="count_lvug">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -184,6 +244,12 @@
     </item>
     <item row="12" column="2">
      <widget class="Line" name="line_3">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -191,6 +257,12 @@
     </item>
     <item row="5" column="2">
      <widget class="QLabel" name="err_lvdb_fp">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -207,6 +279,12 @@
     </item>
     <item row="5" column="1">
      <widget class="QLabel" name="count_lvdb_fp">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -223,6 +301,12 @@
     </item>
     <item row="7" column="1">
      <widget class="QLabel" name="count_dmd_pt">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -239,6 +323,12 @@
     </item>
     <item row="2" column="2">
      <widget class="QLabel" name="err_lvoh">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>0</string>
       </property>
@@ -249,6 +339,12 @@
     </item>
     <item row="14" column="2">
      <widget class="Line" name="line_4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -256,6 +352,12 @@
     </item>
     <item row="4" column="1">
      <widget class="QLabel" name="count_lv_cj">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -272,6 +374,12 @@
     </item>
     <item row="4" column="2">
      <widget class="QLabel" name="err_lv_cj">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -288,6 +396,12 @@
     </item>
     <item row="6" column="2">
      <widget class="QLabel" name="err_pole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>0</string>
       </property>
@@ -298,6 +412,12 @@
     </item>
     <item row="10" column="2">
      <widget class="QLabel" name="err_st_duct">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -314,6 +434,12 @@
     </item>
     <item row="7" column="2">
      <widget class="QLabel" name="err_dmd_pt">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -330,6 +456,12 @@
     </item>
     <item row="10" column="0">
      <widget class="QCheckBox" name="checkBox_st_duct">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Structure Duct</string>
       </property>
@@ -337,6 +469,12 @@
     </item>
     <item row="3" column="1">
      <widget class="QLabel" name="count_lv_fuse">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -353,6 +491,12 @@
     </item>
     <item row="9" column="0">
      <widget class="QCheckBox" name="checkBox_manhole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Manhole</string>
       </property>
@@ -360,6 +504,12 @@
     </item>
     <item row="8" column="0">
      <widget class="QCheckBox" name="checkBox_st_light">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Street Light</string>
       </property>
@@ -367,6 +517,12 @@
     </item>
     <item row="9" column="1">
      <widget class="QLabel" name="count_manhole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -383,6 +539,12 @@
     </item>
     <item row="2" column="0">
      <widget class="QCheckBox" name="checkBox_lvoh">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>LV OH Conductor</string>
       </property>
@@ -390,6 +552,12 @@
     </item>
     <item row="1" column="0">
      <widget class="QCheckBox" name="checkBox_lvug">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>LV UG Conductor</string>
       </property>
@@ -397,6 +565,12 @@
     </item>
     <item row="7" column="0">
      <widget class="QCheckBox" name="checkBox_dmd_pt">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Demand Point</string>
       </property>
@@ -404,6 +578,12 @@
     </item>
     <item row="5" column="0">
      <widget class="QCheckBox" name="checkBox_lvdb_fp">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>LVDB-FP</string>
       </property>
@@ -411,6 +591,12 @@
     </item>
     <item row="4" column="0">
      <widget class="QCheckBox" name="checkBox_lv_cj">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>LV Cable Joint</string>
       </property>
@@ -418,6 +604,12 @@
     </item>
     <item row="6" column="0">
      <widget class="QCheckBox" name="checkBox_pole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Pole</string>
       </property>
@@ -425,6 +617,12 @@
     </item>
     <item row="2" column="1">
      <widget class="QLabel" name="count_lvoh">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -441,6 +639,12 @@
     </item>
     <item row="3" column="0">
      <widget class="QCheckBox" name="checkBox_lv_fuse">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>LV Fuse</string>
       </property>
@@ -448,6 +652,12 @@
     </item>
     <item row="10" column="1">
      <widget class="QLabel" name="count_st_duct">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -464,6 +674,12 @@
     </item>
     <item row="9" column="2">
      <widget class="QLabel" name="err_manhole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -480,6 +696,12 @@
     </item>
     <item row="6" column="1">
      <widget class="QLabel" name="count_pole">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -496,6 +718,12 @@
     </item>
     <item row="8" column="2">
      <widget class="QLabel" name="err_st_light">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <weight>50</weight>
@@ -512,6 +740,12 @@
     </item>
     <item row="13" column="2">
      <widget class="QLabel" name="err_total">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>0</string>
       </property>
@@ -548,9 +782,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>409</y>
+     <y>400</y>
      <width>471</width>
-     <height>71</height>
+     <height>31</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -562,7 +796,14 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_csv"/>
+     <widget class="QLineEdit" name="lineEdit_csv">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_csv">
@@ -582,9 +823,21 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <widget class="QCheckBox" name="checkBox_all">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -599,6 +852,12 @@
     </item>
     <item>
      <widget class="QLabel" name="title_total">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -616,6 +875,12 @@
     </item>
     <item>
      <widget class="QLabel" name="title_errors">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -641,6 +906,12 @@
      <width>471</width>
      <height>16</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>

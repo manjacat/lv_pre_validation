@@ -219,29 +219,44 @@ def dmd_pt_snapping():
         for lyr in arr_layer_name:
                 layer_lv_01 = QgsProject.instance().mapLayersByName(lyr)[0]
                 feat_lv_01 = layer_lv_01.getFeatures()
+                # query = '"device_id" = \'' + 'RPS6122ohc724' + '\''
+                # feat_lv_01 = layer_lv_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+                
                 for f in feat_lv_01:
+                        dev_id_temp = f.attribute('device_id')
                         geom = f.geometry()
-                        y = geom.mergeLines()
-                        # Get last vertex
-                        arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline())-1])
-        # print('total array:',len(arr_lv_vertex))
+                        display_str = QgsWkbTypes.displayString(geom.wkbType())
+                        geom_get = geom.get()
+                        if display_str != 'Unknown' and geom_get.isEmpty() == False:
+                                y = geom.mergeLines()
+                                y_type = QgsWkbTypes.displayString(y.wkbType())
+                                if y_type != 'LineString':
+                                        print(dev_id_temp + ' ' + QgsWkbTypes.displayString(y.wkbType()))
+                                if y_type != 'MultiLineString':
+                                        # Get first vertex
+                                        arr_lv_vertex.append(y.asPolyline()[0])
+                                        # Get last vertex
+                                        arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline())-1])
 
-        # Get geometry of Demand point and check distance
-        # print('layer_name is:',layer_name)
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
+
         for f in feat:
                 device_id = f.attribute('device_id')
                 geom = f.geometry()
+                display_str = QgsWkbTypes.displayString(geom.wkbType())
                 # new arr_snapping each loop
                 arr_snapping = []
                 # loop through all LV OH & LV UG
                 for geom_lv in arr_lv_vertex:
                         geom_x = geom.asPoint()
                         m = distance.measureLine(geom_lv, geom_x)
-                        # print('distance in meters',m)
+                        # if m < 0.001 or str(m) == 'nan':
                         if m < 0.001:
                                 arr_snapping.append(device_id)
+                        # elif m >= 0.001 and m < 0.01:
+                        #        print(device_id + ' distance is ' + str("{:.5f}".format(m)))                                
+                                
                 if len(arr_snapping) == 0:
                         arr.append(device_id)        
         return arr

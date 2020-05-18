@@ -56,6 +56,10 @@ def exec_validation(self):
     # error message
     e_msg = ''
 
+    # error geom
+    arr_lv_ug_exclude_geom = []
+    arr_lv_oh_exclude_geom = []
+
     #***************************************************************
     #***********     CHECK HOW MANY FEATURES SELECTED    ***********
     #***************************************************************
@@ -112,19 +116,35 @@ def exec_validation(self):
     if len(arr_feat_count) > 0:
         print(arr_feat_count)
 
-    #****************************************************************
-    #***************     LV UG COND VALIDATION    *******************
-    #****************************************************************
+    #*******************************************************
+    #***************     Z M CHECKING    *******************
+    #*******************************************************
 
     arr_lv_ug = []
 
     # check z-m shapefile
-    if lv_ug_flag:
-        arr_lv_ug = lv_ug_z_m_shapefile()
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_z_m_shapefile_message(device_id)
-            lv_ug_error += 1
-            total_error += 1
+    arr_lv_ug = lv_ug_z_m_shapefile()
+    arr_lv_ug_exclude_geom = arr_lv_ug
+    # print(len(arr_lv_ug_exclude_geom))
+    for device_id in arr_lv_ug:
+        e_msg += lv_ug_z_m_shapefile_message(device_id)
+        lv_ug_error += 1
+        total_error += 1
+
+    arr_lv_oh = []
+    
+    # check z-m shapefile
+    arr_lv_oh = lv_oh_z_m_shapefile()
+    arr_lv_oh_exclude_geom = arr_lv_oh
+    # print(len(arr_lv_oh_exclude_geom))
+    for device_id in arr_lv_oh:
+        e_msg += lv_oh_z_m_shapefile_message(device_id)
+        lv_oh_error += 1
+        total_error += 1
+
+    #****************************************************************
+    #***************     LV UG COND VALIDATION    *******************
+    #****************************************************************
 
     # check for duplicates
     if lv_ug_flag:
@@ -182,7 +202,7 @@ def exec_validation(self):
 
     # check for incoming lv ug vs in_lvdb_id
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_lv_db_in()
+        arr_lv_ug = lv_ug_lv_db_in(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_lv_db_in_message(device_id)
             lv_ug_error += 1
@@ -190,7 +210,7 @@ def exec_validation(self):
 
     # check for outgoing lv ug vs out_lvdb_id
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_lv_db_out()
+        arr_lv_ug = lv_ug_lv_db_out(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             e_msg += lvug_lvdb_out_message(device_id)
             total_error += 1
@@ -233,7 +253,7 @@ def exec_validation(self):
 
     # check for self intersect geometry
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_self_intersect()
+        arr_lv_ug = lv_ug_self_intersect(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_self_intersect_message(device_id)
             lv_ug_error += 1
@@ -241,14 +261,14 @@ def exec_validation(self):
 
     # check for distance between 2nd vertex to LVDB-FP
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_1_2_incoming()
+        arr_lv_ug = lv_ug_1_2_incoming(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_1_2_incoming_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_1_2_outgoing()
+        arr_lv_ug = lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             e_msg += lv_ug_1_2_outgoing_message(device_id)
             lv_ug_error += 1
@@ -256,17 +276,17 @@ def exec_validation(self):
 
     # check for LV UG hanging
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_hanging()
+        arr_lv_ug = lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_ug:
-            e_msg += lv_ug_hanging_message(device_id)
+            e_msg += lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
             lv_ug_error += 1
             total_error += 1
 
     # check for LV UG buffer
     if lv_ug_flag:
-        arr_lv_ug = lv_ug_buffer()
+        arr_lv_ug = lv_ug_buffer(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
-            e_msg += lv_ug_buffer_message(device_id)
+            e_msg += lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom)
             lv_ug_error += 1
             total_error += 1
 
@@ -282,16 +302,8 @@ def exec_validation(self):
     #***************     LV OH COND VALIDATION     ******************
     #****************************************************************
 
-    arr_lv_oh = []
+    # moved z_m checking to top
     
-    # check z-m shapefile
-    if lv_oh_flag:
-        arr_lv_oh = lv_oh_z_m_shapefile()
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_z_m_shapefile_message(device_id)
-            lv_oh_error += 1
-            total_error += 1
-
     # check for duplicates
     if lv_oh_flag:
         arr_lv_oh = lv_oh_duplicate()
@@ -355,7 +367,7 @@ def exec_validation(self):
 
     # check LV OH self intersect
     if lv_oh_flag:
-        arr_lv_oh = lv_oh_self_intersect()
+        arr_lv_oh = lv_oh_self_intersect(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             e_msg += lv_oh_self_intersect_message(device_id)
             lv_oh_error += 1
@@ -363,17 +375,17 @@ def exec_validation(self):
 
     # check LV OH hanging
     if lv_oh_flag:
-        arr_lv_oh = lv_oh_hanging()
+        arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
-            e_msg += lv_oh_hanging_message(device_id)
+            e_msg += lv_oh_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
             lv_oh_error += 1
             total_error += 1
 
     # check for LV OH buffer
     if lv_oh_flag:
-        arr_lv_oh = lv_oh_buffer()
+        arr_lv_oh = lv_oh_buffer(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
-            e_msg += lv_oh_buffer_message(device_id)
+            e_msg += lv_oh_buffer_message(device_id, arr_lv_oh_exclude_geom)
             lv_oh_error += 1
             total_error += 1
     
@@ -453,7 +465,7 @@ def exec_validation(self):
 
     # check for LV Fuse(Blackbox) Snapping Error
     if lv_fuse_flag:
-        arr_lv_fuse = lv_fuse_snapping()
+        arr_lv_fuse = lv_fuse_snapping(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_fuse:
             e_msg += lv_fuse_snapping_message(device_id)
             lv_fuse_error += 1
@@ -524,7 +536,7 @@ def exec_validation(self):
 
     # check for snapping with LV OH/LV UG
     if lv_cj_flag:
-        arr_lv_cj = lv_cj_snapping()
+        arr_lv_cj = lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_cj:
             e_msg += lv_cj_snapping_message(device_id)
             lv_cj_error += 1
@@ -613,7 +625,7 @@ def exec_validation(self):
 
     # check for lvdb-fp hanging/snapping
     if lvdb_fp_flag:
-        arr_lvdb_fp = lvdb_fp_snapping()
+        arr_lvdb_fp = lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lvdb_fp:
             e_msg += lvdb_fp_snapping_message(device_id)
             lvdb_fp_error += 1
@@ -687,7 +699,7 @@ def exec_validation(self):
 
     # check for Pole/LV OH vertex
     if pole_flag:
-        arr_pole = pole_lv_oh_vertex()
+        arr_pole = pole_lv_oh_vertex(arr_lv_oh_exclude_geom)
         for device_id in arr_pole:
             e_msg += pole_lv_oh_vertex_message(device_id)
             pole_error += 1
@@ -1040,7 +1052,7 @@ def exec_validation(self):
               "Success", "Output file written at " + filename,
               level=Qgis.Success, duration=3)
     else:
-        print(e_msg)
+        # print(e_msg)
         print('total Error(s):', str(total_error))
         self.iface.messageBar().pushMessage(
               "Success", "Validation completed. " + str(total_error) + " ERROR(s) found.",

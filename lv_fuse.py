@@ -225,7 +225,7 @@ def lv_fuse_pole_distance_message(device_id):
 # Step 4: if LV Fuse is not nearby LV OH Vectors, then error.
 '''
 
-def lv_fuse_snapping():
+def lv_fuse_snapping(arr_lv_oh_exclude_geom):
 
         # trylukis()
         # try_lukis_line()
@@ -243,12 +243,14 @@ def lv_fuse_snapping():
         # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         feat_01 = layerLV_01.getFeatures()        
         for f in feat_01:
-                geom = f.geometry()                
-                y = geom.mergeLines()
-                arr_lv_line.append(geom)
-                polyline_y = y.asPolyline()
-                for geom_02 in polyline_y:
-                        arr_lv_vector.append(geom_02)
+                device_temp = f.attribute('device_id')
+                if device_temp not in arr_lv_oh_exclude_geom: 
+                        geom = f.geometry()                
+                        y = geom.mergeLines()
+                        arr_lv_line.append(geom)
+                        polyline_y = y.asPolyline()
+                        for geom_02 in polyline_y:
+                                arr_lv_vector.append(geom_02)
 
         #print('arr lv line')
         #print(arr_lv_line)
