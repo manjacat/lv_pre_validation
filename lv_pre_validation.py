@@ -200,7 +200,8 @@ class lv_pre_validation:
     def select_all(self):
         #list all checkbox in plugin
         arr_chkbox = [
-            self.dlg.checkBox_lvoh
+            self.dlg.checkBox_device_id
+            ,self.dlg.checkBox_lvoh
             ,self.dlg.checkBox_lvug
             ,self.dlg.checkBox_pole
             ,self.dlg.checkBox_lv_fuse
@@ -244,7 +245,7 @@ class lv_pre_validation:
 
     def run_qa_qc(self):
         # run qa qc moved to run_validation.py
-        print('calling new python file')
+        # print('calling new python file')
         exec_validation(self)
 
         return 0

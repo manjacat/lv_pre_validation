@@ -230,8 +230,8 @@ def dmd_pt_snapping():
                         if display_str != 'Unknown' and geom_get.isEmpty() == False:
                                 y = geom.mergeLines()
                                 y_type = QgsWkbTypes.displayString(y.wkbType())
-                                if y_type != 'LineString':
-                                        print(dev_id_temp + ' ' + QgsWkbTypes.displayString(y.wkbType()))
+                                # if y_type != 'LineString':
+                                #        print(dev_id_temp + ' ' + QgsWkbTypes.displayString(y.wkbType()))
                                 if y_type != 'MultiLineString':
                                         # Get first vertex
                                         arr_lv_vertex.append(y.asPolyline()[0])

@@ -194,7 +194,7 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
                 geom = f.geometry()
                 geom_pole = geom.asPoint()
                 for vertex in arr_lv_oh:
-                        m = distance.measureLine(geom_pole,yavertex)
+                        m = distance.measureLine(geom_pole,vertex)
                         # user feedback: changed upper limit to 2.6 (previously 1.15)
                         if m >= 0.85 and m <= 2.5:
                                 arr_snapping.append(device_id)                        

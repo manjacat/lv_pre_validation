@@ -2,6 +2,13 @@
 """
 /***************************************************************************
  seperating main button with GUI code
+
+ Changelog
+ ---------
+ 18/5/2020: require geometry checks for LV OH/LV UG to prevent it throws error in other checks (demand point, lvdb, pole etc)
+ 27/5/2020: allow 'N/A' for [pole number] column
+ 4/6/2020: seperate device id error as seperate checks
+ 
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
@@ -42,6 +49,7 @@ def exec_validation(self):
     #*****************************************************
 
     #start total_error count
+    device_id_error = 0
     lv_ug_error = 0
     lv_oh_error = 0
     lv_fuse_error = 0
@@ -65,6 +73,7 @@ def exec_validation(self):
     #***************************************************************
 
     # init flags
+    device_id_flag = self.dlg.checkBox_device_id.isChecked() 
     lv_ug_flag = self.dlg.checkBox_lvug.isChecked()        
     lv_oh_flag = self.dlg.checkBox_lvoh.isChecked()
     lv_fuse_flag = self.dlg.checkBox_lv_fuse.isChecked()
@@ -78,6 +87,9 @@ def exec_validation(self):
 
     feat_count = 0
     arr_feat_count = []
+    if self.dlg.checkBox_device_id.isChecked():
+        arr_feat_count.append('Device_Id')
+        feat_count += 1
     if self.dlg.checkBox_lvug.isChecked():
         arr_feat_count.append('LV_UG_Conductor')
         feat_count += 1
@@ -116,6 +128,103 @@ def exec_validation(self):
     if len(arr_feat_count) > 0:
         print(arr_feat_count)
 
+    #******************************************************
+    #**********     DEVICE ID CHECKING    *****************
+    #******************************************************
+
+    # print('current total (device_id): ' + str(total_error))
+
+    arr_device_id_err = []
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = lv_ug_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += lv_ug_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = lv_oh_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += lv_oh_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = lv_fuse_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += lv_fuse_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = lv_cj_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += lv_cj_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = lvdb_fp_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += lvdb_fp_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = pole_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += pole_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+    
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = dmd_pt_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += dmd_pt_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        arr_device_id_err = st_light_device_id_format()
+        for device_id in arr_device_id_err:
+            e_msg += st_light_device_id_format_message(device_id)
+            device_id_error += 1
+            total_error += 1
+
+    # check for device_id format
+    if device_id_flag:
+        try:
+            arr_device_id_err = manhole_device_id_format()
+            for device_id in arr_device_id_err:
+                e_msg += manhole_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('manhole device id skipped')
+
+    # check for device_id format
+    if device_id_flag:
+        try:
+            arr_device_id_err = st_duct_device_id_format()
+            for device_id in arr_device_id_err:
+                e_msg += st_duct_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('structure duct device id skipped')
+
+    print('current total (end of device id): ' + str(total_error))
+
+
     #*******************************************************
     #***************     Z M CHECKING    *******************
     #*******************************************************
@@ -142,6 +251,8 @@ def exec_validation(self):
         lv_oh_error += 1
         total_error += 1
 
+    # print('current total error is (zm check):' + str(total_error))
+
     #****************************************************************
     #***************     LV UG COND VALIDATION    *******************
     #****************************************************************
@@ -151,14 +262,6 @@ def exec_validation(self):
         arr_lv_ug = lv_ug_duplicate()
         for device_id in arr_lv_ug:
             e_msg += lv_ug_duplicate_message(device_id)
-            lv_ug_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if lv_ug_flag:
-        arr_lv_ug = lv_ug_device_id_format()
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_device_id_format_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
@@ -290,13 +393,14 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-    # check for coincidence geometry
-    if lv_ug_flag:
-        arr_lv_ug = lv_ug_coin()
-        for device_id in arr_lv_ug:
-            e_msg += lv_ug_self_intersect_message(device_id)
-            lv_ug_error += 1
-            total_error += 1
+##    # check for coincidence geometry
+##    if lv_ug_flag:
+##        arr_lv_ug = lv_ug_coin()
+##        for device_id in arr_lv_ug:
+##            e_msg += lv_ug_self_intersect_message(device_id)
+##            lv_ug_error += 1
+##            total_error += 1
+
 
     #****************************************************************
     #***************     LV OH COND VALIDATION     ******************
@@ -309,14 +413,6 @@ def exec_validation(self):
         arr_lv_oh = lv_oh_duplicate()
         for device_id in arr_lv_oh:
             e_msg += lv_oh_duplicate_message(device_id)
-            lv_oh_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if lv_oh_flag:
-        arr_lv_oh = lv_oh_device_id_format()
-        for device_id in arr_lv_oh:
-            e_msg += lv_oh_device_id_format_message(device_id)
             lv_oh_error += 1
             total_error += 1
 
@@ -412,14 +508,6 @@ def exec_validation(self):
             lv_fuse_error += 1
             total_error += 1
 
-    # check for device_id format
-    if lv_fuse_flag:
-        arr_lv_fuse = lv_fuse_device_id_format()
-        for device_id in arr_lv_fuse:
-            e_msg += lv_fuse_device_id_format_message(device_id)
-            lv_fuse_error += 1
-            total_error += 1
-
     # check for mandatory not null
     field_name_arr = [
         'status'
@@ -475,6 +563,8 @@ def exec_validation(self):
     #**************    LV Cable Joint VALIDATION     ***************
     #***************************************************************
 
+    # print('current total (lv cj): ' + str(total_error))
+
     arr_lv_cj = []
 
     # check for z-m value
@@ -491,14 +581,6 @@ def exec_validation(self):
         for device_id in arr_lv_cj:
             e_msg += lv_cj_duplicate_message(device_id)
             lv_cj_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if lv_cj_flag:
-        arr_cj_oh = lv_cj_device_id_format()
-        for device_id in arr_lv_cj:
-            e_msg += lv_cj_device_id_format_message(device_id)
-            lv_oh_error += 1
             total_error += 1
 
     # check for mandatory not null
@@ -547,6 +629,8 @@ def exec_validation(self):
     #******************    LVDB-FP VALIDATION     ******************
     #***************************************************************
 
+    # print('current total (lvdb-fp): ' + str(total_error))
+
     arr_lvdb_fp = []
 
     # check for z-m value
@@ -562,14 +646,6 @@ def exec_validation(self):
         arr_lvdb_fp = lvdb_fp_duplicate()
         for device_id in arr_lvdb_fp:
             e_msg += lvdb_fp_duplicate_message(device_id)
-            lvdb_fp_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if lvdb_fp_flag:
-        arr_lvdb_fp = lvdb_fp_device_id_format()
-        for device_id in arr_lvdb_fp:
-            e_msg += lvdb_fp_device_id_format_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
 
@@ -631,6 +707,8 @@ def exec_validation(self):
             lvdb_fp_error += 1
             total_error += 1
 
+    print('end of total: ' + str(total_error))
+
     #***************************************************************
     #********************    POLE VALIDATION     *******************
     #***************************************************************
@@ -650,14 +728,6 @@ def exec_validation(self):
         arr_pole = pole_duplicate()
         for device_id in arr_pole:
             e_msg += pole_duplicate_message(device_id)
-            pole_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if pole_flag:
-        arr_pole = pole_device_id_format()
-        for device_id in arr_pole:
-            e_msg += pole_device_id_format_message(device_id)
             pole_error += 1
             total_error += 1
 
@@ -724,14 +794,6 @@ def exec_validation(self):
         arr_dmd_pt = dmd_pt_duplicate()
         for device_id in arr_dmd_pt:
             e_msg += dmd_pt_duplicate_message(device_id)
-            dmd_pt_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if dmd_pt_flag:
-        arr_dmd_pt = dmd_pt_device_id_format()
-        for device_id in arr_dmd_pt:
-            e_msg += dmd_pt_device_id_format_message(device_id)
             dmd_pt_error += 1
             total_error += 1
 
@@ -805,14 +867,6 @@ def exec_validation(self):
             st_light_error += 1
             total_error += 1
 
-    # check for device_id format
-    if st_light_flag:
-        arr_st_light = st_light_device_id_format()
-        for device_id in arr_st_light:
-            e_msg += st_light_device_id_format_message(device_id)
-            st_light_error += 1
-            total_error += 1
-
     # check for mandatory not null
     field_name_arr = [
         'status'
@@ -877,7 +931,7 @@ def exec_validation(self):
 
     arr_manhole = []
 
-    #check for z-m value
+    # check for z-m value
     if manhole_flag:
         arr_manhole = manhole_z_m_shapefile()
         for device_id in arr_manhole:
@@ -890,14 +944,6 @@ def exec_validation(self):
         arr_manhole = manhole_duplicate()
         for device_id in arr_manhole:
             e_msg += manhole_duplicate_message(device_id)
-            manhole_error += 1
-            total_error += 1
-
-    # check for device_id format
-    if manhole_flag:
-        arr_manhole = manhole_device_id_format()
-        for device_id in arr_manhole:
-            e_msg += manhole_device_id_format_message(device_id)
             manhole_error += 1
             total_error += 1
 
@@ -949,14 +995,6 @@ def exec_validation(self):
             st_duct_error += 1
             total_error += 1
 
-    # check for device_id format
-    if st_duct_flag:
-        arr_st_duct = st_duct_device_id_format()
-        for device_id in arr_st_duct:
-            e_msg += st_duct_device_id_format_message(device_id)
-            st_duct_error += 1
-            total_error += 1
-
     # check for mandatory not null
     field_name_arr = [
         'status'
@@ -995,11 +1033,15 @@ def exec_validation(self):
     #****************************************************************
     #******************     END OF VALIDATION     *******************
     #****************************************************************
+
+    # print('after end of validation, total error is ' + str(total_error))
             
-    #change label in GUI
-    if lv_ug_flag == False:
+    # change label in GUI
+    if device_id_flag == False:
+        device_id_error = 'Skipped'
+    if lv_ug_flag == False and lv_ug_error == 0:
         lv_ug_error = 'Skipped'
-    if lv_oh_flag == False:
+    if lv_oh_flag == False and lv_oh_error == 0:
         lv_oh_error = 'Skipped'
     if lv_fuse_flag == False:
         lv_fuse_error = 'Skipped'
@@ -1021,6 +1063,7 @@ def exec_validation(self):
     self.dlg.label_message.setText(' ')
 
     # update error count label
+    self.dlg.err_device_id.setText(str(device_id_error))
     self.dlg.err_lvug.setText(str(lv_ug_error))
     self.dlg.err_lvoh.setText(str(lv_oh_error))
     self.dlg.err_lv_fuse.setText(str(lv_fuse_error))
@@ -1061,6 +1104,7 @@ def exec_validation(self):
 
 def exec_clear_errors(self):
     #start total_error count
+    device_id_error = 0
     lv_ug_error = 0
     lv_oh_error = 0
     lv_fuse_error = 0
@@ -1074,6 +1118,7 @@ def exec_clear_errors(self):
     total_error = 0
     
     # update error count label
+    self.dlg.err_device_id.setText(str(device_id_error))
     self.dlg.err_lvug.setText(str(lv_ug_error))
     self.dlg.err_lvoh.setText(str(lv_oh_error))
     self.dlg.err_lv_fuse.setText(str(lv_fuse_error))
@@ -1086,5 +1131,9 @@ def exec_clear_errors(self):
     self.dlg.err_st_duct.setText(str(st_duct_error))
     # update total
     self.dlg.err_total.setText(str(total_error))
+
+    # clear csv file
+    self.dlg.lineEdit_csv.setText('')        
+    
     return 0
 

@@ -657,8 +657,9 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         distance = QgsDistanceArea()
         distance.setEllipsoid('WGS84')
 
-        print(arr_lv_ug_exclude_geom)
-        print(arr_lv_oh_exclude_geom)
+        # for debugging purpose
+        # print(arr_lv_ug_exclude_geom)
+        # print(arr_lv_oh_exclude_geom)
         
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         # query = '"device_id" = \'' + 'R6142ugc017' + '\''
