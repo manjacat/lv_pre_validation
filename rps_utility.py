@@ -151,9 +151,7 @@ def rps_z_m_shapefile(layer_name):
                         except:
                                 # print('ah hah! caught you finally! ' + device_id)
                                 arr.append(device_id)
-
-        # print(arr_device_id)
-                                        
+                                
         return arr
 
 # ********************************************

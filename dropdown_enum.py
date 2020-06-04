@@ -176,7 +176,7 @@ arr_lvdb_loc = [
 arr_design_lvdb = [
         'FP 1600 A - 2 in 8 out'
         ,'FP 800 A - 2 in 5 out'
-        ,'FP 160000 A - 2 in 8 out (PE)'
+        ,'FP 1600 A - 2 in 8 out (PE)'
         ,'LVDB 1600 A - 2 in 10 out (CS)'
         ,'LVDB 1600 A - 2 in 8 out'
         ,'LVDB 800 A - 2 in 6 out (CS)'

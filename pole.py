@@ -126,10 +126,13 @@ def pole_field_enum_message(device_id, field_name):
 # ****** Check for Not Null   ******
 # **********************************
 
+# user feedback: if pole_no, allow N/A
 def pole_field_not_null(field_name):
 	arr = []
 	layer = QgsProject.instance().mapLayersByName(layer_name)[0]
 	query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
+	if field_name == 'pole_no':
+                query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'NA\''
 	feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 	for f in feat:
 		device_id = f.attribute('device_id')
@@ -191,11 +194,12 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
                 geom = f.geometry()
                 geom_pole = geom.asPoint()
                 for vertex in arr_lv_oh:
-                        m = distance.measureLine(geom_pole, vertex)
-                        if m >= 0.85 and m <= 1.15:
-                                arr_snapping.append(device_id)
-                        elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
-                                print('WARNING: ' + device_id + ' distance is ' + str(m) + 'm')
+                        m = distance.measureLine(geom_pole,yavertex)
+                        # user feedback: changed upper limit to 2.6 (previously 1.15)
+                        if m >= 0.85 and m <= 2.5:
+                                arr_snapping.append(device_id)                        
+                        #elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
+                        #        print('WARNING: ' + device_id + ' distance is ' + str(m) + 'm')
                 if len(arr_snapping) == 0:
                         # print(device_id + ' arr_snapping is ' + str(len(arr_snapping)))
                         arr.append(device_id)
