@@ -8,6 +8,8 @@
  18/5/2020: require geometry checks for LV OH/LV UG to prevent it throws error in other checks (demand point, lvdb, pole etc)
  27/5/2020: allow 'N/A' for [pole number] column
  4/6/2020: seperate device id error as seperate checks
+ 11/6/2020: added device_id.strip() to remove carriage return (/r/n) in device_id
+ 11/6/2020: added try/catch for all object when checking for device id format error
  
  ***************************************************************************/
 """
@@ -138,73 +140,110 @@ def exec_validation(self):
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = lv_ug_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += lv_ug_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = lv_ug_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += lv_ug_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('lv ug device_id skipped')
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = lv_oh_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += lv_oh_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = lv_oh_device_id_format()
+            for device_id in arr_device_id_err:
+                e_msg += lv_oh_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('lv oh device id skipped')
 
     # check for device_id format
     if device_id_flag:
         arr_device_id_err = lv_fuse_device_id_format()
         for device_id in arr_device_id_err:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_fuse_device_id_format_message(device_id)
             device_id_error += 1
             total_error += 1
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = lv_cj_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += lv_cj_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = lv_cj_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += lv_cj_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('lv cable joint device id skipped')
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = lvdb_fp_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += lvdb_fp_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = lvdb_fp_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += lvdb_fp_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('lvdb-fp device id skipped')
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = pole_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += pole_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = pole_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += pole_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('pole device_id skipped')
     
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = dmd_pt_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += dmd_pt_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = dmd_pt_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += dmd_pt_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('demand point device_id skipped')
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = st_light_device_id_format()
-        for device_id in arr_device_id_err:
-            e_msg += st_light_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = st_light_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += st_light_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except:
+            print('street light device id skipped')
 
     # check for device_id format
     if device_id_flag:
         try:
             arr_device_id_err = manhole_device_id_format()
             for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += manhole_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
@@ -216,6 +255,8 @@ def exec_validation(self):
         try:
             arr_device_id_err = st_duct_device_id_format()
             for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += st_duct_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
@@ -236,6 +277,8 @@ def exec_validation(self):
     arr_lv_ug_exclude_geom = arr_lv_ug
     # print(len(arr_lv_ug_exclude_geom))
     for device_id in arr_lv_ug:
+        if device_id:
+                device_id = device_id.strip()
         e_msg += lv_ug_z_m_shapefile_message(device_id)
         lv_ug_error += 1
         total_error += 1
@@ -247,6 +290,8 @@ def exec_validation(self):
     arr_lv_oh_exclude_geom = arr_lv_oh
     # print(len(arr_lv_oh_exclude_geom))
     for device_id in arr_lv_oh:
+        if device_id:
+                device_id = device_id.strip()
         e_msg += lv_oh_z_m_shapefile_message(device_id)
         lv_oh_error += 1
         total_error += 1
@@ -261,6 +306,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_duplicate()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_duplicate_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -281,6 +328,8 @@ def exec_validation(self):
         if lv_ug_flag:
             arr_lv_ug = lv_ug_field_not_null(field_name)
             for device_id in arr_lv_ug:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_ug_field_not_null_message(device_id, field_name)
                 lv_ug_error += 1
                 total_error += 1
@@ -299,6 +348,8 @@ def exec_validation(self):
         if lv_ug_flag:
             arr_lv_ug = lv_ug_field_enum(field_name)
             for device_id in arr_lv_ug:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_ug_field_enum_message(device_id, field_name)
                 lv_ug_error += 1
                 total_error += 1
@@ -307,6 +358,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lv_db_in(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_lv_db_in_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -315,6 +368,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lv_db_out(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvug_lvdb_out_message(device_id)
             total_error += 1
 
@@ -322,6 +377,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lvdb_id_in_check()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_lvdb_id_check_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -329,12 +386,16 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lvdb_id_out_check()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_lvdb_id_check_message(device_id)
             total_error += 1
 
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lvdb_no_in_check()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_lvdb_no_check_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -342,6 +403,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_lvdb_no_out_check()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_lvdb_no_check_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -350,6 +413,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_length_check()
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_length_check_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -358,6 +423,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_self_intersect(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_self_intersect_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -366,6 +433,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_1_2_incoming(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_1_2_incoming_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -373,6 +442,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_1_2_outgoing_message(device_id)
             lv_ug_error += 1
             total_error += 1
@@ -381,6 +452,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
             lv_ug_error += 1
             total_error += 1
@@ -389,6 +462,8 @@ def exec_validation(self):
     if lv_ug_flag:
         arr_lv_ug = lv_ug_buffer(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom)
             lv_ug_error += 1
             total_error += 1
@@ -412,6 +487,8 @@ def exec_validation(self):
     if lv_oh_flag:
         arr_lv_oh = lv_oh_duplicate()
         for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_oh_duplicate_message(device_id)
             lv_oh_error += 1
             total_error += 1
@@ -431,6 +508,8 @@ def exec_validation(self):
         if lv_oh_flag:
             arr_lv_oh = lv_oh_field_not_null(field_name)
             for device_id in arr_lv_oh:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_oh_field_not_null_message(device_id, field_name)
                 lv_oh_error += 1
                 total_error += 1
@@ -448,6 +527,8 @@ def exec_validation(self):
         if lv_oh_flag:
             arr_lv_oh = lv_oh_field_enum(field_name)
             for device_id in arr_lv_oh:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_oh_field_enum_message(device_id, field_name)
                 lv_oh_error += 1
                 total_error += 1
@@ -457,6 +538,8 @@ def exec_validation(self):
     if lv_oh_flag:
         arr_lv_oh = lv_oh_length_check()
         for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_oh_length_check_message(device_id)
             lv_oh_error += 1
             total_error += 1
@@ -465,6 +548,8 @@ def exec_validation(self):
     if lv_oh_flag:
         arr_lv_oh = lv_oh_self_intersect(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_oh_self_intersect_message(device_id)
             lv_oh_error += 1
             total_error += 1
@@ -473,6 +558,8 @@ def exec_validation(self):
     if lv_oh_flag:
         arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_oh_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
             lv_oh_error += 1
             total_error += 1
@@ -481,6 +568,8 @@ def exec_validation(self):
     if lv_oh_flag:
         arr_lv_oh = lv_oh_buffer(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_oh_buffer_message(device_id, arr_lv_oh_exclude_geom)
             lv_oh_error += 1
             total_error += 1
@@ -496,6 +585,8 @@ def exec_validation(self):
     if lv_fuse_flag:
         arr_lv_fuse = lv_fuse_z_m_shapefile()
         for device_id in arr_lv_fuse:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_fuse_z_m_shapefile_message(device_id)
             lv_fuse_error += 1
             total_error += 1
@@ -504,6 +595,8 @@ def exec_validation(self):
     if lv_fuse_flag:
         arr_lv_fuse = lv_fuse_duplicate()
         for device_id in arr_lv_fuse:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_fuse_duplicate_message(device_id)
             lv_fuse_error += 1
             total_error += 1
@@ -522,6 +615,8 @@ def exec_validation(self):
         for field_name in field_name_arr:             
             arr_lv_fuse = lv_fuse_field_not_null(field_name)
             for device_id in arr_lv_fuse:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_fuse_field_not_null_message(device_id, field_name)
                 lv_fuse_error += 1
                 total_error += 1
@@ -539,6 +634,8 @@ def exec_validation(self):
         for field_name in field_name_arr:            
             arr_lv_fuse = lv_fuse_field_enum(field_name)
             for device_id in arr_lv_fuse:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_fuse_field_enum_message(device_id, field_name)
                 lv_fuse_error += 1
                 total_error += 1
@@ -547,6 +644,8 @@ def exec_validation(self):
     if lv_fuse_flag:
         arr_lv_fuse = lv_fuse_pole_distance()
         for device_id in arr_lv_fuse:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_fuse_pole_distance_message(device_id)
             lv_fuse_error += 1
             total_error += 1
@@ -555,6 +654,8 @@ def exec_validation(self):
     if lv_fuse_flag:
         arr_lv_fuse = lv_fuse_snapping(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_fuse:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_fuse_snapping_message(device_id)
             lv_fuse_error += 1
             total_error += 1
@@ -571,6 +672,8 @@ def exec_validation(self):
     if lv_cj_flag:
         arr_lv_cj = lv_cj_z_m_shapefile()
         for device_id in arr_lv_cj:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_cj_z_m_shapefile_message(device_id)
             lv_cj_error += 1
             total_error += 1
@@ -579,6 +682,8 @@ def exec_validation(self):
     if lv_cj_flag:
         arr_lv_cj = lv_cj_duplicate()
         for device_id in arr_lv_cj:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_cj_duplicate_message(device_id)
             lv_cj_error += 1
             total_error += 1
@@ -596,6 +701,8 @@ def exec_validation(self):
         for field_name in field_name_arr:             
             arr_lv_cj = lv_cj_field_not_null(field_name)
             for device_id in arr_lv_cj:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_cj_field_not_null_message(device_id, field_name)
                 lv_cj_error += 1
                 total_error += 1
@@ -612,6 +719,8 @@ def exec_validation(self):
         for field_name in field_name_arr:             
             arr_lv_cj = lv_cj_field_enum(field_name)
             for device_id in arr_lv_cj:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lv_cj_field_enum_message(device_id, field_name)
                 lv_cj_error += 1
                 total_error += 1
@@ -620,6 +729,8 @@ def exec_validation(self):
     if lv_cj_flag:
         arr_lv_cj = lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_cj:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lv_cj_snapping_message(device_id)
             lv_cj_error += 1
             total_error += 1
@@ -637,6 +748,8 @@ def exec_validation(self):
     if lvdb_fp_flag:
         arr_lvdb_fp = lvdb_fp_z_m_shapefile()
         for device_id in arr_lvdb_fp:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvdb_fp_z_m_shapefile_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
@@ -645,6 +758,8 @@ def exec_validation(self):
     if lvdb_fp_flag:
         arr_lvdb_fp = lvdb_fp_duplicate()
         for device_id in arr_lvdb_fp:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvdb_fp_duplicate_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
@@ -663,6 +778,8 @@ def exec_validation(self):
         if lvdb_fp_flag:
             arr_lvdb_fp = lvdb_fp_field_not_null(field_name)
             for device_id in arr_lvdb_fp:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lvdb_fp_field_not_null_message(device_id, field_name)
                 lvdb_fp_error += 1
                 total_error += 1
@@ -679,6 +796,8 @@ def exec_validation(self):
         if lvdb_fp_flag:
             arr_lvdb_fp = lvdb_fp_field_enum(field_name)
             for device_id in arr_lvdb_fp:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += lvdb_fp_field_enum_message(device_id, field_name)
                 lvdb_fp_error += 1
                 total_error += 1
@@ -687,6 +806,8 @@ def exec_validation(self):
     if lvdb_fp_flag:
         arr_lvdb_fp = lvdb_fp_remarks_db_oper()
         for device_id in arr_lvdb_fp:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvdb_fp_remarks_db_oper_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
@@ -695,6 +816,8 @@ def exec_validation(self):
     if lvdb_fp_flag:
         arr_lvdb_fp = lvdb_fp_lvf_design()
         for device_id in arr_lvdb_fp:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvdb_fp_lvf_design_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
@@ -703,6 +826,8 @@ def exec_validation(self):
     if lvdb_fp_flag:
         arr_lvdb_fp = lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lvdb_fp:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += lvdb_fp_snapping_message(device_id)
             lvdb_fp_error += 1
             total_error += 1
@@ -719,6 +844,8 @@ def exec_validation(self):
     if pole_flag:
         arr_pole = pole_z_m_shapefile()
         for device_id in arr_pole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += pole_z_m_shapefile_message(device_id)
             pole_error += 1
             total_error += 1
@@ -727,6 +854,8 @@ def exec_validation(self):
     if pole_flag:
         arr_pole = pole_duplicate()
         for device_id in arr_pole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += pole_duplicate_message(device_id)
             pole_error += 1
             total_error += 1
@@ -746,6 +875,8 @@ def exec_validation(self):
         if pole_flag:
             arr_pole = pole_field_not_null(field_name)
         for device_id in arr_pole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += pole_field_not_null_message(device_id, field_name)
             pole_error += 1
             total_error += 1
@@ -763,6 +894,8 @@ def exec_validation(self):
         if pole_flag:
             arr_pole = pole_field_enum(field_name)
             for device_id in arr_pole:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += pole_field_enum_message(device_id, field_name)
                 pole_error += 1
                 total_error += 1
@@ -771,6 +904,8 @@ def exec_validation(self):
     if pole_flag:
         arr_pole = pole_lv_oh_vertex(arr_lv_oh_exclude_geom)
         for device_id in arr_pole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += pole_lv_oh_vertex_message(device_id)
             pole_error += 1
             total_error += 1
@@ -785,6 +920,8 @@ def exec_validation(self):
     if dmd_pt_flag:
         arr_dmd_pt = dmd_pt_z_m_shapefile()
         for device_id in arr_dmd_pt:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += dmd_pt_z_m_shapefile_message(device_id)
             dmd_pt_error += 1
             total_error += 1
@@ -793,6 +930,8 @@ def exec_validation(self):
     if dmd_pt_flag:
         arr_dmd_pt = dmd_pt_duplicate()
         for device_id in arr_dmd_pt:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += dmd_pt_duplicate_message(device_id)
             dmd_pt_error += 1
             total_error += 1
@@ -811,6 +950,8 @@ def exec_validation(self):
         if dmd_pt_flag:
             arr_dmd_pt = dmd_pt_field_not_null(field_name)
             for device_id in arr_dmd_pt:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += dmd_pt_field_not_null_message(device_id, field_name)
                 dmd_pt_error += 1
                 total_error += 1
@@ -825,6 +966,8 @@ def exec_validation(self):
         if dmd_pt_flag:
             arr_dmd_pt = dmd_pt_field_enum(field_name)
             for device_id in arr_dmd_pt:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += dmd_pt_field_enum_message(device_id, field_name)
                 dmd_pt_error += 1
                 total_error += 1
@@ -833,6 +976,8 @@ def exec_validation(self):
     if dmd_pt_flag:
         arr_dmd_pt = dmd_pt_remarks()
         for device_id in arr_dmd_pt:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += dmd_pt_remarks_message(device_id)
             dmd_pt_error += 1
             total_error += 1
@@ -841,6 +986,8 @@ def exec_validation(self):
     if dmd_pt_flag:
         arr_dmd_pt = dmd_pt_snapping()
         for device_id in arr_dmd_pt:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += dmd_pt_snapping_message(device_id)
             dmd_pt_error += 1
             total_error += 1
@@ -855,6 +1002,8 @@ def exec_validation(self):
     if st_light_flag:
         arr_st_light = st_light_z_m_shapefile()
         for device_id in arr_st_light:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_light_z_m_shapefile_message(device_id)
             st_light_error += 1
             total_error += 1
@@ -863,6 +1012,8 @@ def exec_validation(self):
     if st_light_flag:
         arr_st_light = st_light_duplicate()
         for device_id in arr_st_light:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_light_duplicate_message(device_id)
             st_light_error += 1
             total_error += 1
@@ -881,6 +1032,8 @@ def exec_validation(self):
         if st_light_flag:
             arr_st_light = st_light_field_not_null(field_name)
             for device_id in arr_st_light:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += st_light_field_not_null_message(device_id, field_name)
                 st_light_error += 1
                 total_error += 1
@@ -897,6 +1050,8 @@ def exec_validation(self):
         if st_light_flag:
             arr_st_light = st_light_field_enum(field_name)
             for device_id in arr_st_light:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += st_light_field_enum_message(device_id, field_name)
                 st_light_error += 1
                 total_error += 1
@@ -905,6 +1060,8 @@ def exec_validation(self):
     if st_light_flag:
         arr_st_light = st_light_phasing()
         for device_id in arr_st_light:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_light_phasing_message(device_id)
             st_light_error += 1
             total_error += 1
@@ -913,6 +1070,8 @@ def exec_validation(self):
     if st_light_flag:
         arr_st_light = st_light_cont_dev()
         for device_id in arr_st_light:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_light_cont_dev_message(device_id)
             st_light_error += 1
             total_error += 1
@@ -921,6 +1080,8 @@ def exec_validation(self):
     if st_light_flag:
         arr_st_light = st_light_overlap_pole()
         for device_id in arr_st_light:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_light_overlap_pole_message(device_id)
             st_light_error += 1
             total_error += 1
@@ -935,6 +1096,8 @@ def exec_validation(self):
     if manhole_flag:
         arr_manhole = manhole_z_m_shapefile()
         for device_id in arr_manhole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += manhole_z_m_shapefile_message(device_id)
             manhole_error += 1
             total_error += 1
@@ -943,6 +1106,8 @@ def exec_validation(self):
     if manhole_flag:
         arr_manhole = manhole_duplicate()
         for device_id in arr_manhole:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += manhole_duplicate_message(device_id)
             manhole_error += 1
             total_error += 1
@@ -961,6 +1126,8 @@ def exec_validation(self):
         if manhole_flag:
             arr_manhole = manhole_field_not_null(field_name)
             for device_id in arr_manhole:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += manhole_field_not_null_message(device_id, field_name)
                 manhole_error += 1
                 total_error += 1
@@ -977,6 +1144,8 @@ def exec_validation(self):
         if manhole_flag:
             arr_manhole = manhole_field_enum(field_name)
             for device_id in arr_manhole:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += manhole_field_enum_message(device_id, field_name)
                 manhole_error += 1
                 total_error += 1
@@ -991,6 +1160,8 @@ def exec_validation(self):
     if st_duct_flag:
         arr_st_duct = st_duct_duplicate()
         for device_id in arr_st_duct:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_duct_duplicate_message(device_id)
             st_duct_error += 1
             total_error += 1
@@ -1009,6 +1180,8 @@ def exec_validation(self):
         if st_duct_flag:
             arr_st_duct = st_duct_field_not_null(field_name)
             for device_id in arr_st_duct:
+                if device_id:
+                    device_id = device_id.strip()
                 e_msg += st_duct_field_not_null_message(device_id, field_name)
                 arr_st_duct_error += 1
                 total_error += 1
@@ -1026,6 +1199,8 @@ def exec_validation(self):
         if st_duct_flag:
             arr_st_duct = st_light_field_enum(field_name)
         for device_id in arr_st_duct:
+            if device_id:
+                device_id = device_id.strip()
             e_msg += st_duct_field_enum_message(device_id, field_name)
             st_duct_error += 1
             total_error += 1

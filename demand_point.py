@@ -30,6 +30,8 @@ def dmd_pt_z_m_shapefile():
 def dmd_pt_z_m_shapefile_message(geom_name):
         longitude = 0
         latitude = 0
+        if not geom_name:
+                geom_name = 'NULL'
         e_msg = dmd_pt_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
@@ -46,14 +48,18 @@ def dmd_pt_device_id_format_message(device_id):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
-        e_msg = dmd_pt_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+                try:
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except:
+                        err_count += 1
+        e_msg = dmd_pt_device_id_format_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -68,14 +74,18 @@ def dmd_pt_duplicate_message(device_id):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
-        e_msg = dmd_pt_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+                try:
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except:
+                        err_count += 1
+        e_msg = dmd_pt_duplicate_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
@@ -106,14 +116,18 @@ def dmd_pt_field_enum_message(device_id, field_name):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
-        e_msg = dmd_pt_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+                try:
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except:
+                        err_count += 1
+        e_msg = dmd_pt_enum_valid +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -133,15 +147,22 @@ def dmd_pt_field_not_null(field_name):
 def dmd_pt_field_not_null_message(device_id, field_name):
         longitude = 0
         latitude = 0
+        if device_id:
+                device_id = device_id.strip()
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
-        e_msg = dmd_pt_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+                try:    
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except Exception as e:
+                        err_count += 1
+                        
+        e_msg = dmd_pt_field_null +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ***************************************
@@ -182,17 +203,21 @@ def get_dmd_pnt_id():
 
 def dmd_pt_remarks_message(device_id):
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         longitude = 0
         latitude = 0
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                try:
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except:
+                        err_count += 1
 
-        e_msg = dmd_pt_remarks_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' remarks must be STREET LIGHT PANEL' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = dmd_pt_remarks_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' remarks must be STREET LIGHT PANEL' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************************************************
@@ -241,6 +266,7 @@ def dmd_pt_snapping():
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
 
+        err_counter = 0
         for f in feat:
                 device_id = f.attribute('device_id')
                 geom = f.geometry()
@@ -249,30 +275,38 @@ def dmd_pt_snapping():
                 arr_snapping = []
                 # loop through all LV OH & LV UG
                 for geom_lv in arr_lv_vertex:
-                        geom_x = geom.asPoint()
-                        m = distance.measureLine(geom_lv, geom_x)
-                        # if m < 0.001 or str(m) == 'nan':
-                        if m < 0.001:
-                                arr_snapping.append(device_id)
-                        # elif m >= 0.001 and m < 0.01:
-                        #        print(device_id + ' distance is ' + str("{:.5f}".format(m)))                                
-                                
+                        try:
+                                geom_x = geom.asPoint()
+                                m = distance.measureLine(geom_lv, geom_x)
+                                # if m < 0.001 or str(m) == 'nan':
+                                if m < 0.001:
+                                        arr_snapping.append(device_id)
+                                # elif m >= 0.001 and m < 0.01:
+                                #        print(device_id + ' distance is ' + str("{:.5f}".format(m)))
+                        except:
+                                err_counter += 1
+                                        
                 if len(arr_snapping) == 0:
-                        arr.append(device_id)        
+                        arr.append(device_id)
+        print('total error is ' + str(err_counter))
         return arr
 
 def dmd_pt_snapping_message(device_id):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        err_count = 0
         for f in feat:
-                geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
-        e_msg = dmd_pt_snapping_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' hanging' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+                try:
+                        geom = f.geometry()
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
+                except:
+                        err_count += 1
+        e_msg = dmd_pt_snapping_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' hanging' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************

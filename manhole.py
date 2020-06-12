@@ -44,7 +44,7 @@ def manhole_device_id_format_message(device_id):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
@@ -52,7 +52,7 @@ def manhole_device_id_format_message(device_id):
                 longitude = point.x()
                 latitude = point.y()
         
-        e_msg = manhole_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = manhole_device_id_format_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -69,7 +69,7 @@ def manhole_duplicate_message(device_id):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
@@ -77,7 +77,7 @@ def manhole_duplicate_message(device_id):
                 longitude = point.x()
                 latitude = point.y()
         
-        e_msg = manhole_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = manhole_duplicate_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -109,7 +109,7 @@ def manhole_field_enum_message(device_id, field_name):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
@@ -117,7 +117,7 @@ def manhole_field_enum_message(device_id, field_name):
                 longitude = point.x()
                 latitude = point.y()
         
-        e_msg = manhole_enum_valid + ',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = manhole_enum_valid + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -138,7 +138,7 @@ def manhole_field_not_null_message(device_id, field_name):
         longitude = 0
         latitude = 0
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
@@ -146,7 +146,7 @@ def manhole_field_not_null_message(device_id, field_name):
                 longitude = point.x()
                 latitude = point.y()
 
-        e_msg = manhole_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = manhole_field_null +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************

@@ -47,14 +47,14 @@ def lv_fuse_device_id_format_message(device_id):
         latitude = 0
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
                 point = geom.asPoint()
                 longitude = point.x()
                 latitude = point.y()
-        e_msg = lv_fuse_device_id_format_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_fuse_device_id_format_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -72,14 +72,18 @@ def lv_fuse_duplicate_message(device_id):
         latitude = 0
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
                 point = geom.asPoint()
                 longitude = point.x()
                 latitude = point.y()
-        e_msg = lv_fuse_duplicate_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' duplicated device_id: ' + device_id + + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        if not device_id:
+                device_id = 'NULL'
+        print(device_id)
+        print(lv_fuse_duplicate_code)
+        e_msg = lv_fuse_duplicate_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' duplicated device_id: '+ str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -116,14 +120,14 @@ def lv_fuse_field_enum_message(device_id, field_name):
         latitude = 0
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
                 point = geom.asPoint()
                 longitude = point.x()
                 latitude = point.y()
-        e_msg = lv_fuse_enum_valid +',' + device_id + ',' + layer_name + ': ' + device_id + ' Invalid Enumerator at: ' + field_name + + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_fuse_enum_valid +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -145,14 +149,14 @@ def lv_fuse_field_not_null_message(device_id, field_name):
         latitude = 0
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
                 point = geom.asPoint()
                 longitude = point.x()
                 latitude = point.y()
-        e_msg = lv_fuse_field_null +',' + device_id + ',' + layer_name + ': ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_fuse_field_null +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # *****************************************************************************************************
@@ -193,7 +197,7 @@ def lv_fuse_pole_distance():
                         # print('distance in meters',m)
                         if m >= 2.4 and m <= 2.6:
                                 arr_snapping.append(device_id)
-                                # print('distance between lv fuse:' + device_id + ' to nearby pole: ' + str(m) + 'm')
+                                # print('distance between lv fuse:' + str(device_id) + ' to nearby pole: ' + str(m) + 'm')
                 if len(arr_snapping) == 0:
                         # print('NO POLE is nearby ', device_id)
                         arr.append(device_id)
@@ -204,14 +208,14 @@ def lv_fuse_pole_distance_message(device_id):
         latitude = 0
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
                 point = geom.asPoint()
                 longitude = point.x()
                 latitude = point.y()
-        e_msg = lv_fuse_pole_distance_code +',' + device_id + ',' + layer_name + ': ' + device_id + ' A pole must be within 2.5m range.' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_fuse_pole_distance_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' A pole must be within 2.5m range.' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ********************************************************
@@ -277,7 +281,7 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
                         if m < 0.35:
                                 # print('distance is '+  str(m) + 'm')                        
                                 arr_snapping.append(device_id)
-                                # print('LV fuse ' + device_id + ' is touching lv oh vector!!')
+                                # print('LV fuse ' + str(device_id) + ' is touching lv oh vector!!')
                 if len(arr_snapping) == 0:
                         # print(arr_snapping)
                         arr.append(device_id)
@@ -286,7 +290,7 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
 
 def lv_fuse_snapping_message(device_id):
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         longitude = 0
         latitude = 0
@@ -296,7 +300,7 @@ def lv_fuse_snapping_message(device_id):
                 longitude = point.x()
                 latitude = point.y()
         
-        e_msg = lv_fuse_snapping_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' LV Fuse is not near LV OH vertex' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_fuse_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' LV Fuse is not near LV OH vertex' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************

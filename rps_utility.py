@@ -67,6 +67,9 @@ def rps_device_id_format(layer_name):
         feat = layer.getFeatures()
         for f in feat:
                 device_id = f.attribute('device_id')
+                # check for null device id
+                if not device_id:
+                        device_id = str(device_id)
                 check = re.search(pattern, device_id)
                 # print('device id =' + device_id)
                 # print(check)

@@ -47,14 +47,20 @@ def lv_ug_z_m_shapefile_message(device_id):
         wkb_type = 'MultiLineString'
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
-        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        if device_id:
+                query = '"device_id" = \'' + str(device_id) + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        else:
+                feat = layer.getFeatures()                
         err_detail = ''
 
         for f in feat:
                 geom = f.geometry()
                 geom_type = QgsWkbTypes.displayString(geom.wkbType())
-                err_detail = layer_name + ': ' + device_id + ' geometry ERROR. Geometry is ' + geom_type
+                if device_id:
+                        err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type
+                else:
+                        err_detail = layer_name + ': Null device_id geometry ERROR. Geometry is ' + geom_type
                 if geom_type == wkb_type:
                         try:
                                 # try merge as polyline
@@ -64,7 +70,7 @@ def lv_ug_z_m_shapefile_message(device_id):
                                 # print('ah hah! caught you finally! ' + device_id)
                                 err_detail += ' but Empty or Null'
                                 
-        e_msg = lv_ug_z_m_shapefile_code + ',' + device_id + ',' + err_detail + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 
@@ -86,7 +92,7 @@ def lv_ug_device_id_format_message(device_id):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
         
-        e_msg = lv_ug_device_id_format_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_device_id_format_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -107,7 +113,7 @@ def lv_ug_duplicate_message(device_id):
                 longitude = midpoint.x()
                 latitude = midpoint.y()                
         
-        e_msg = lv_ug_duplicate_code +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' duplicated device_id: ' + device_id + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_duplicate_code +',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
@@ -152,7 +158,7 @@ def lv_ug_field_enum_message(device_id, field_name):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
         
-        e_msg = lv_ug_enum_valid +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_enum_valid +',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
  
 # **********************************
@@ -178,7 +184,7 @@ def lv_ug_field_not_null_message(device_id, field_name):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
         
-        e_msg = lv_ug_field_null +',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_field_null +',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -231,7 +237,7 @@ def lv_ug_lv_db_in_message(device_id):
                 longitude = last_point.x()
                 latitude = last_point.y()
 
-        e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column in_lvdb_id mismtach ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_lv_db_in_out_geom + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' column in_lvdb_id mismtach ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 def lv_ug_lv_db_out(arr_lv_ug_exclude_geom):
@@ -272,7 +278,7 @@ def lvug_lvdb_out_message(device_id):
                 longitude = first_point.x()
                 latitude = first_point.y()
 
-        e_msg = lv_ug_lv_db_in_out_geom + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' column out_lvdb_id mismatch' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_lv_db_in_out_geom + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' column out_lvdb_id mismatch' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ************************************
@@ -352,7 +358,7 @@ def lv_ug_lvdb_id_check_message(device_id):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
 
-        e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_no/lvdb_ot_no MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_lvdb_in_out_col + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' lvdb_in_no/lvdb_ot_no MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 def lv_ug_lvdb_no_check_message(device_id):
@@ -364,7 +370,7 @@ def lv_ug_lvdb_no_check_message(device_id):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
 
-        e_msg = lv_ug_lvdb_in_out_col + ',' + device_id + ',' + 'LV_UG_Conductor: ' + device_id + ' lvdb_in_id/lvdb_out_i MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_lvdb_in_out_col + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(device_id) + ' lvdb_in_id/lvdb_out_i MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # **********************************
@@ -390,7 +396,7 @@ def lv_ug_length_check_message(device_id):
                 longitude = midpoint.x()
                 latitude = midpoint.y()
 
-        e_msg = lv_ug_length + ',' + device_id + ',' + layer_name + ': ' + device_id + ' length less than 1.5' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_length + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' length less than 1.5' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ********************************************
@@ -407,7 +413,7 @@ def lv_ug_length_check_message(device_id):
 
 def get_lvdb_by_device_id(device_id):
         layer = QgsProject.instance().mapLayersByName('LVDB-FP')[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 device_id = f.attribute('device_id')
@@ -454,7 +460,7 @@ def lv_ug_1_2_incoming_message(device_id):
                 longitude = lastpoint.x()
                 latitude = lastpoint.y()        
 
-        e_msg = lv_ug_1_2_incoming_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' INCOMING vertex to LVDB must be more than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_1_2_incoming_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' INCOMING vertex to LVDB must be more than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 def lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom):
@@ -499,7 +505,7 @@ def lv_ug_1_2_outgoing_message(device_id):
                 longitude = second_point.x()
                 latitude = second_point.y()         
         
-        e_msg = lv_ug_1_2_outgoing_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' OUTGOING vertex from LVDB-FP must be more than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_1_2_outgoing_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' OUTGOING vertex from LVDB-FP must be more than 1.0m' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # ***************************************************
@@ -574,7 +580,7 @@ def lv_ug_self_intersect_message(device_id):
         arr_self_intersect = []
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
         for f in feat:
@@ -627,12 +633,12 @@ def lv_ug_self_intersect_message(device_id):
                                                 # pass longitude/latitude
                                                 longitude = qgs_point_0.x()
                                                 latitude = qgs_point_0.y()
-                                                # print('device id: ' + device_id + ' ' + str(qgs_point_0))
+                                                # print('device id: ' + str(device_id) + ' ' + str(qgs_point_0))
                         except:
                                 longitude = 0
                                 latitude = 0
                                 
-        e_msg = lv_ug_self_intersect_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has self intersect geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_self_intersect_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' has self intersect geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # *******************************
@@ -686,7 +692,7 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                                         arr_point = []
                                         arr_device_id = []
                                         layer_lv_ug = QgsProject.instance().mapLayersByName(layer_name)[0]
-                                        query = '"device_id" != \'' + device_id + '\''
+                                        query = '"device_id" != \'' + str(device_id) + '\''
                                         feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
                                         for g in feat_lv_ug:
                                                 device_temp = g.attribute('device_id')
@@ -770,7 +776,7 @@ def lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_g
         distance.setEllipsoid('WGS84')
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \'' + device_id + '\''
+        query = '"device_id" = \'' + str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
         for f in feat:
@@ -789,7 +795,7 @@ def lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_g
                         arr_point = []
                         arr_device_id = []
                         layer_lv_ug = QgsProject.instance().mapLayersByName(layer_name)[0]
-                        query = '"device_id" != \'' + device_id + '\''
+                        query = '"device_id" != \'' + str(device_id) + '\''
                         feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
                         for g in feat_lv_ug:
                                 device_temp = g.attribute('device_id')
@@ -858,7 +864,7 @@ def lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_g
                         longitude = 0
                         latitude = 0
                         
-        e_msg = lv_ug_hanging_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_hanging_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
         
 
@@ -894,7 +900,7 @@ def lv_ug_coin_message(device_id):
         longitude = 0
         latitude = 0
         
-        e_msg = lv_ug_coin_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' has coincidence geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_coin_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' has coincidence geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 # *************************************************
@@ -1000,7 +1006,7 @@ def lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom):
         arr_lv_ug = get_all_lv_ug_vector(arr_lv_ug_exclude_geom)
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-        query = '"device_id" = \''+ device_id + '\''
+        query = '"device_id" = \''+ str(device_id) + '\''
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 # reset array values
@@ -1042,12 +1048,12 @@ def lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom):
                                 # pass longitude/latitude
                                 longitude = qgs_point_0.x()
                                 latitude = qgs_point_0.y()
-                                # print('device id: ' + device_id + ' ' + str(qgs_point_0))
+                                # print('device id: ' + str(device_id) + ' ' + str(qgs_point_0))
                 except:
                         longitude = 0
                         latitude = 0                       
         
-        e_msg = lv_ug_buffer_code + ',' + device_id + ',' + layer_name + ': ' + device_id + ' is too close to another conductor! (distance < 0.3m) ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = lv_ug_buffer_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' is too close to another conductor! (distance < 0.3m) ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
 
