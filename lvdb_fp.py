@@ -2,6 +2,10 @@
 """
 /***************************************************************************
 All checkings related to LVDB-FP
+
+12/6/2020 - Fixed design check missed when user choose 'FP 1600 A - 2 in 8 out (PE)'
+(this value was recently changed)
+
  ***************************************************************************/
 """
 from qgis.core import *
@@ -270,7 +274,7 @@ def lvdb_fp_lvf_design():
 def get_lv_out_number(design):
         lv_out = 0
         #total design dropdown value = 8
-        if design == 'FP 1600 A - 2 in 8 out' or design == 'FP 160000 A - 2 in 8 out (PE)' or design == 'LVDB 1600 A - 2 in 8 out':
+        if design == 'FP 1600 A - 2 in 8 out' or design == 'FP 1600 A - 2 in 8 out (PE)' or design == 'LVDB 1600 A - 2 in 8 out':
                 lv_out = 8
         elif design == 'FP 800 A - 2 in 5 out' or design == 'LVDB 800 A - 2 in 5 out (CS)':
                 lv_out = 5
