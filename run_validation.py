@@ -1197,7 +1197,7 @@ def exec_validation(self):
         
     for field_name in field_name_arr:    
         if st_duct_flag:
-            arr_st_duct = st_light_field_enum(field_name)
+            arr_st_duct = st_duct_field_enum(field_name)
         for device_id in arr_st_duct:
             if device_id:
                 device_id = device_id.strip()

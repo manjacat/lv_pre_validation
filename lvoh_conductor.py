@@ -450,12 +450,13 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                                         device_temp = h.attribute('device_id')
                                         if device_temp not in arr_lv_ug_exclude_geom:
                                                 geom_h = h.geometry()
-                                                y_h = geom_h.mergeLines()
-                                                polyline_y = y_h.asPolyline()
-                                                v1_one = polyline_y[0]
-                                                v1_last = polyline_y[len(polyline_y) - 1]
-                                                arr_point.append(v1_one)
-                                                arr_point.append(v1_last)
+                                                if geom_h:
+                                                        y_h = geom_h.mergeLines()
+                                                        polyline_y = y_h.asPolyline()
+                                                        v1_one = polyline_y[0]
+                                                        v1_last = polyline_y[len(polyline_y) - 1]
+                                                        arr_point.append(v1_one)
+                                                        arr_point.append(v1_last)
 
                                 # get demand point point
                                 layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
@@ -463,8 +464,9 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                                 for j in feat_dmd_pt:
                                         devide_temp = j.attribute('device_id')
                                         geom_j = j.geometry()
-                                        j_point = geom_j.asPoint()
-                                        arr_point.append(j_point)
+                                        if geom_j:
+                                                j_point = geom_j.asPoint()
+                                                arr_point.append(j_point)
 
                                 # get LV Cable Joint
                                 layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
@@ -472,8 +474,9 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                                 for j in feat_lv_cj:
                                         devide_temp = j.attribute('device_id')
                                         geom_j = j.geometry()
-                                        j_point = geom_j.asPoint()
-                                        arr_point.append(j_point)
+                                        if geom_j:
+                                                j_point = geom_j.asPoint()
+                                                arr_point.append(j_point)
                                        
                                                         
                                 # print('arr point is:' + str(len(arr_point)))

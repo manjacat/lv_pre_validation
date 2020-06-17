@@ -29,8 +29,25 @@ def st_light_z_m_shapefile():
         arr = rps_z_m_shapefile(layer_name)
         return arr
 
-def st_light_z_m_shapefile_message(geom_name):
-        e_msg = st_light_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name+ '\n'
+def st_light_z_m_shapefile_message(device_id):
+        longitude = 0
+        latitude = 0
+
+        if device_id:
+                query = '"device_id" = \'' + str(device_id) + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        else:
+                feat = layer.getFeatures()
+        err_detail = ''
+        for f in feat:
+                geom = f.geometry()
+                geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                if geom:
+                        err_detail = layer_name + ': ' + str(device_id) + ' geometry is ' + geom_type
+                else:
+                        err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type
+        e_msg = lv_cj_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
+                latitude) + ' \n'
         return e_msg
 
 # ****************************************

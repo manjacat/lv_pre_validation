@@ -27,10 +27,25 @@ def lv_cj_z_m_shapefile():
         arr = rps_z_m_shapefile(layer_name)
         return arr
 
-def lv_cj_z_m_shapefile_message(geom_name):
+def lv_cj_z_m_shapefile_message(device_id):
         longitude = 0
         latitude = 0
-        e_msg = lv_cj_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        if device_id:
+                query = '"device_id" = \'' + str(device_id) + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        else:
+                feat = layer.getFeatures()
+        err_detail = ''
+        for f in feat:
+                geom = f.geometry()
+                geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                if geom:
+                        err_detail = layer_name + ': ' + str(device_id) + ' geometry is ' + geom_type
+                else:
+                        err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type
+        e_msg = lv_cj_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
+                latitude) + ' \n'
         return e_msg
 
 # ****************************************
@@ -50,9 +65,10 @@ def lv_cj_device_id_format_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
         e_msg = lv_cj_device_id_format_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
 
@@ -74,9 +90,10 @@ def lv_cj_duplicate_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
 
         e_msg = lv_cj_duplicate_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -101,11 +118,16 @@ def lv_cj_field_enum(field_name):
         
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
         feat = layer.getFeatures()
+        err_count = 0
         for f in feat:
                 device_id = f.attribute('device_id')
-                field_value = f.attribute(field_name)
-                if field_value not in arr_dropdown:
-                        arr.append(device_id)
+                try:
+                        field_value = f.attribute(field_name)
+                        if field_value not in arr_dropdown:
+                                arr.append(device_id)
+                except Exception as e:
+                        err_count += 1
+
         return arr
 
 def lv_cj_field_enum_message(device_id, field_name):
@@ -203,15 +225,16 @@ def lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         for f in feat:
                 device_id = f.attribute('device_id')
                 geom = f.geometry()
-                geom_x = geom.asPoint()
-                # new arr_snapping each loop
-                arr_snapping = []
-                for geom_lv in arr_lv:
-                        m = distance.measureLine(geom_lv, geom_x)
-                        if m < 0.001:
-                                arr_snapping.append(device_id)
-                if len(arr_snapping) == 0:
-                        arr.append(device_id)
+                if geom:
+                        geom_x = geom.asPoint()
+                        # new arr_snapping each loop
+                        arr_snapping = []
+                        for geom_lv in arr_lv:
+                                m = distance.measureLine(geom_lv, geom_x)
+                                if m < 0.001:
+                                        arr_snapping.append(device_id)
+                        if len(arr_snapping) == 0:
+                                arr.append(device_id)
         return arr
 
 def lv_cj_snapping_message(device_id):
@@ -222,9 +245,10 @@ def lv_cj_snapping_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        point = geom.asPoint()
+                        longitude = point.x()
+                        latitude = point.y()
         
         e_msg = lv_cj_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' LV Cable joint not snap to LV OH/LV UG ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg

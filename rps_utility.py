@@ -141,19 +141,22 @@ def rps_z_m_shapefile(layer_name):
         for f in feat:
                 device_id = f.attribute('device_id')
                 geom = f.geometry()
-                geom_type = QgsWkbTypes.displayString(geom.wkbType())
-                # print('geometry type is ', geom_type)
-                if geom_type != wkb_type:
-                        # print('found one mismatch! ' + device_id)
-                        arr.append(device_id)
-                elif geom_type == 'MultiLineString':                        
-                        try:
-                                # try merge as polyline
-                                y = geom.mergeLines()
-                                polyline_y = y.asPolyline()
-                        except:
-                                # print('ah hah! caught you finally! ' + device_id)
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        # print('geometry type is ', geom_type)
+                        if geom_type != wkb_type:
+                                # print('found one mismatch! ' + device_id)
                                 arr.append(device_id)
+                        elif geom_type == 'MultiLineString':
+                                try:
+                                        # try merge as polyline
+                                        y = geom.mergeLines()
+                                        polyline_y = y.asPolyline()
+                                except:
+                                        # print('ah hah! caught you finally! ' + device_id)
+                                        arr.append(device_id)
+                else:
+                        arr.append(device_id)
                                 
         return arr
 
