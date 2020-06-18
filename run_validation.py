@@ -550,7 +550,7 @@ def exec_validation(self):
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_self_intersect_message(device_id)
+            e_msg += lv_oh_self_intersect_message(arr_lv_oh_exclude_geom, device_id)
             lv_oh_error += 1
             total_error += 1
 

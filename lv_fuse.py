@@ -46,7 +46,7 @@ def lv_fuse_z_m_shapefile_message(device_id):
             err_detail = layer_name + ': ' + str(device_id) + ' geometry is ' + geom_type
         else:
             err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type
-    e_msg = lv_cj_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
+    e_msg = lv_fuse_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'
     return e_msg
 
@@ -323,21 +323,22 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
         device_id = f.attribute('device_id')
         # print('device_id insert:', device_id)
         geom_lvf = f.geometry()
-        geom_x = geom_lvf.asPoint()
-        # my_buffer = geom_lvf.buffer(0.1, 5)
-        # print(geom_lvf)
-        # print(geom_lvf)
-        # new arr_snapping each loop
-        arr_snapping = []
-        for geom_lv in arr_lv_vector:
-            m = distance.measureLine(geom_lv, geom_x)
-            if m < 0.35:
-                # print('distance is '+  str(m) + 'm')
-                arr_snapping.append(device_id)
-                # print('LV fuse ' + str(device_id) + ' is touching lv oh vector!!')
-        if len(arr_snapping) == 0:
-            # print(arr_snapping)
-            arr.append(device_id)
+        if geom_lvf:
+            geom_x = geom_lvf.asPoint()
+            # my_buffer = geom_lvf.buffer(0.1, 5)
+            # print(geom_lvf)
+            # print(geom_lvf)
+            # new arr_snapping each loop
+            arr_snapping = []
+            for geom_lv in arr_lv_vector:
+                m = distance.measureLine(geom_lv, geom_x)
+                if m < 0.35:
+                    # print('distance is '+  str(m) + 'm')
+                    arr_snapping.append(device_id)
+                    # print('LV fuse ' + str(device_id) + ' is touching lv oh vector!!')
+            if len(arr_snapping) == 0:
+                # print(arr_snapping)
+                arr.append(device_id)
 
     return arr
 

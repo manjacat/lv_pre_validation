@@ -314,7 +314,7 @@ def lv_oh_self_intersect(arr_lv_oh_exclude_geom):
                         
         return arr
 
-def lv_oh_self_intersect_message(device_id):
+def lv_oh_self_intersect_message(arr_lv_oh_exclude_geom, device_id):
         longitude = 0
         latitude = 0
 
@@ -326,51 +326,67 @@ def lv_oh_self_intersect_message(device_id):
 
         for f in feat:
                 device_id = f.attribute('device_id')
-                geom = f.geometry()
-                y = geom.mergeLines()
-                polyLine_y = y.asPolyline()
+                if device_id not in arr_lv_oh_exclude_geom:
+                        geom = f.geometry()
+                        y = geom.mergeLines()
+                        polyLine_y = y.asPolyline()
 
-                arr_line = []
-                for i in range(len(polyLine_y)):
-                        geom_i = polyLine_y[i]
-                        if i < len(polyLine_y) - 1:
-                                geom_i2 = polyLine_y[i+1]
-                                arr_temp_line = [QgsPoint(geom_i), QgsPoint(geom_i2)]
-                                new_line = QgsGeometry.fromPolyline(arr_temp_line)
-                                arr_line.append(new_line)
+                        arr_line = []
+                        for i in range(len(polyLine_y)):
+                                geom_i = polyLine_y[i]
+                                if i < len(polyLine_y) - 1:
+                                        geom_i2 = polyLine_y[i+1]
+                                        arr_temp_line = [QgsPoint(geom_i), QgsPoint(geom_i2)]
+                                        new_line = QgsGeometry.fromPolyline(arr_temp_line)
+                                        arr_line.append(new_line)
 
-                # print(str(len(polyLine_y)) + ' vector(s) found, with ' + str(len(arr_line)) + ' total lines')   
-                for h in range(len(arr_line)):
-                        arr_temp = []
-                        arr_temp.extend(arr_line)
-                        arr_temp.remove(arr_line[h])
-                        no_of_intersect = 0
-                        # for first lines and last line, we (+1) so that all lines will have 2 intersect points at the start
-                        if h == 0 or h == len(arr_line) - 1:
-                                no_of_intersect += 1
-                        arr_points = []
-                        for i in range(len(arr_temp)):
-                                intersect = QgsGeometry.intersection(arr_line[h], arr_temp[i])
-                                if intersect:
-                                        if intersect.asPoint() not in arr_points:
-                                                # print('different point found!' + str(intersect.asPoint()))
-                                                arr_points.append(intersect.asPoint())
-                                        polyline_h = arr_line[h].asPolyline()
-                                        for i in polyline_h:
-                                                if i in arr_points:
-                                                        arr_points.remove(i)
+                        # print(str(len(polyLine_y)) + ' vector(s) found, with ' + str(len(arr_line)) + ' total lines')
+                        for h in range(len(arr_line)):
+                                arr_temp = []
+                                arr_temp.extend(arr_line)
+                                arr_temp.remove(arr_line[h])
+                                no_of_intersect = 0
+                                # for first lines and last line, we (+1) so that all lines will have 2 intersect points at the start
+                                if h == 0 or h == len(arr_line) - 1:
                                         no_of_intersect += 1
+                                arr_points = []
+                                for i in range(len(arr_temp)):
+                                        intersect = QgsGeometry.intersection(arr_line[h], arr_temp[i])
+                                        if intersect:
+                                                #print('device id is ' + str(device_id))
+                                                #print(str(device_id) + '-s intersect is ' + str(intersect))
+                                                # print(arr_points)
 
-                        if no_of_intersect > 2 and arr_points[0] not in arr_self_intersect:
-                                # print(arr_points)
-                                # take last intersect point
-                                arr_self_intersect.append(arr_points[0])
-                        if(len(arr_self_intersect) > 0):
-                                qgs_point_0 = arr_self_intersect[0]
-                                # pass longitude/latitude
-                                longitude = qgs_point_0.x()
-                                latitude = qgs_point_0.y()
-                                # print('device id: ' + str(device_id) + ' ' + str(qgs_point_0)) 
+                                                intersect_geom = intersect.geometry()
+                                                geom_type = QgsWkbTypes.displayString(intersect_geom.wkbType())
+                                                print('geom type is ' + geom_type)
+
+                                                if intersect.asPoint() not in arr_points:
+                                                        # print('different point found!' + str(intersect.asPoint()))
+                                                        arr_points.append(intersect.asPoint())
+                                                polyline_h = arr_line[h].asPolyline()
+                                                for i in polyline_h:
+                                                        if i in arr_points:
+                                                                arr_points.remove(i)
+                                                no_of_intersect += 1
+
+                                err_count = 0
+                                try:
+                                        print('arr_points[0] is ' + str(arr_points[0]))
+                                        print('length arr is ' + str(len(arr_self_intersect)))
+                                        if no_of_intersect > 2 and arr_points[0] not in arr_self_intersect:
+                                                # print(arr_points)
+                                                # take last intersect point
+                                                arr_self_intersect.append(arr_points[0])
+                                        if(len(arr_self_intersect) > 0):
+                                                qgs_point_0 = arr_self_intersect[0]
+                                                # pass longitude/latitude
+                                                longitude = qgs_point_0.x()
+                                                latitude = qgs_point_0.y()
+                                                # print('device id: ' + str(device_id) + ' ' + str(qgs_point_0))
+                                except Exception as e:
+                                        print(str(device_id + ' - error self intersect: ' + str(e)))
+                                        err_count += 1
                         
 
         layer = QgsProject.instance().mapLayersByName(layer_name)[0]
