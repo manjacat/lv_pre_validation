@@ -47,25 +47,7 @@ def lv_fuse_device_id_format():
 
 
 def lv_fuse_device_id_format_message(device_id):
-    longitude = 0
-    latitude = 0
-
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"device_id" = \'' + str(device_id) + '\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-
-    err_count = 0
-
-    for f in feat:
-        try:
-            geom = f.geometry()
-            point = geom.asPoint()
-            longitude = point.x()
-            latitude = point.y()
-        except Exception as e:
-            err_count += 1
-    e_msg = lv_fuse_device_id_format_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+    e_msg = rps_device_id_format_message(layer_name, device_id, lv_fuse_device_id_format_code)
     return e_msg
 
 

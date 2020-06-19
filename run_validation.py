@@ -40,19 +40,19 @@ from .manhole import *
 from .st_duct import *
 from .feature_count import count_lv_features
 
-def exec_validation(self):
 
+def exec_validation(self):
     # test calling from new python file
     # print('Hello from new python file')
-    
+
     # count features
     count_lv_features(self)
-    
-    #*****************************************************
-    #***********     INITIALIZE VARIABLE    **************
-    #*****************************************************
 
-    #start total_error count
+    # *****************************************************
+    # ***********     INITIALIZE VARIABLE    **************
+    # *****************************************************
+
+    # start total_error count
     device_id_error = 0
     lv_ug_error = 0
     lv_oh_error = 0
@@ -72,13 +72,13 @@ def exec_validation(self):
     arr_lv_ug_exclude_geom = []
     arr_lv_oh_exclude_geom = []
 
-    #***************************************************************
-    #***********     CHECK HOW MANY FEATURES SELECTED    ***********
-    #***************************************************************
+    # ***************************************************************
+    # ***********     CHECK HOW MANY FEATURES SELECTED    ***********
+    # ***************************************************************
 
     # init flags
-    device_id_flag = self.dlg.checkBox_device_id.isChecked() 
-    lv_ug_flag = self.dlg.checkBox_lvug.isChecked()        
+    device_id_flag = self.dlg.checkBox_device_id.isChecked()
+    lv_ug_flag = self.dlg.checkBox_lvug.isChecked()
     lv_oh_flag = self.dlg.checkBox_lvoh.isChecked()
     lv_fuse_flag = self.dlg.checkBox_lv_fuse.isChecked()
     lv_cj_flag = self.dlg.checkBox_lv_cj.isChecked()
@@ -127,14 +127,14 @@ def exec_validation(self):
 
     qa_qc_msg = 'No features selected fo QA/QC validation.'
     if feat_count > 0:
-        qa_qc_msg = ' ' .join(['running QA/QC now on ',str(feat_count),'features:'])
+        qa_qc_msg = ' '.join(['running QA/QC now on ', str(feat_count), 'features:'])
     print(qa_qc_msg)
     if len(arr_feat_count) > 0:
         print(arr_feat_count)
 
-    #******************************************************
-    #**********     DEVICE ID CHECKING    *****************
-    #******************************************************
+    # ******************************************************
+    # **********     DEVICE ID CHECKING    *****************
+    # ******************************************************
 
     # print('current total (device_id): ' + str(total_error))
 
@@ -162,17 +162,20 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('lv oh device id skipped')
+            print('lv oh device id skipped:' + str(e))
 
     # check for device_id format
     if device_id_flag:
-        arr_device_id_err = lv_fuse_device_id_format()
-        for device_id in arr_device_id_err:
-            if device_id:
-                device_id = device_id.strip()
-            e_msg += lv_fuse_device_id_format_message(device_id)
-            device_id_error += 1
-            total_error += 1
+        try:
+            arr_device_id_err = lv_fuse_device_id_format()
+            for device_id in arr_device_id_err:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += lv_fuse_device_id_format_message(device_id)
+                device_id_error += 1
+                total_error += 1
+        except Exception as e:
+            print('lv fuse device id skipped:' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -185,7 +188,7 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('lv cable joint device id skipped')
+            print('lv cable joint device id skipped:' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -198,7 +201,7 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('lvdb-fp device id skipped')
+            print('lvdb-fp device id skipped:' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -211,8 +214,8 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('pole device_id skipped')
-    
+            print('pole device_id skipped:' + str(e))
+
     # check for device_id format
     if device_id_flag:
         try:
@@ -224,7 +227,7 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('demand point device_id skipped')
+            print('pole device_id skipped:' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -237,7 +240,7 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('street light device id skipped')
+            print('street light device id skipped: ' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -250,7 +253,7 @@ def exec_validation(self):
                 device_id_error += 1
                 total_error += 1
         except Exception as e:
-            print('manhole device id skipped')
+            print('manhole device id skipped: ' + str(e))
 
     # check for device_id format
     if device_id_flag:
@@ -265,12 +268,11 @@ def exec_validation(self):
         except Exception as e:
             print('structure duct device id skipped')
 
-    print('current total (end of device id): ' + str(total_error))
+    # print('current total (end of device id): ' + str(total_error))
 
-
-    #*******************************************************
-    #***************     Z M CHECKING    *******************
-    #*******************************************************
+    # *******************************************************
+    # ***************     Z M CHECKING    *******************
+    # *******************************************************
 
     arr_lv_ug = []
 
@@ -280,29 +282,29 @@ def exec_validation(self):
     # print(len(arr_lv_ug_exclude_geom))
     for device_id in arr_lv_ug:
         if device_id:
-                device_id = device_id.strip()
+            device_id = device_id.strip()
         e_msg += lv_ug_z_m_shapefile_message(device_id)
         lv_ug_error += 1
         total_error += 1
 
     arr_lv_oh = []
-    
+
     # check z-m shapefile
     arr_lv_oh = lv_oh_z_m_shapefile()
     arr_lv_oh_exclude_geom = arr_lv_oh
     # print(len(arr_lv_oh_exclude_geom))
     for device_id in arr_lv_oh:
         if device_id:
-                device_id = device_id.strip()
+            device_id = device_id.strip()
         e_msg += lv_oh_z_m_shapefile_message(device_id)
         lv_oh_error += 1
         total_error += 1
 
     # print('current total error is (zm check):' + str(total_error))
 
-    #****************************************************************
-    #***************     LV UG COND VALIDATION    *******************
-    #****************************************************************
+    # ****************************************************************
+    # ***************     LV UG COND VALIDATION    *******************
+    # ****************************************************************
 
     # check for duplicates
     if lv_ug_flag:
@@ -317,16 +319,16 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'usage'
-        ,'length'
-        ,'label'
-        ,'dat_qty_cl'
-        ,'device_id'
-        ,'db_oper'
-        ]
-    
-    for field_name in field_name_arr: 
+        , 'phasing'
+        , 'usage'
+        , 'length'
+        , 'label'
+        , 'dat_qty_cl'
+        , 'device_id'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if lv_ug_flag:
             arr_lv_ug = lv_ug_field_not_null(field_name)
             for device_id in arr_lv_ug:
@@ -339,14 +341,14 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'usage'
-        ,'label'
-        ,'dat_qty_cl'
-        ,'db_oper'
-        ]
-    
-    for field_name in field_name_arr:           
+        , 'phasing'
+        , 'usage'
+        , 'label'
+        , 'dat_qty_cl'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if lv_ug_flag:
             arr_lv_ug = lv_ug_field_enum(field_name)
             for device_id in arr_lv_ug:
@@ -470,21 +472,20 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-##    # check for coincidence geometry
-##    if lv_ug_flag:
-##        arr_lv_ug = lv_ug_coin()
-##        for device_id in arr_lv_ug:
-##            e_msg += lv_ug_self_intersect_message(device_id)
-##            lv_ug_error += 1
-##            total_error += 1
+    ##    # check for coincidence geometry
+    ##    if lv_ug_flag:
+    ##        arr_lv_ug = lv_ug_coin()
+    ##        for device_id in arr_lv_ug:
+    ##            e_msg += lv_ug_self_intersect_message(device_id)
+    ##            lv_ug_error += 1
+    ##            total_error += 1
 
-
-    #****************************************************************
-    #***************     LV OH COND VALIDATION     ******************
-    #****************************************************************
+    # ****************************************************************
+    # ***************     LV OH COND VALIDATION     ******************
+    # ****************************************************************
 
     # moved z_m checking to top
-    
+
     # check for duplicates
     if lv_oh_flag:
         arr_lv_oh = lv_oh_duplicate()
@@ -498,15 +499,15 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'usage'
-        ,'label'
-        ,'length'
-        ,'device_id'
-        ,'db_oper'
-        ]
-    
-    for field_name in field_name_arr: 
+        , 'phasing'
+        , 'usage'
+        , 'label'
+        , 'length'
+        , 'device_id'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if lv_oh_flag:
             arr_lv_oh = lv_oh_field_not_null(field_name)
             for device_id in arr_lv_oh:
@@ -519,13 +520,13 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'usage'
-        ,'label'
-        ,'db_oper'
-        ]
-    
-    for field_name in field_name_arr: 
+        , 'phasing'
+        , 'usage'
+        , 'label'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if lv_oh_flag:
             arr_lv_oh = lv_oh_field_enum(field_name)
             for device_id in arr_lv_oh:
@@ -535,7 +536,6 @@ def exec_validation(self):
                 lv_oh_error += 1
                 total_error += 1
 
-    
     # check for LV OH length
     if lv_oh_flag:
         arr_lv_oh = lv_oh_length_check()
@@ -575,11 +575,10 @@ def exec_validation(self):
             e_msg += lv_oh_buffer_message(device_id, arr_lv_oh_exclude_geom)
             lv_oh_error += 1
             total_error += 1
-    
 
-    #*************************************************************
-    #***************     LV Fuse VALIDATION     ******************
-    #*************************************************************
+    # *************************************************************
+    # ***************     LV Fuse VALIDATION     ******************
+    # *************************************************************
 
     arr_lv_fuse = []
 
@@ -606,15 +605,15 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'class'
-        ,'normal_sta'
-        ,'device_id'            
-        ,'db_oper'
-        ]
+        , 'phasing'
+        , 'class'
+        , 'normal_sta'
+        , 'device_id'
+        , 'db_oper'
+    ]
 
     if lv_fuse_flag:
-        for field_name in field_name_arr:             
+        for field_name in field_name_arr:
             arr_lv_fuse = lv_fuse_field_not_null(field_name)
             for device_id in arr_lv_fuse:
                 if device_id:
@@ -622,18 +621,18 @@ def exec_validation(self):
                 e_msg += lv_fuse_field_not_null_message(device_id, field_name)
                 lv_fuse_error += 1
                 total_error += 1
-                
+
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'class'
-        ,'normal_sta'
-        ,'db_oper'
-        ]
-     
+        , 'phasing'
+        , 'class'
+        , 'normal_sta'
+        , 'db_oper'
+    ]
+
     if lv_fuse_flag:
-        for field_name in field_name_arr:            
+        for field_name in field_name_arr:
             arr_lv_fuse = lv_fuse_field_enum(field_name)
             for device_id in arr_lv_fuse:
                 if device_id:
@@ -662,9 +661,9 @@ def exec_validation(self):
             lv_fuse_error += 1
             total_error += 1
 
-    #***************************************************************
-    #**************    LV Cable Joint VALIDATION     ***************
-    #***************************************************************
+    # ***************************************************************
+    # **************    LV Cable Joint VALIDATION     ***************
+    # ***************************************************************
 
     # print('current total (lv cj): ' + str(total_error))
 
@@ -693,14 +692,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'class'
-        ,'type'
-        ,'db_oper'
-        ,'device_id'
-        ]
-    
+        , 'class'
+        , 'type'
+        , 'db_oper'
+        , 'device_id'
+    ]
+
     if lv_cj_flag:
-        for field_name in field_name_arr:             
+        for field_name in field_name_arr:
             arr_lv_cj = lv_cj_field_not_null(field_name)
             for device_id in arr_lv_cj:
                 if device_id:
@@ -712,13 +711,13 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'class'
-        ,'type'
-        ,'db_oper'
-        ]
+        , 'class'
+        , 'type'
+        , 'db_oper'
+    ]
 
     if lv_cj_flag:
-        for field_name in field_name_arr:             
+        for field_name in field_name_arr:
             arr_lv_cj = lv_cj_field_enum(field_name)
             for device_id in arr_lv_cj:
                 if device_id:
@@ -736,11 +735,10 @@ def exec_validation(self):
             e_msg += lv_cj_snapping_message(device_id)
             lv_cj_error += 1
             total_error += 1
-    
 
-    #***************************************************************
-    #******************    LVDB-FP VALIDATION     ******************
-    #***************************************************************
+    # ***************************************************************
+    # ******************    LVDB-FP VALIDATION     ******************
+    # ***************************************************************
 
     # print('current total (lvdb-fp): ' + str(total_error))
 
@@ -769,14 +767,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'lvdb_loc'
-        ,'design'
-        ,'device_id'
-        ,'db_oper'
-        ,'lvdb_angle'
-        ]
+        , 'lvdb_loc'
+        , 'design'
+        , 'device_id'
+        , 'db_oper'
+        , 'lvdb_angle'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if lvdb_fp_flag:
             arr_lvdb_fp = lvdb_fp_field_not_null(field_name)
             for device_id in arr_lvdb_fp:
@@ -789,12 +787,12 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'lvdb_loc'
-        ,'design'
-        ,'db_oper'
-        ]
-        
-    for field_name in field_name_arr:    
+        , 'lvdb_loc'
+        , 'design'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if lvdb_fp_flag:
             arr_lvdb_fp = lvdb_fp_field_enum(field_name)
             for device_id in arr_lvdb_fp:
@@ -836,9 +834,9 @@ def exec_validation(self):
 
     print('end of total: ' + str(total_error))
 
-    #***************************************************************
-    #********************    POLE VALIDATION     *******************
-    #***************************************************************
+    # ***************************************************************
+    # ********************    POLE VALIDATION     *******************
+    # ***************************************************************
 
     arr_pole = []
 
@@ -865,15 +863,15 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'light_ares'
-        ,'struc_type'
-        ,'pole_no'
-        ,'device_id'
-        ,'db_oper'
-        ,'lv_ptc'
-        ]
+        , 'light_ares'
+        , 'struc_type'
+        , 'pole_no'
+        , 'device_id'
+        , 'db_oper'
+        , 'lv_ptc'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if pole_flag:
             arr_pole = pole_field_not_null(field_name)
         for device_id in arr_pole:
@@ -886,13 +884,13 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'light_ares'
-        ,'struc_type'
-        ,'db_oper'
-        ,'lv_ptc'
-        ]
-        
-    for field_name in field_name_arr:    
+        , 'light_ares'
+        , 'struc_type'
+        , 'db_oper'
+        , 'lv_ptc'
+    ]
+
+    for field_name in field_name_arr:
         if pole_flag:
             arr_pole = pole_field_enum(field_name)
             for device_id in arr_pole:
@@ -912,9 +910,9 @@ def exec_validation(self):
             pole_error += 1
             total_error += 1
 
-    #***************************************************************
-    #***************    DEMAND POINT VALIDATION     ****************
-    #***************************************************************
+    # ***************************************************************
+    # ***************    DEMAND POINT VALIDATION     ****************
+    # ***************************************************************
 
     arr_dmd_pt = []
 
@@ -941,14 +939,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'device_id'
-        ,'db_oper'
-        ,'dist_tranx'
-        ,'house_no'
-        ,'str_name'
-        ]
+        , 'device_id'
+        , 'db_oper'
+        , 'dist_tranx'
+        , 'house_no'
+        , 'str_name'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if dmd_pt_flag:
             arr_dmd_pt = dmd_pt_field_not_null(field_name)
             for device_id in arr_dmd_pt:
@@ -960,11 +958,11 @@ def exec_validation(self):
 
     # check for ENUM values
     field_name_arr = [
-        'status'         
-        ,'db_oper'
-        ]
-        
-    for field_name in field_name_arr:    
+        'status'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if dmd_pt_flag:
             arr_dmd_pt = dmd_pt_field_enum(field_name)
             for device_id in arr_dmd_pt:
@@ -994,9 +992,9 @@ def exec_validation(self):
             dmd_pt_error += 1
             total_error += 1
 
-    #***************************************************************
-    #***************    STREET LIGHT VALIDATION     ****************
-    #***************************************************************
+    # ***************************************************************
+    # ***************    STREET LIGHT VALIDATION     ****************
+    # ***************************************************************
 
     arr_st_light = []
 
@@ -1023,14 +1021,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'db_oper'
-        ,'stl_angle'
-        ,'cont_dev'
-        ,'device_id'
-        ]
+        , 'phasing'
+        , 'db_oper'
+        , 'stl_angle'
+        , 'cont_dev'
+        , 'device_id'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if st_light_flag:
             arr_st_light = st_light_field_not_null(field_name)
             for device_id in arr_st_light:
@@ -1040,15 +1038,14 @@ def exec_validation(self):
                 st_light_error += 1
                 total_error += 1
 
-    
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'db_oper'
-        ,'cont_dev'
-        ]
-        
-    for field_name in field_name_arr:    
+        , 'db_oper'
+        , 'cont_dev'
+    ]
+
+    for field_name in field_name_arr:
         if st_light_flag:
             arr_st_light = st_light_field_enum(field_name)
             for device_id in arr_st_light:
@@ -1088,9 +1085,9 @@ def exec_validation(self):
             st_light_error += 1
             total_error += 1
 
-    #***************************************************************
-    #******************    MANHOLE VALIDATION     ******************
-    #***************************************************************
+    # ***************************************************************
+    # ******************    MANHOLE VALIDATION     ******************
+    # ***************************************************************
 
     arr_manhole = []
 
@@ -1104,7 +1101,7 @@ def exec_validation(self):
             manhole_error += 1
             total_error += 1
 
-    #check for duplicate
+    # check for duplicate
     if manhole_flag:
         arr_manhole = manhole_duplicate()
         for device_id in arr_manhole:
@@ -1117,14 +1114,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'db_oper'
-        ,'stl_angle'
-        ,'cont_dev'
-        ,'device_id'
-        ]
+        , 'phasing'
+        , 'db_oper'
+        , 'stl_angle'
+        , 'cont_dev'
+        , 'device_id'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if manhole_flag:
             arr_manhole = manhole_field_not_null(field_name)
             for device_id in arr_manhole:
@@ -1137,12 +1134,12 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'phasing'
-        ,'db_oper'
-        ,'cont_dev'
-        ]
-        
-    for field_name in field_name_arr:    
+        , 'phasing'
+        , 'db_oper'
+        , 'cont_dev'
+    ]
+
+    for field_name in field_name_arr:
         if manhole_flag:
             arr_manhole = manhole_field_enum(field_name)
             for device_id in arr_manhole:
@@ -1152,12 +1149,12 @@ def exec_validation(self):
                 manhole_error += 1
                 total_error += 1
 
-    #***************************************************************
-    #***************     STRUCTURE DUCT VALIDATION     *************
-    #***************************************************************
+    # ***************************************************************
+    # ***************     STRUCTURE DUCT VALIDATION     *************
+    # ***************************************************************
 
     arr_st_duct = []
-    
+
     # check for duplicates
     if st_duct_flag:
         arr_st_duct = st_duct_duplicate()
@@ -1171,14 +1168,14 @@ def exec_validation(self):
     # check for mandatory not null
     field_name_arr = [
         'status'
-        ,'size'
-        ,'method'
-        ,'way'
-        ,'device_id'
-        ,'db_oper'
-        ]
+        , 'size'
+        , 'method'
+        , 'way'
+        , 'device_id'
+        , 'db_oper'
+    ]
 
-    for field_name in field_name_arr: 
+    for field_name in field_name_arr:
         if st_duct_flag:
             arr_st_duct = st_duct_field_not_null(field_name)
             for device_id in arr_st_duct:
@@ -1191,13 +1188,13 @@ def exec_validation(self):
     # check for ENUM values
     field_name_arr = [
         'status'
-        ,'size'
-        ,'method'
-        ,'way'
-        ,'db_oper'
-        ]
-        
-    for field_name in field_name_arr:    
+        , 'size'
+        , 'method'
+        , 'way'
+        , 'db_oper'
+    ]
+
+    for field_name in field_name_arr:
         if st_duct_flag:
             arr_st_duct = st_duct_field_enum(field_name)
         for device_id in arr_st_duct:
@@ -1206,13 +1203,13 @@ def exec_validation(self):
             e_msg += st_duct_field_enum_message(device_id, field_name)
             st_duct_error += 1
             total_error += 1
-    
-    #****************************************************************
-    #******************     END OF VALIDATION     *******************
-    #****************************************************************
+
+    # ****************************************************************
+    # ******************     END OF VALIDATION     *******************
+    # ****************************************************************
 
     # print('after end of validation, total error is ' + str(total_error))
-            
+
     # change label in GUI
     if device_id_flag == False:
         device_id_error = 'Skipped'
@@ -1236,7 +1233,7 @@ def exec_validation(self):
         manhole_error = 'Skipped'
     if st_duct_flag == False:
         st_duct_error = 'Skipped'
-        
+
     self.dlg.label_message.setText(' ')
 
     # update error count label
@@ -1254,9 +1251,9 @@ def exec_validation(self):
     # update total
     self.dlg.err_total.setText(str(total_error))
 
-    #****************************************************************
-    #******************     WRITE TO CSV FILE     *******************
-    #****************************************************************
+    # ****************************************************************
+    # ******************     WRITE TO CSV FILE     *******************
+    # ****************************************************************
 
     # write to csv file
     filename = self.dlg.lineEdit_csv.text()
@@ -1266,21 +1263,22 @@ def exec_validation(self):
         with open(filename, 'w') as output_file:
             # Add header to e_msg
             header = 'Error Code, Device Id, Error Message, Longitude, Latitude \n'
-            e_msg = header + e_msg            
+            e_msg = header + e_msg
             output_file.write(e_msg)
         self.iface.messageBar().pushMessage(
-              "Success", "Output file written at " + filename,
-              level=Qgis.Success, duration=3)
+            "Success", "Output file written at " + filename,
+            level=Qgis.Success, duration=3)
     else:
         # print(e_msg)
         print('total Error(s):', str(total_error))
         self.iface.messageBar().pushMessage(
-              "Success", "Validation completed. " + str(total_error) + " ERROR(s) found.",
-              level=Qgis.Success, duration=3)
+            "Success", "Validation completed. " + str(total_error) + " ERROR(s) found.",
+            level=Qgis.Success, duration=3)
     return 0
 
+
 def exec_clear_errors(self):
-    #start total_error count
+    # start total_error count
     device_id_error = 0
     lv_ug_error = 0
     lv_oh_error = 0
@@ -1293,7 +1291,7 @@ def exec_clear_errors(self):
     manhole_error = 0
     st_duct_error = 0
     total_error = 0
-    
+
     # update error count label
     self.dlg.err_device_id.setText(str(device_id_error))
     self.dlg.err_lvug.setText(str(lv_ug_error))
@@ -1310,7 +1308,6 @@ def exec_clear_errors(self):
     self.dlg.err_total.setText(str(total_error))
 
     # clear csv file
-    self.dlg.lineEdit_csv.setText('')        
-    
-    return 0
+    self.dlg.lineEdit_csv.setText('')
 
+    return 0
