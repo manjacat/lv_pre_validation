@@ -34,10 +34,10 @@ def lvdb_fp_z_m_shapefile():
         arr = rps_z_m_shapefile(layer_name)
         return arr
 
-def lvdb_fp_z_m_shapefile_message(geom_name):
+def lvdb_fp_z_m_shapefile_message(device_id):
         longitude = 0
         latitude = 0
-        e_msg = lvdb_fp_z_m_shapefile_code + ',' + layer_name + ',' + 'Z M Value for ' + layer_name + ' is ' + geom_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        e_msg = rps_z_m_shapefile_message(layer_name, device_id, lvdb_fp_z_m_shapefile_code)
         return e_msg
 
 # ****************************************
@@ -57,9 +57,12 @@ def lvdb_fp_device_id_format_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
         
         e_msg = lvdb_fp_device_id_format_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' device_id format error' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -82,9 +85,12 @@ def lvdb_fp_duplicate_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
         
         e_msg = lvdb_fp_duplicate_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -124,9 +130,12 @@ def lvdb_fp_field_enum_message(device_id, field_name):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
         
         e_msg = lvdb_fp_enum_valid +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -153,9 +162,12 @@ def lvdb_fp_field_not_null_message(device_id, field_name):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
                 
         e_msg = lvdb_fp_field_null +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -202,9 +214,12 @@ def lvdb_fp_remarks_db_oper_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
                 
         e_msg = lvdb_fp_remarks_db_oper_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' remarks and db_oper MISMATCH ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -295,9 +310,12 @@ def lvdb_fp_lvf_design_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
 
         e_msg = lvdb_fp_lvf_design_code +',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' number of lvf/lvs columns does not match IN/OUT design ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg
@@ -353,15 +371,18 @@ def lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                 device_id = f.attribute('device_id')
                 # print('device_id insert:', device_id)
                 geom = f.geometry()
-                geom_x = geom.asPoint()
-                # new arr_snapping each loop
-                arr_snapping = []
-                for geom_lv in arr_lv:
-                        m = distance.measureLine(geom_lv, geom_x)
-                        if m < 0.001:
-                                arr_snapping.append(device_id)
-                if len(arr_snapping) == 0:
-                        arr.append(device_id)
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                geom_x = geom.asPoint()
+                                # new arr_snapping each loop
+                                arr_snapping = []
+                                for geom_lv in arr_lv:
+                                        m = distance.measureLine(geom_lv, geom_x)
+                                        if m < 0.001:
+                                                arr_snapping.append(device_id)
+                                if len(arr_snapping) == 0:
+                                        arr.append(device_id)
         
         return arr
 
@@ -373,9 +394,12 @@ def lvdb_fp_snapping_message(device_id):
         feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         for f in feat:
                 geom = f.geometry()
-                point = geom.asPoint()
-                longitude = point.x()
-                latitude = point.y()
+                if geom:
+                        geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                        if geom_type == 'Point':
+                                point = geom.asPoint()
+                                longitude = point.x()
+                                latitude = point.y()
 
         e_msg = lvdb_fp_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(device_id) + ' LVDB-FP is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
         return e_msg

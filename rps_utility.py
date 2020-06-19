@@ -160,6 +160,40 @@ def rps_z_m_shapefile(layer_name):
                                 
         return arr
 
+def rps_z_m_shapefile_message(layer_name, device_id, error_code):
+        e_msg = ''
+        longitude = 0
+        latitude = 0
+
+        # correct wkb type based on layer name
+        wkb_type = ''
+
+        arr_line_type = ['LV_UG_Conductor', 'LV_OH_Conductor']
+        arr_point_type = ['LV_Fuse', 'LV_Cable_Joint', 'LVDB-FP', 'Pole', 'Demand_Point', 'Street_Light', 'Manhole',
+                          'Structure_Duct']
+
+        if layer_name in arr_line_type:
+                wkb_type = 'MultiLineString'
+        elif layer_name in arr_point_type:
+                wkb_type = 'Point'
+
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        if device_id:
+                query = '"device_id" = \'' + str(device_id) + '\''
+                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        else:
+                feat = layer.getFeatures()
+        err_detail = ''
+        for f in feat:
+                geom = f.geometry()
+                geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type + ' (correct is ' + wkb_type + ') '
+        e_msg = error_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
+                latitude) + ' \n'
+        print(e_msg)
+
+        return e_msg
+
 # ********************************************
 # ********* Get Midpoint of Line  **********
 # ********************************************

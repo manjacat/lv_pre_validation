@@ -29,21 +29,7 @@ def pole_z_m_shapefile():
 def pole_z_m_shapefile_message(device_id):
         longitude = 0
         latitude = 0
-        if device_id:
-                query = '"device_id" = \'' + str(device_id) + '\''
-                feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-        else:
-                feat = layer.getFeatures()
-        err_detail = ''
-        for f in feat:
-                geom = f.geometry()
-                geom_type = QgsWkbTypes.displayString(geom.wkbType())
-                if geom:
-                        err_detail = layer_name + ': ' + str(device_id) + ' geometry is ' + geom_type
-                else:
-                        err_detail = layer_name + ': ' + str(device_id) + ' geometry ERROR. Geometry is ' + geom_type
-        e_msg = lv_cj_z_m_shapefile_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
-                latitude) + ' \n'
+        e_msg = rps_z_m_shapefile_message(layer_name, device_id, pole_z_m_shapefile_code)
         return e_msg
 
 # ****************************************

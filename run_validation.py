@@ -10,6 +10,8 @@
  4/6/2020: seperate device id error as seperate checks
  11/6/2020: added device_id.strip() to remove carriage return (/r/n) in device_id
  11/6/2020: added try/catch for all object when checking for device id format error
+ 18/6/2020: added param to lv_ug_self_intersect_message and lv_oh_self_intersect_message
+            changed try-except clause to try-except Exception as e
  
  ***************************************************************************/
 """
@@ -148,7 +150,7 @@ def exec_validation(self):
                 e_msg += lv_ug_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('lv ug device_id skipped')
 
     # check for device_id format
@@ -159,7 +161,7 @@ def exec_validation(self):
                 e_msg += lv_oh_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('lv oh device id skipped')
 
     # check for device_id format
@@ -182,7 +184,7 @@ def exec_validation(self):
                 e_msg += lv_cj_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('lv cable joint device id skipped')
 
     # check for device_id format
@@ -195,7 +197,7 @@ def exec_validation(self):
                 e_msg += lvdb_fp_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('lvdb-fp device id skipped')
 
     # check for device_id format
@@ -208,7 +210,7 @@ def exec_validation(self):
                 e_msg += pole_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('pole device_id skipped')
     
     # check for device_id format
@@ -221,7 +223,7 @@ def exec_validation(self):
                 e_msg += dmd_pt_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('demand point device_id skipped')
 
     # check for device_id format
@@ -234,7 +236,7 @@ def exec_validation(self):
                 e_msg += st_light_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('street light device id skipped')
 
     # check for device_id format
@@ -247,7 +249,7 @@ def exec_validation(self):
                 e_msg += manhole_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('manhole device id skipped')
 
     # check for device_id format
@@ -260,7 +262,7 @@ def exec_validation(self):
                 e_msg += st_duct_device_id_format_message(device_id)
                 device_id_error += 1
                 total_error += 1
-        except:
+        except Exception as e:
             print('structure duct device id skipped')
 
     print('current total (end of device id): ' + str(total_error))
@@ -425,7 +427,7 @@ def exec_validation(self):
         for device_id in arr_lv_ug:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_ug_self_intersect_message(device_id)
+            e_msg += lv_ug_self_intersect_message(arr_lv_ug_exclude_geom, device_id)
             lv_ug_error += 1
             total_error += 1
 
