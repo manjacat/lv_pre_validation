@@ -9,6 +9,57 @@ from qgis.core import *
 from .dropdown_enum import *
 import re
 
+# *********************************************
+# ****** Check for Field not null or N/A ******
+# *********************************************
+
+def rps_field_not_null(layer_name, field_name):
+    arr = []
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    # TODO : if Pole No, allow N/A but don't allow NA
+    query = ''
+    if field_name == 'pole_no' and layer_name == 'Pole':
+        query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'NA\''
+    else:
+        query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
+    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    for f in feat:
+        device_id = f.attribute('device_id')
+        arr.append(device_id)
+    return arr
+
+def rps_field_not_null_message(device_id, field_name, layer_name, error_code):
+    longitude = 0
+    latitude = 0
+
+    # customer has no geom, so no need to get geom
+    if layer_name != 'Customer':
+        layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+        query = '"device_id" = \'' + str(device_id) + '\''
+        feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        for f in feat:
+            geom = f.geometry()
+            if geom:
+                # check what type of geometry (Point, Line or Error Geom)
+                geom_type = QgsWkbTypes.displayString(geom.wkbType())
+                # print('geom type is ' + geom_type)
+                if geom_type == 'Point':
+                    point = geom.asPoint()
+                    longitude = point.x()
+                    latitude = point.y()
+                elif geom_type == 'MultiLineString':
+                    midpoint = rps_get_midpoint(layer_name, device_id)
+                    if midpoint:
+                        longitude = midpoint.x()
+                        latitude = midpoint.y()
+                else:
+                    longitude = 0
+                    latitude = 0
+
+    e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
+        device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+    return e_msg
+
 # ****************************************
 # ****** Check for Device_Id format ******
 # ****************************************
@@ -29,8 +80,6 @@ code_st_duct = 'std'
 # Step 2: Generate pattern: vendor code + station code + object code + running number
 # Step 3: test device_id against pattern
 '''
-
-
 def rps_device_id_format(layer_name):
     arr = []
     object_code = ''
@@ -189,8 +238,8 @@ def rps_z_m_shapefile(layer_name):
                     # try merge as polyline
                     y = geom.mergeLines()
                     polyline_y = y.asPolyline()
-                except:
-                    # print('ah hah! caught you finally! ' + device_id)
+                except Exception as e:
+                    # print('ah hah! caught you finally! ' + device_id + str(e))
                     arr.append(device_id)
         else:
             arr.append(device_id)
@@ -225,7 +274,13 @@ def rps_z_m_shapefile_message(layer_name, device_id, error_code):
     for f in feat:
         geom = f.geometry()
         geom_type = QgsWkbTypes.displayString(geom.wkbType())
-        err_detail = layer_name + ': ' + str(
+
+        # if conductor is MultiLineString, there is possibility that the vector goes at least 2 ways
+        if geom_type == 'MultiLineString' and wkb_type == 'MultiLineString':
+            err_detail = layer_name + ': ' + str(
+                device_id) + ' geometry ERROR. Check if possible 2 way vector direction.'
+        else:
+            err_detail = layer_name + ': ' + str(
             device_id) + ' geometry ERROR. Geometry is ' + geom_type + ' (correct is ' + wkb_type + ') '
     e_msg = error_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'
@@ -262,7 +317,7 @@ def rps_get_midpoint(layer_name, device_id):
 
         return vector_midpoint
 
-    except:
+    except Exception as e:
         return QgsPoint(0, 0)
 
 
@@ -297,7 +352,7 @@ def rps_get_firstpoint(layer_name, device_id):
                     vector_first_point = QgsPoint(0,0)
 
         return vector_first_point
-    except:
+    except Exception as e:
         return QgsPoint(0, 0)
 
 
@@ -333,7 +388,7 @@ def rps_get_secondpoint(layer_name, device_id):
 
         return vector_second_point
 
-    except:
+    except Exception as e:
         return QgsPoint(0, 0)
 
 
@@ -368,7 +423,7 @@ def rps_get_lastpoint(layer_name, device_id):
                     return QgsPoint(0, 0)
 
         return vector_last_point
-    except:
+    except Exception as e:
         return QgsPoint(0, 0)
 
 # **********************************

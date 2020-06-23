@@ -12,6 +12,7 @@
  11/6/2020: added try/catch for all object when checking for device id format error
  18/6/2020: added param to lv_ug_self_intersect_message and lv_oh_self_intersect_message
             changed try-except clause to try-except Exception as e
+ 22/6/2020: added customer.py validation
  
  ***************************************************************************/
 """
@@ -27,7 +28,7 @@ from .resources import *
 # Import the code for the dialog
 from .lv_pre_validation_dialog import lv_pre_validationDialog
 import os.path
-# TODO: import own custom python file
+# import own custom python file
 from .lvoh_conductor import *
 from .lvug_conductor import *
 from .lv_fuse import *
@@ -38,6 +39,7 @@ from .demand_point import *
 from .street_light import *
 from .manhole import *
 from .st_duct import *
+from .customer import *
 from .feature_count import count_lv_features
 
 
@@ -64,6 +66,7 @@ def exec_validation(self):
     st_light_error = 0
     manhole_error = 0
     st_duct_error = 0
+    customer_error = 0
     total_error = 0
     # error message
     e_msg = ''
@@ -88,6 +91,7 @@ def exec_validation(self):
     st_light_flag = self.dlg.checkBox_st_light.isChecked()
     manhole_flag = self.dlg.checkBox_manhole.isChecked()
     st_duct_flag = self.dlg.checkBox_st_duct.isChecked()
+    customer_flag = self.dlg.checkBox_customer.isChecked()
 
     feat_count = 0
     arr_feat_count = []
@@ -123,6 +127,9 @@ def exec_validation(self):
         feat_count += 1
     if self.dlg.checkBox_st_duct.isChecked():
         arr_feat_count.append('Structure_Duct')
+        feat_count += 1
+    if self.dlg.checkBox_customer.isChecked():
+        arr_feat_count.append('Customer')
         feat_count += 1
 
     qa_qc_msg = 'No features selected fo QA/QC validation.'
@@ -1175,8 +1182,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if st_duct_flag:
+    if st_duct_flag:
+        for field_name in field_name_arr:
             arr_st_duct = st_duct_field_not_null(field_name)
             for device_id in arr_st_duct:
                 if device_id:
@@ -1194,15 +1201,46 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if st_duct_flag:
+    if st_duct_flag:
+        for field_name in field_name_arr:
             arr_st_duct = st_duct_field_enum(field_name)
-        for device_id in arr_st_duct:
+            for device_id in arr_st_duct:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += st_duct_field_enum_message(device_id, field_name)
+                st_duct_error += 1
+                total_error += 1
+
+    # *************************************************************
+    # ***************     CUSTOMER VALIDATION     ******************
+    # *************************************************************
+
+    # customer_meter_empty_code
+    field_name_arr = [
+        'device_id'
+        ,'meter_no'
+    ]
+    if customer_flag:
+        for field_name in field_name_arr:
+            arr_customer = customer_field_not_null(field_name)
+            for device_id in arr_customer:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += customer_field_not_null_message(device_id, field_name)
+                customer_error += 1
+                total_error += 1
+
+    # check device id vs demand point device id
+    if customer_flag:
+        arr_customer = customer_dmd_pt_id_missing()
+        for device_id in arr_customer:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += st_duct_field_enum_message(device_id, field_name)
-            st_duct_error += 1
+            e_msg += customer_dmd_pt_id_missing_message(device_id)
+            customer_error += 1
             total_error += 1
+
+
 
     # ****************************************************************
     # ******************     END OF VALIDATION     *******************

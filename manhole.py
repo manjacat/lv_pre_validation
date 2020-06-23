@@ -126,13 +126,7 @@ def manhole_field_enum_message(device_id, field_name):
 # **********************************
 
 def manhole_field_not_null(field_name):
-    arr = []
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    for f in feat:
-        device_id = f.attribute('device_id')
-        arr.append(device_id)
+    arr = rps_field_not_null(layer_name, field_name)
     return arr
 
 

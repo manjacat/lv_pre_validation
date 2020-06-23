@@ -10,8 +10,8 @@ from .dropdown_enum import *
 from .rps_utility import *
 
 layer_name = 'Demand_Point'
-dmd_pt_field_null = 'ERR_DEMANDPT_01'
-dmd_pt_enum_valid = 'ERR_DEMANDPT_02'
+dmd_pt_field_null_code = 'ERR_DEMANDPT_01'
+dmd_pt_enum_valid_code = 'ERR_DEMANDPT_02'
 dmd_pt_duplicate_code = 'ERR_DUPLICATE_ID'
 dmd_pt_device_id_format_code = 'ERR_DEVICE_ID'
 dmd_pt_remarks_code = 'ERR_DEMANDPT_04'
@@ -121,7 +121,7 @@ def dmd_pt_field_enum_message(device_id, field_name):
             latitude = point.y()
         except:
             err_count += 1
-    e_msg = dmd_pt_enum_valid + ',' + str(device_id) + ',' + layer_name + ': ' + str(
+    e_msg = dmd_pt_enum_valid_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -131,36 +131,12 @@ def dmd_pt_field_enum_message(device_id, field_name):
 # **********************************
 
 def dmd_pt_field_not_null(field_name):
-    arr = []
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    for f in feat:
-        device_id = f.attribute('device_id')
-        arr.append(device_id)
+    arr = rps_field_not_null(layer_name, field_name)
     return arr
 
 
 def dmd_pt_field_not_null_message(device_id, field_name):
-    longitude = 0
-    latitude = 0
-    if device_id:
-        device_id = device_id.strip()
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"device_id" = \'' + str(device_id) + '\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    err_count = 0
-    for f in feat:
-        try:
-            geom = f.geometry()
-            point = geom.asPoint()
-            longitude = point.x()
-            latitude = point.y()
-        except Exception as e:
-            err_count += 1
-
-    e_msg = dmd_pt_field_null + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+    e_msg = rps_field_not_null_message(device_id, field_name, layer_name, dmd_pt_field_null_code)
     return e_msg
 
 

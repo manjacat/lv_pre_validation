@@ -95,28 +95,28 @@ def lv_ug_duplicate_message(device_id):
 
 def lv_ug_field_enum(field_name):
     arr = []
-    arr_dropdown = []
+    arr_drop_down = []
     if field_name == 'status':
-        arr_dropdown = arr_status
+        arr_drop_down = arr_status
     elif field_name == 'phasing':
-        arr_dropdown = arr_phasing
+        arr_drop_down = arr_phasing
     elif field_name == 'usage':
-        arr_dropdown = arr_usage
+        arr_drop_down = arr_usage
     elif field_name == 'label':
-        arr_dropdown = arr_label_lv_ug
+        arr_drop_down = arr_label_lv_ug
     elif field_name == 'dat_qty_cl':
-        arr_dropdown = arr_dat_qty_cl
+        arr_drop_down = arr_dat_qty_cl
     elif field_name == 'db_oper':
-        arr_dropdown = arr_db_oper
+        arr_drop_down = arr_db_oper
     else:
-        arr_dropdown = []
+        arr_drop_down = []
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
         field_value = f.attribute(field_name)
-        if field_value not in arr_dropdown:
+        if field_value not in arr_drop_down:
             arr.append(device_id)
     return arr
 
@@ -140,13 +140,7 @@ def lv_ug_field_enum_message(device_id, field_name):
 # **********************************
 
 def lv_ug_field_not_null(field_name):
-    arr = []
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    for f in feat:
-        device_id = f.attribute('device_id')
-        arr.append(device_id)
+    arr = rps_field_not_null(layer_name, field_name)
     return arr
 
 
