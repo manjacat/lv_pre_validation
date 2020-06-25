@@ -9,6 +9,11 @@ from qgis.core import *
 from .dropdown_enum import *
 import re
 
+def rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude):
+    e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + error_desc + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+    return e_msg
+
+
 # *********************************************
 # ****** Check for Field not null or N/A ******
 # *********************************************
@@ -340,7 +345,7 @@ def rps_get_firstpoint(layer_name, device_id):
                 # check the geom type
                 geom_type = QgsWkbTypes.displayString(geom.wkbType())
                 # print('geometry type is ', geom_type)
-                if geom_type != 'MultiLineString':
+                if geom_type == 'MultiLineString':
                     y = geom.mergeLines()
                     polyline_y = y.asPolyline()
                     # get total no of vectors
@@ -375,7 +380,7 @@ def rps_get_secondpoint(layer_name, device_id):
                 # check the geom type
                 geom_type = QgsWkbTypes.displayString(geom.wkbType())
                 # print('geometry type is ', geom_type)
-                if geom_type != 'MultiLineString':
+                if geom_type == 'MultiLineString':
                     y = geom.mergeLines()
                     polyline_y = y.asPolyline()
                     # get total no of vectors
@@ -411,7 +416,7 @@ def rps_get_lastpoint(layer_name, device_id):
                 # check the geom type
                 geom_type = QgsWkbTypes.displayString(geom.wkbType())
                 # print('geometry type is ', geom_type)
-                if geom_type != 'MultiLineString':
+                if geom_type == 'MultiLineString':
                     y = geom.mergeLines()
                     polyline_y = y.asPolyline()
                     # get total no of vectors

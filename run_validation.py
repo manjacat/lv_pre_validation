@@ -583,6 +583,16 @@ def exec_validation(self):
             lv_oh_error += 1
             total_error += 1
 
+    # check for wrong flow direction
+    if lv_oh_flag:
+        arr_lv_oh = lv_oh_wrong_flow(arr_lv_oh_exclude_geom)
+        for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
+            e_msg += lv_oh_wrong_flow_message(device_id, arr_lv_oh_exclude_geom)
+            lv_oh_error += 1
+            total_error += 1
+
     # *************************************************************
     # ***************     LV Fuse VALIDATION     ******************
     # *************************************************************
