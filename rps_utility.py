@@ -9,10 +9,196 @@ from qgis.core import *
 from .dropdown_enum import *
 import re
 
+
+rps_column_name_check_code = 'ERR_COLUMN_NAME'
+
+# *********************************************
+# ****** Return Point from MultiPoint *********
+# *********************************************
+
+def rps_get_qgspoint(geom):
+    geom_type = QgsWkbTypes.displayString(geom.wkbType())
+    # print('geom is : ' + geom_type)
+    if geom_type == 'MultiPoint':
+        multi_point = geom.asMultiPoint()
+        return_geom = multi_point[0]
+        # print(multi_point[0])
+    elif geom_type == 'Point':
+        point = geom.asPoint()
+        # print(point)
+        return_geom = point
+
+    return return_geom
+
+# ********************************************
+# ****** Output E MSG in correct format ******
+# ********************************************
+
 def rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude):
     e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + error_desc + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
+# ********************************************
+# ****** Check for List of Column Names ******
+# ********************************************
+
+def rps_get_field_name(layer_name):
+    arr = []
+    # list down all mandatory field names
+    arr_col_lv_ug = [
+        'status'
+        , 'phasing'
+        , 'usage'
+        , 'length'
+        , 'label'
+        , 'dat_qty_cl'
+        , 'device_id'
+        , 'db_oper'
+    ]
+    arr_col_lv_oh = [
+        'status'
+        , 'phasing'
+        , 'usage'
+        , 'label'
+        , 'length'
+        , 'device_id'
+        , 'db_oper'
+    ]
+    arr_col_lv_fuse = [
+        'status'
+        , 'phasing'
+        , 'class'
+        , 'normal_sta'
+        , 'device_id'
+        , 'db_oper'
+    ]
+    arr_col_lv_cj = [
+        'status'
+        , 'class'
+        , 'type'
+        , 'db_oper'
+        , 'device_id'
+    ]
+    arr_col_lvdb_fp = [
+        'status'
+        , 'lvdb_loc'
+        , 'design'
+        , 'device_id'
+        , 'db_oper'
+        , 'lvdb_angle'
+    ]
+    arr_col_pole = [
+        'status'
+        , 'light_ares'
+        , 'struc_type'
+        , 'pole_no'
+        , 'device_id'
+        , 'db_oper'
+        , 'lv_ptc'
+    ]
+    arr_col_dmd_pt = [
+        'status'
+        , 'device_id'
+        , 'db_oper'
+        , 'dist_tranx'
+        , 'house_no'
+        , 'str_name'
+    ]
+    arr_col_st_light = [
+        'status'
+        , 'phasing'
+        , 'db_oper'
+        , 'stl_angle'
+        , 'cont_dev'
+        , 'device_id'
+    ]
+    arr_col_manhole = [
+        'status'
+        , 'phasing'
+        , 'db_oper'
+        , 'stl_angle'
+        , 'cont_dev'
+        , 'device_id'
+    ]
+    arr_col_st_duct = [
+        'status'
+        , 'size'
+        , 'method'
+        , 'way'
+        , 'device_id'
+        , 'db_oper'
+    ]
+    if layer_name == 'LV_UG_Conductor':
+        arr = arr_col_lv_ug
+    elif layer_name == 'LV_OH_Conductor':
+        arr = arr_col_lv_oh
+    elif layer_name == 'LV_Fuse':
+        arr = arr_col_lv_fuse
+    elif layer_name == 'LV_Cable_Joint':
+        arr = arr_col_lv_cj
+    elif layer_name == 'LVDB-FP':
+        arr = arr_col_lvdb_fp
+    elif layer_name == 'Pole':
+        arr = arr_col_pole
+    elif layer_name == 'Demand_Point':
+        arr = arr_col_dmd_pt
+    elif layer_name == 'Street_Light':
+        arr = arr_col_st_light
+    elif layer_name == 'Manhole':
+        arr = arr_col_manhole
+    elif layer_name == 'Structure_Duct':
+        arr = arr_col_st_duct
+    return arr
+
+def rps_column_name_check(layer_name):
+    arr = []
+    arr_col_list = rps_get_field_name(layer_name)
+    arr_col_layer = []
+    arr_col_missing = []
+
+    # get field name list
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    if layer:
+        for field in layer.fields():
+            arr_col_layer.append(field.name())
+
+    # check if mandatory field names in current layer
+    for col in arr_col_list:
+        if col not in arr_col_layer:
+            arr_col_missing.append(col)
+
+    if len(arr_col_missing) > 0:
+        arr.append(layer_name)
+
+    return arr
+
+def rps_column_name_check_message(layer_name):
+    longitude = 0
+    latitude = 0
+    error_desc = layer_name + ' is missing fields: '
+    arr_col_list = rps_get_field_name(layer_name)
+    arr_col_layer = []
+    arr_col_missing = []
+
+    # get field name list
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    if layer:
+        for field in layer.fields():
+            arr_col_layer.append(field.name())
+
+    # check if mandatory field names in current layer
+    for col in arr_col_list:
+        if col not in arr_col_layer:
+            arr_col_missing.append(col)
+
+    if len(arr_col_missing) > 0:
+        for col_miss in arr_col_missing:
+            error_desc += '[' + col_miss + ']'
+
+    e_msg = rps_write_line(rps_column_name_check_code, layer_name, layer_name, error_desc, longitude, latitude)
+    print(e_msg)
+
+    return e_msg
 
 # *********************************************
 # ****** Check for Field not null or N/A ******
@@ -283,7 +469,7 @@ def rps_z_m_shapefile_message(layer_name, device_id, error_code):
         # if conductor is MultiLineString, there is possibility that the vector goes at least 2 ways
         if geom_type == 'MultiLineString' and wkb_type == 'MultiLineString':
             err_detail = layer_name + ': ' + str(
-                device_id) + ' geometry ERROR. Check if possible 2 way vector direction.'
+                device_id) + ' geometry ERROR. Unable to read geometry.'
         else:
             err_detail = layer_name + ': ' + str(
             device_id) + ' geometry ERROR. Geometry is ' + geom_type + ' (correct is ' + wkb_type + ') '

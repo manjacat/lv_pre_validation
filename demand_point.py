@@ -72,10 +72,11 @@ def dmd_pt_duplicate_message(device_id):
     for f in feat:
         try:
             geom = f.geometry()
-            point = geom.asPoint()
-            longitude = point.x()
-            latitude = point.y()
-        except:
+            if geom:
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        except Exception as e:
             err_count += 1
     e_msg = dmd_pt_duplicate_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
@@ -88,20 +89,20 @@ def dmd_pt_duplicate_message(device_id):
 
 def dmd_pt_field_enum(field_name):
     arr = []
-    arr_dropdown = []
+    arr_drop_down = []
     if field_name == 'status':
-        arr_dropdown = arr_status
+        arr_drop_down = arr_status
     elif field_name == 'db_oper':
-        arr_dropdown = arr_db_oper
+        arr_drop_down = arr_db_oper
     else:
-        arr_dropdown = []
+        arr_drop_down = []
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
         field_value = f.attribute(field_name)
-        if field_value not in arr_dropdown:
+        if field_value not in arr_drop_down:
             arr.append(device_id)
     return arr
 
@@ -116,10 +117,11 @@ def dmd_pt_field_enum_message(device_id, field_name):
     for f in feat:
         try:
             geom = f.geometry()
-            point = geom.asPoint()
-            longitude = point.x()
-            latitude = point.y()
-        except:
+            if geom:
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        except Exception as e:
             err_count += 1
     e_msg = dmd_pt_enum_valid_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
@@ -188,10 +190,11 @@ def dmd_pt_remarks_message(device_id):
     for f in feat:
         try:
             geom = f.geometry()
-            point = geom.asPoint()
-            longitude = point.x()
-            latitude = point.y()
-        except:
+            if geom:
+                point = geom.asPoint()
+                longitude = point.x()
+                latitude = point.y()
+        except Exception as e:
             err_count += 1
 
     e_msg = dmd_pt_remarks_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -205,7 +208,7 @@ def dmd_pt_remarks_message(device_id):
 
 '''
 # Step 1: Get geometry of all conductors (LV UG, LV OH)
-# Step 2: Get last vertext of all geometry of Step 1
+# Step 2: Get last vertex of all geometry of Step 1
 # Step 3: Get geometry of all demand point
 # Step 4: Geometry of demand point must snap to at least one of LV UG/LV OH
 # Step 5: if not snap to any cable == error
@@ -256,14 +259,14 @@ def dmd_pt_snapping():
         # loop through all LV OH & LV UG
         for geom_lv in arr_lv_vertex:
             try:
-                geom_x = geom.asPoint()
+                geom_x = rps_get_qgspoint(geom)
                 m = distance.measureLine(geom_lv, geom_x)
                 # if m < 0.001 or str(m) == 'nan':
                 if m < 0.001:
                     arr_snapping.append(device_id)
                 # elif m >= 0.001 and m < 0.01:
                 #        print(device_id + ' distance is ' + str("{:.5f}".format(m)))
-            except:
+            except Exception as e:
                 err_counter += 1
 
         if len(arr_snapping) == 0:
@@ -278,15 +281,12 @@ def dmd_pt_snapping_message(device_id):
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     query = '"device_id" = \'' + str(device_id) + '\''
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    err_count = 0
     for f in feat:
-        try:
-            geom = f.geometry()
-            point = geom.asPoint()
+        geom = f.geometry()
+        if geom:
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
-        except:
-            err_count += 1
     e_msg = dmd_pt_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' hanging' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg

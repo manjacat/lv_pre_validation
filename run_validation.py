@@ -68,12 +68,42 @@ def exec_validation(self):
     st_duct_error = 0
     customer_error = 0
     total_error = 0
+
     # error message
     e_msg = ''
+
+    # col flag
+    lv_ug_column_check = False
+    lv_oh_column_check = False
+    lv_fuse_column_check = False
+    lv_cj_column_check = False
+    lvdb_fp_column_check = False
+    pole_column_check = False
+    dmd_pt_column_check = False
+    st_light_column_check = False
+    manhole_column_check = False
+    st_duct_column_check = False
+    customer_column_check = False
 
     # error geom
     arr_lv_ug_exclude_geom = []
     arr_lv_oh_exclude_geom = []
+
+    # ****************************************************
+    # ***********     KHAIRIL TESTING STUFF    ***********
+    # ****************************************************
+
+    # layer_test = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+    # device_id_test = 'N79E45013dmd85'
+    # query_test = '"device_id" = \'' + str(device_id_test) + '\''
+    # feat_test = layer_test.getFeatures(QgsFeatureRequest().setFilterExpression(query_test))
+    # for field in layer_test.fields():
+    #     print(field.name())
+    # for f in feat_test:
+    #     geom = f.geometry()
+    #     if geom:
+    #         point_geom = rps_get_qgspoint(geom)
+    #         print('output point geom is ' + str(point_geom))
 
     # ***************************************************************
     # ***********     CHECK HOW MANY FEATURES SELECTED    ***********
@@ -138,6 +168,40 @@ def exec_validation(self):
     print(qa_qc_msg)
     if len(arr_feat_count) > 0:
         print(arr_feat_count)
+
+    # ******************************************************
+    # **********     MANDATORY COLUMN CHECKING    **********
+    # ******************************************************
+
+    if lv_ug_flag:
+        arr_lv_ug = rps_column_name_check('LV_UG_Conductor')
+        if len(arr_lv_ug) > 0:
+            for device_id in arr_lv_ug:
+                e_msg += rps_column_name_check_message(device_id)
+                lv_ug_error += 1
+                total_error += 1
+        else:
+            lv_ug_column_check = True
+
+    if lv_oh_flag:
+        arr_lv_oh = rps_column_name_check('LV_OH_Conductor')
+        if len(arr_lv_oh) > 0:
+            for device_id in arr_lv_oh:
+                e_msg += rps_column_name_check_message(device_id)
+                lv_oh_error += 1
+                total_error += 1
+        else:
+            lv_oh_column_check = True
+
+    if dmd_pt_flag:
+        arr_dmd_pt = rps_column_name_check('Demand_Point')
+        if len(arr_dmd_pt) > 0:
+            for device_id in arr_dmd_pt:
+                e_msg += rps_column_name_check_message(device_id)
+                dmd_pt_error += 1
+                total_error += 1
+        else:
+            dmd_pt_column_check = True
 
     # ******************************************************
     # **********     DEVICE ID CHECKING    *****************
@@ -436,7 +500,7 @@ def exec_validation(self):
         for device_id in arr_lv_ug:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_ug_self_intersect_message(arr_lv_ug_exclude_geom, device_id)
+            e_msg += lv_ug_self_intersect_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
@@ -465,7 +529,7 @@ def exec_validation(self):
         for device_id in arr_lv_ug:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+            e_msg += lv_ug_hanging_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
@@ -475,7 +539,7 @@ def exec_validation(self):
         for device_id in arr_lv_ug:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom)
+            e_msg += lv_ug_buffer_message(device_id)
             lv_ug_error += 1
             total_error += 1
 
@@ -559,7 +623,7 @@ def exec_validation(self):
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_self_intersect_message(arr_lv_oh_exclude_geom, device_id)
+            e_msg += lv_oh_self_intersect_message(device_id)
             lv_oh_error += 1
             total_error += 1
 
@@ -569,7 +633,7 @@ def exec_validation(self):
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+            e_msg += lv_oh_hanging_message(device_id)
             lv_oh_error += 1
             total_error += 1
 
@@ -579,7 +643,7 @@ def exec_validation(self):
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_buffer_message(device_id, arr_lv_oh_exclude_geom)
+            e_msg += lv_oh_buffer_message(device_id)
             lv_oh_error += 1
             total_error += 1
 
@@ -589,7 +653,7 @@ def exec_validation(self):
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_wrong_flow_message(device_id, arr_lv_oh_exclude_geom)
+            e_msg += lv_oh_wrong_flow_message(device_id)
             lv_oh_error += 1
             total_error += 1
 
@@ -934,7 +998,7 @@ def exec_validation(self):
     arr_dmd_pt = []
 
     # check z-m shapefile
-    if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_column_check:
         arr_dmd_pt = dmd_pt_z_m_shapefile()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -944,7 +1008,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_column_check:
         arr_dmd_pt = dmd_pt_duplicate()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -963,8 +1027,8 @@ def exec_validation(self):
         , 'str_name'
     ]
 
-    for field_name in field_name_arr:
-        if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_column_check:
+        for field_name in field_name_arr:
             arr_dmd_pt = dmd_pt_field_not_null(field_name)
             for device_id in arr_dmd_pt:
                 if device_id:
@@ -979,8 +1043,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_column_check:
+        for field_name in field_name_arr:
             arr_dmd_pt = dmd_pt_field_enum(field_name)
             for device_id in arr_dmd_pt:
                 if device_id:
@@ -990,7 +1054,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for Remarks
-    if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_column_check:
         arr_dmd_pt = dmd_pt_remarks()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -1259,27 +1323,27 @@ def exec_validation(self):
     # print('after end of validation, total error is ' + str(total_error))
 
     # change label in GUI
-    if device_id_flag == False:
+    if not device_id_flag:
         device_id_error = 'Skipped'
     if lv_ug_flag == False and lv_ug_error == 0:
         lv_ug_error = 'Skipped'
     if lv_oh_flag == False and lv_oh_error == 0:
         lv_oh_error = 'Skipped'
-    if lv_fuse_flag == False:
+    if not lv_fuse_flag:
         lv_fuse_error = 'Skipped'
-    if lv_cj_flag == False:
+    if not lv_cj_flag:
         lv_cj_error = 'Skipped'
-    if lvdb_fp_flag == False:
+    if not lvdb_fp_flag:
         lvdb_fp_error = 'Skipped'
-    if pole_flag == False:
+    if not pole_flag:
         pole_error = 'Skipped'
-    if dmd_pt_flag == False:
+    if not dmd_pt_flag:
         dmd_pt_error = 'Skipped'
-    if st_light_flag == False:
+    if not st_light_flag:
         st_light_error = 'Skipped'
-    if manhole_flag == False:
+    if not manhole_flag:
         manhole_error = 'Skipped'
-    if st_duct_flag == False:
+    if not st_duct_flag:
         st_duct_error = 'Skipped'
 
     self.dlg.label_message.setText(' ')

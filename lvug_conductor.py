@@ -432,13 +432,10 @@ def lv_ug_1_2_incoming(arr_lv_ug_exclude_geom):
                 distance_n = distance.measureLine(polyline_y[len(polyline_y) - 1], polyline_y[len(polyline_y) - 2])
                 # get incoming/outgoing lvdb, if any
                 in_lv_db_device_id = f.attribute('in_lvdb_id')
-                out_lv_db_device_id = f.attribute('out_lvdb_i')
-                if in_lv_db_device_id:
-                    geom_lvdb = get_lvdb_by_device_id(in_lv_db_device_id)
-                    if distance_n < 1:
+                if in_lv_db_device_id and distance_n < 1:
                         # print(device_id + '/' + in_lv_db_device_id + ' incoming dist is ' + str(distance_n))
                         arr.append(device_id)
-            except:
+            except Exception as e:
                 arr.append(device_id)
     return arr
 
@@ -447,13 +444,13 @@ def lv_ug_1_2_incoming_message(device_id):
     longitude = 0
     latitude = 0
 
-    lastpoint = rps_get_lastpoint(layer_name, device_id)
-    if lastpoint:
-        longitude = lastpoint.x()
-        latitude = lastpoint.y()
+    last_point = rps_get_lastpoint(layer_name, device_id)
+    if last_point:
+        longitude = last_point.x()
+        latitude = last_point.y()
 
     e_msg = lv_ug_1_2_incoming_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' INCOMING vertex to LVDB must be more than 1.0m' + ',' + str(longitude) + ',' + str(
+        device_id) + ' INCOMING vertex to LVDB-FP must be more than 1.0m' + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'
     return e_msg
 
@@ -479,14 +476,11 @@ def lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom):
                 distance_0 = distance.measureLine(polyline_y[0], polyline_y[1])
                 # distance_n = distance.measureLine(polyline_y[len(polyline_y) - 1],polyline_y[len(polyline_y) - 2])
                 # get incoming/outgoing lvdb, if any
-                in_lv_db_device_id = f.attribute('in_lvdb_id')
                 out_lv_db_device_id = f.attribute('out_lvdb_i')
-                if out_lv_db_device_id:
-                    geom_lvdb = get_lvdb_by_device_id(out_lv_db_device_id)
-                    if distance_0 < 1:
+                if out_lv_db_device_id and distance_0 < 1:
                         # print(device_id + '/' + out_lv_db_device_id + ' outgoing distance is ' + str(distance_0))
                         arr.append(device_id)
-            except:
+            except Exception as e:
                 arr.append(device_id)
 
     return arr
@@ -536,13 +530,13 @@ def lv_ug_self_intersect(arr_exclude_geom):
         try:
             if device_id not in arr_exclude_geom:
                 y = geom.mergeLines()
-                polyLine_y = y.asPolyline()
+                poly_line_y = y.asPolyline()
 
                 arr_line = []
-                for i in range(len(polyLine_y)):
-                    geom_i = polyLine_y[i]
-                    if i < len(polyLine_y) - 1:
-                        geom_i2 = polyLine_y[i + 1]
+                for i in range(len(poly_line_y)):
+                    geom_i = poly_line_y[i]
+                    if i < len(poly_line_y) - 1:
+                        geom_i2 = poly_line_y[i + 1]
                         arr_temp_line = [QgsPoint(geom_i), QgsPoint(geom_i2)]
                         new_line = QgsGeometry.fromPolyline(arr_temp_line)
                         arr_line.append(new_line)
@@ -577,61 +571,14 @@ def lv_ug_self_intersect(arr_exclude_geom):
 '''
 
 
-def lv_ug_self_intersect_message(arr_exclude_geom, device_id):
+def lv_ug_self_intersect_message(device_id):
     longitude = 0
     latitude = 0
-    arr_self_intersect = []
 
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"device_id" = \'' + str(device_id) + '\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-
-    for f in feat:
-        device_id = f.attribute('device_id')
-        geom = f.geometry()
-        display_str = QgsWkbTypes.displayString(geom.wkbType())
-        # print(device_id + ' display string is: ' + display_str)
-        if device_id not in arr_exclude_geom:
-            y = geom.mergeLines()
-            poly_line_y = y.asPolyline()
-
-            arr_line = []
-            for i in range(len(poly_line_y)):
-                geom_i = poly_line_y[i]
-                if i < len(poly_line_y) - 1:
-                    geom_i2 = poly_line_y[i + 1]
-                    arr_temp_line = [QgsPoint(geom_i), QgsPoint(geom_i2)]
-                    new_line = QgsGeometry.fromPolyline(arr_temp_line)
-                    arr_line.append(new_line)
-
-            # print(str(len(poly_line_y)) + ' vector(s) found, with ' + str(len(arr_line)) + ' total lines')
-            for h in range(len(arr_line)):
-                arr_temp = []
-                arr_temp.extend(arr_line)
-                # remove self
-                arr_temp.remove(arr_line[h])
-                no_of_intersect = 0
-                # for first lines and last line, we (+1) so that all lines will have 2 intersect points at the start
-                if h == 0 or h == len(arr_line) - 1:
-                    no_of_intersect += 1
-                for i in range(len(arr_temp)):
-                    intersect = QgsGeometry.intersection(arr_line[h], arr_temp[i])
-                    if intersect:
-                        no_of_intersect += 1
-                # print('intersect: ' + str(no_of_intersect))
-                # remove duplicate device_id
-                if no_of_intersect > 2:
-                    # check if intersect is Point or LineString
-                    geom_type = QgsWkbTypes.displayString(arr_line[h].wkbType())
-                    if geom_type == 'Point':
-                        # get longitude and latitude
-                        longitude = arr_line[h].asPoint().x()
-                        latitude = arr_line[h].asPoint().y()
-                    else:
-                        point_zero = arr_line[h].asPolyline()[0]
-                        print(point_zero)
-                        longitude = point_zero.x()
-                        latitude = point_zero.y()
+    geom = rps_get_midpoint(layer_name, device_id)
+    if geom:
+        longitude = geom.x()
+        latitude = geom.y()
 
     e_msg = lv_ug_self_intersect_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' has self intersect geometry ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
@@ -709,6 +656,7 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                     # print(arr_device_id)
                     # print(arr_point)
 
+                    # 29/6/2020 - changed from only read start and end of LV OH, instead check all vectors
                     layer_lv_oh = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
                     feat_lv_oh = layer_lv_oh.getFeatures()
                     for h in feat_lv_oh:
@@ -716,15 +664,15 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                         if device_temp not in arr_lv_oh_exclude_geom:
                             try:
                                 geom_h = h.geometry()
-                                y_h = geom_h.mergeLines()
-                                # print('current polyline to check is ' + device_temp)
-                                polyline_y = y_h.asPolyline()
-                                v1_one = polyline_y[0]
-                                v1_last = polyline_y[len(polyline_y) - 1]
-                                arr_point.append(v1_one)
-                                arr_point.append(v1_last)
+                                if geom_h:
+                                    y_h = geom_h.mergeLines()
+                                    # print('current polyline to check is ' + device_temp)
+                                    polyline_y = y_h.asPolyline()
+                                    for i in range(len(polyline_y)):
+                                        vector = polyline_y[i]
+                                        arr_point.append(vector)
                             except Exception as e:
-                                print(device_temp + ' ' + str(e))
+                                print(device_temp + ' lv ug hanging error check: ' + str(e))
 
                     layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
                     feat_dmd_pt = layer_dmd_pt.getFeatures()
@@ -766,101 +714,14 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
 '''
 
 
-def lv_ug_hanging_message(device_id, arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
+def lv_ug_hanging_message(device_id):
     longitude = 0
     latitude = 0
 
-    # qgis distanceArea
-    distance = QgsDistanceArea()
-    distance.setEllipsoid('WGS84')
-
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"device_id" = \'' + str(device_id) + '\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-
-    for f in feat:
-        device_id = f.attribute('device_id')
-        geom = f.geometry()
-        try:
-            y = geom.mergeLines()
-            polyline_y = y.asPolyline()
-            v_one = polyline_y[0]
-            v_last = polyline_y[len(polyline_y) - 1]
-            # print('len polyline is ', len(polyline_y))
-
-            # print(v_one)
-
-            # get other vertex
-            arr_point = []
-            arr_device_id = []
-            layer_lv_ug = QgsProject.instance().mapLayersByName(layer_name)[0]
-            query = '"device_id" != \'' + str(device_id) + '\''
-            feat_lv_ug = layer_lv_ug.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-            for g in feat_lv_ug:
-                device_temp = g.attribute('device_id')
-                if device_temp not in arr_lv_ug_exclude_geom:
-                    arr_device_id.append(device_temp)
-                    geom_g = g.geometry()
-                    y_g = geom_g.mergeLines()
-                    polyline_y_g = y_g.asPolyline()
-                    for g1 in range(len(polyline_y_g)):
-                        if polyline_y_g[g1] not in arr_point:
-                            arr_point.append(polyline_y_g[g1])
-                            # print(arr_device_id)
-            # print(arr_point)
-
-            layer_lv_oh = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-            feat_lv_oh = layer_lv_oh.getFeatures()
-            for h in feat_lv_oh:
-                device_temp = h.attribute('device_id')
-                if device_temp not in arr_lv_oh_exclude_geom:
-                    geom_h = h.geometry()
-                    y_h = geom_h.mergeLines()
-                    polyline_y = y_h.asPolyline()
-                    v1_one = polyline_y[0]
-                    v1_last = polyline_y[len(polyline_y) - 1]
-                    arr_point.append(v1_one)
-                    arr_point.append(v1_last)
-
-            layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
-            feat_dmd_pt = layer_dmd_pt.getFeatures()
-            for j in feat_dmd_pt:
-                devide_temp = j.attribute('device_id')
-                geom_j = j.geometry()
-                j_point = geom_j.asPoint()
-                arr_point.append(j_point)
-
-            # print('arr point is:' + str(len(arr_point)))
-
-            # check distance between v_one / v_last with arr_point
-            arr_snap_v_one = []
-            arr_snap_v_last = []
-            error_vector = []
-
-            for v_point in arr_point:
-                distance_v_one = distance.measureLine(v_one, v_point)
-                if distance_v_one <= 0.001:
-                    # print(j)
-                    # print('distance is ' + format(distance_xy,'.9f') + 'm')
-                    arr_snap_v_one.append(device_id)
-                # print('v point to check:' + str(v_point))
-                distance_v_last = distance.measureLine(v_last, v_point)
-                if distance_v_last <= 0.001:
-                    # print('v last is ' + str(v_last))
-                    # print('lv point is ' + str(v_point))
-                    # print('distance is ' + format(distance_v_last,'.9f') + 'm')
-                    arr_snap_v_last.append(device_id)
-                    # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
-            if len(arr_snap_v_one) == 0:
-                longitude = v_one.x()
-                latitude = v_one.y()
-            elif len(arr_snap_v_last) == 0:
-                longitude = v_last.x()
-                latitude = v_last.y()
-
-        except:
-            longitude = 0
-            latitude = 0
+    geom = rps_get_lastpoint(layer_name, device_id)
+    if geom:
+        longitude = geom.x()
+        latitude = geom.y()
 
     e_msg = lv_ug_hanging_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' is hanging ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
@@ -931,8 +792,8 @@ def get_all_lv_ug_vector(arr_exclude_geom):
                 polyline_y = y.asPolyline()
                 for geom_y in polyline_y:
                     arr_lv_ug.append(geom_y)
-            except:
-                print('failed to read geometry!')
+            except Exception as e:
+                print('failed to read geometry!' + str(e))
 
     return arr_lv_ug
 
@@ -975,17 +836,17 @@ def lv_ug_buffer(arr_lv_ug_exclude_geom):
 
                 for i in range(len(arr_cur_lv_ug)):
                     # remove first and last vertex from checking
-                    if i > 0 and i < len(arr_cur_lv_ug) - 1:
+                    if 0 < i < len(arr_cur_lv_ug) - 1:
                         for vector_all in arr_temp:
                             vector = arr_cur_lv_ug[i]
                             m = distance.measureLine(vector, vector_all)
-                            if m < 0.29 and m > 0.005:
+                            if 0.29 > m > 0.005:
                                 # print(device_id + '[' + str(i + 1) + '/' + str(len(arr_cur_lv_oh)) + ']' + ' is too close to another conductor!')
                                 arr_too_close.append(device_id)
-                            elif m > 0.31 and m < 0.5:
+                            elif 0.31 < m < 0.5:
                                 # print(device_id + ' is too far from another conductor')
                                 arr_too_far.append(device_id)
-                if (len(arr_too_close) > 0):
+                if len(arr_too_close) > 0:
                     arr.append(device_id)
             except Exception as e:
                 print('lv ug buffer error: ' + str(e))
@@ -1040,15 +901,15 @@ def lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom):
             for i in range(len(arr_cur_lv_ug)):
 
                 # remove first and last vertex from checking
-                if i > 0 and i < len(arr_cur_lv_ug) - 1:
+                if 0 < i < len(arr_cur_lv_ug) - 1:
                     for vector_all in arr_temp:
                         vector = arr_cur_lv_ug[i]
                         m = distance.measureLine(vector, vector_all)
-                        if m < 0.29 and m > 0.005:
+                        if 0.29 > m > 0.005:
                             arr_too_close.append(i)
-                        elif m > 0.31 and m < 0.5:
+                        elif 0.31 < m < 0.5:
                             arr_too_far.append(i)
-            if (len(arr_too_close) > 0):
+            if len(arr_too_close) > 0:
                 # get vector geometry
                 vector_no = arr_too_close[0]
                 qgs_point_0 = arr_cur_lv_ug[vector_no]
@@ -1056,7 +917,7 @@ def lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom):
                 longitude = qgs_point_0.x()
                 latitude = qgs_point_0.y()
                 # print('device id: ' + str(device_id) + ' ' + str(qgs_point_0))
-        except:
+        except Exception as e:
             longitude = 0
             latitude = 0
 
