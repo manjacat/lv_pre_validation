@@ -83,26 +83,26 @@ def pole_duplicate_message(device_id):
 
 def pole_field_enum(field_name):
     arr = []
-    arr_dropdown = []
+    arr_drop_down = []
     if field_name == 'status':
-        arr_dropdown = arr_status
+        arr_drop_down = arr_status
     elif field_name == 'light_ares':
-        arr_dropdown = arr_ares
+        arr_drop_down = arr_ares
     elif field_name == 'struc_type':
-        arr_dropdown = arr_struc_type
+        arr_drop_down = arr_struc_type
     elif field_name == 'db_oper':
-        arr_dropdown = arr_db_oper
+        arr_drop_down = arr_db_oper
     elif field_name == 'lv_ptc':
-        arr_dropdown = arr_lv_ptc
+        arr_drop_down = arr_lv_ptc
     else:
-        arr_dropdown = []
+        arr_drop_down = []
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
         field_value = f.attribute(field_name)
-        if field_value not in arr_dropdown:
+        if field_value not in arr_drop_down:
             arr.append(device_id)
     return arr
 
@@ -115,9 +115,10 @@ def pole_field_enum_message(device_id, field_name):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
     e_msg = pole_enum_valid + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
@@ -141,9 +142,10 @@ def pole_field_not_null_message(device_id, field_name):
     latitude = 0
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
     e_msg = pole_field_null + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
@@ -194,7 +196,7 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
         for vertex in arr_lv_oh:
             m = distance.measureLine(geom_pole, vertex)
             # user feedback: changed upper limit to 2.6 (previously 1.15)
-            if m >= 0.85 and m <= 2.5:
+            if 0.85 <= m <= 2.5:
                 arr_snapping.append(device_id)
                 # elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
             #        print('WARNING: ' + str(device_id) + ' distance is ' + str(m) + 'm')
@@ -212,9 +214,10 @@ def pole_lv_oh_vertex_message(device_id):
     latitude = 0
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
     e_msg = pole_lv_oh_vertex_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' distance to LV OH vertex not within 1.0m (too close/too far)' + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'

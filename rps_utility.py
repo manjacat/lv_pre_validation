@@ -11,6 +11,49 @@ import re
 
 
 rps_column_name_check_code = 'ERR_COLUMN_NAME'
+rps_check_layer_name_code = 'ERR_MISSING_LAYER'
+
+# *********************************************
+# ****** Return Point from MultiPoint *********
+# *********************************************
+
+def rps_get_arr_layers(layer_name):
+    arr = []
+    arr_layers_st_light = ['Street_Light', 'Pole']
+    arr_layers_dmd_pt = ['Demand_Point', 'LV_OH_Conductor', 'LV_UG_Conductor', 'Street_Light']
+    arr_layers_pole = ['Pole', 'LV_OH_Conductor']
+    arr_layers_lvdb_fp = ['LVDB-FP', 'LV_OH_Conductor', 'LV_UG_Conductor']
+    arr_layers_lv_cj = ['LV_Cable_Joint', 'LV_OH_Conductor', 'LV_UG_Conductor']
+    arr_layers_lv_fuse = ['LV_Fuse', 'LV_OH_Conductor', 'Pole']
+    arr_layers_lv_oh = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LV_Cable_Joint', 'Pole']
+    arr_layers_lv_ug = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LVDB-FP']
+    arr_layers_manhole = ['Manhole']
+    arr_layers_st_duct = ['Structure_Duct']
+
+    if layer_name == 'LV_UG_Conductor':
+        arr = arr_layers_lv_ug
+    elif layer_name == 'LV_OH_Conductor':
+        arr = arr_layers_lv_oh
+    elif layer_name == 'LV_Fuse':
+        arr = arr_layers_lv_fuse
+    elif layer_name == 'LV_Cable_Joint':
+        arr = arr_layers_lv_cj
+    elif layer_name == 'LVDB-FP':
+        arr = arr_layers_lvdb_fp
+    elif layer_name == 'Pole':
+        arr = arr_layers_pole
+    elif layer_name == 'Demand_Point':
+        arr = arr_layers_dmd_pt
+    elif layer_name == 'Street_Light':
+        arr = arr_layers_st_light
+    elif layer_name == 'Manhole':
+        arr = arr_layers_manhole
+    elif layer_name == 'Structure_Duct':
+        arr = arr_layers_st_duct
+
+    return arr
+
+
 
 # *********************************************
 # ****** Return Point from MultiPoint *********
@@ -37,6 +80,30 @@ def rps_get_qgspoint(geom):
 def rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude):
     e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + error_desc + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
+
+# *****************************************************
+# ****** Check for List of Mandatory Layer Names ******
+# *****************************************************
+
+def rps_check_layer_name(arr_layers):
+    arr = []
+    for layer_name_zero in arr_layers:
+        try:
+            layer_test = QgsProject.instance().mapLayersByName(layer_name_zero)[0]
+        except  Exception as e:
+            arr.append(layer_name_zero)
+    return arr
+
+def rps_check_layer_name_message(layer_name, layer_miss):
+    longitude = 0
+    latitude = 0
+    error_desc = ' These layers are required for ' + layer_name + '! ' +  '[' + str(layer_miss) + ']'
+
+    e_msg = rps_write_line(rps_check_layer_name_code, layer_name, layer_name, error_desc, longitude, latitude)
+    # print(e_msg)
+
+    return e_msg
+
 
 # ********************************************
 # ****** Check for List of Column Names ******
@@ -150,8 +217,8 @@ def rps_get_field_name(layer_name):
         arr = arr_col_st_duct
     return arr
 
+# returns any fields which are required, but missing
 def rps_column_name_check(layer_name):
-    arr = []
     arr_col_list = rps_get_field_name(layer_name)
     arr_col_layer = []
     arr_col_missing = []
@@ -167,33 +234,12 @@ def rps_column_name_check(layer_name):
         if col not in arr_col_layer:
             arr_col_missing.append(col)
 
-    if len(arr_col_missing) > 0:
-        arr.append(layer_name)
+    return arr_col_missing
 
-    return arr
-
-def rps_column_name_check_message(layer_name):
+def rps_column_name_check_message(layer_name, col_miss):
     longitude = 0
     latitude = 0
-    error_desc = layer_name + ' is missing fields: '
-    arr_col_list = rps_get_field_name(layer_name)
-    arr_col_layer = []
-    arr_col_missing = []
-
-    # get field name list
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    if layer:
-        for field in layer.fields():
-            arr_col_layer.append(field.name())
-
-    # check if mandatory field names in current layer
-    for col in arr_col_list:
-        if col not in arr_col_layer:
-            arr_col_missing.append(col)
-
-    if len(arr_col_missing) > 0:
-        for col_miss in arr_col_missing:
-            error_desc += '[' + col_miss + ']'
+    error_desc = layer_name + ' is missing fields: ' + '[' + str(col_miss) + ']'
 
     e_msg = rps_write_line(rps_column_name_check_code, layer_name, layer_name, error_desc, longitude, latitude)
     print(e_msg)
@@ -616,6 +662,27 @@ def rps_get_lastpoint(layer_name, device_id):
         return vector_last_point
     except Exception as e:
         return QgsPoint(0, 0)
+
+# ********************************************
+# ********* LV UG / LV OH Functions  *********
+# ********************************************
+
+def rps_get_all_dmd_pt():
+    arr_dmd_pt = []
+    layer = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+    feat = layer.getFeatures()
+    # temporary: for testing
+    # device_id_test = 'RPS6122ohc364'
+    # query = '"device_id" = \'' + str(device_id_test) + '\''
+    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    for f in feat:
+        # get demand point vectors
+        geom = f.geometry()
+        if geom:
+            geom_point = geom.asPoint()
+            arr_dmd_pt.append(geom_point)
+
+    return arr_dmd_pt
 
 # **********************************
 # ******* End of Validation  *******

@@ -20,7 +20,6 @@ st_light_device_id_format_code = 'ERR_DEVICE_ID'
 max_distance_m = 0.001
 st_light_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 
-
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
 # *****************************************
@@ -72,9 +71,10 @@ def st_light_duplicate_message(device_id):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
     e_msg = st_light_duplicate_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' duplicated device_id: ' + str(device_id) + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
@@ -217,9 +217,10 @@ def st_light_phasing_message(device_id):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
 
     e_msg = st_light_phasing_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' phasing should be "R" ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
@@ -289,9 +290,10 @@ def st_light_overlap_pole_message(device_id):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
     e_msg = st_light_overlap_pole_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' Street Light MUST overlap Pole ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg

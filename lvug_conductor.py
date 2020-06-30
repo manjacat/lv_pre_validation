@@ -12,20 +12,21 @@ from .rps_utility import *
 import re
 
 layer_name = 'LV_UG_Conductor'
-lv_ug_field_null = 'ERR_LVUGCOND_01'
-lv_ug_enum_valid = 'ERR_LVUGCOND_02'
-lv_ug_lv_db_in_out_geom = 'ERR_LVUGCOND_04'
-lv_ug_lvdb_in_out_col = 'ERR_LVUGCOND_03'
-lv_ug_length = 'ERR_LVUGCOND_05'
-lv_ug_duplicate_code = 'ERR_DUPLICATEID'
-lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
+lv_ug_field_not_null_code = 'ERR_LVUGCOND_01'
+lv_ug_enum_valid_code = 'ERR_LVUGCOND_02'
+lv_ug_lv_db_in_out_col_code = 'ERR_LVUGCOND_03'
+lv_ug_lv_db_in_out_geom_code = 'ERR_LVUGCOND_04'
+lv_ug_length_code = 'ERR_LVUGCOND_05'
 lv_ug_coin_code = 'ERR_LVUGCOND_06'
-lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
-lv_ug_self_intersect_code = 'ERR_LVUGCOND_10'
+lv_ug_hanging_code = 'ERR_LVUGCOND_07'
 lv_ug_1_2_incoming_code = 'ERR_LVUGCOND_08'
 lv_ug_1_2_outgoing_code = 'ERR_LVUGCOND_08'
-lv_ug_hanging_code = 'ERR_LVUGCOND_07'
 lv_ug_buffer_code = 'ERR_LVUGCOND_09'
+lv_ug_self_intersect_code = 'ERR_LVUGCOND_10'
+lv_ug_wrong_flow_code = 'ERR_LVUGCOND_11'
+lv_ug_duplicate_code = 'ERR_DUPLICATEID'
+lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
+lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 
 # this number is the max number to test for hanging.
 # if total LV UG is more than this number, test for hanging is skipped
@@ -130,7 +131,7 @@ def lv_ug_field_enum_message(device_id, field_name):
         longitude = midpoint.x()
         latitude = midpoint.y()
 
-    e_msg = lv_ug_enum_valid + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_enum_valid_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' Invalid Enumerator at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -153,7 +154,7 @@ def lv_ug_field_not_null_message(device_id, field_name):
         longitude = midpoint.x()
         latitude = midpoint.y()
 
-    e_msg = lv_ug_field_null + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_field_not_null_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -210,7 +211,7 @@ def lv_ug_lv_db_in_message(device_id):
         longitude = last_point.x()
         latitude = last_point.y()
 
-    e_msg = lv_ug_lv_db_in_out_geom + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_lv_db_in_out_geom_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' column in_lvdb_id mismtach ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -254,7 +255,7 @@ def lvug_lvdb_out_message(device_id):
         longitude = first_point.x()
         latitude = first_point.y()
 
-    e_msg = lv_ug_lv_db_in_out_geom + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_lv_db_in_out_geom_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' column out_lvdb_id mismatch' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -340,7 +341,7 @@ def lv_ug_lvdb_id_check_message(device_id):
         longitude = midpoint.x()
         latitude = midpoint.y()
 
-    e_msg = lv_ug_lvdb_in_out_col + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_lv_db_in_out_col_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' lvdb_in_no/lvdb_ot_no MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -354,7 +355,7 @@ def lv_ug_lvdb_no_check_message(device_id):
         longitude = midpoint.x()
         latitude = midpoint.y()
 
-    e_msg = lv_ug_lvdb_in_out_col + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
+    e_msg = lv_ug_lv_db_in_out_col_code + ',' + str(device_id) + ',' + 'LV_UG_Conductor: ' + str(
         device_id) + ' lvdb_in_id/lvdb_out_i MISSING' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -383,7 +384,7 @@ def lv_ug_length_check_message(device_id):
         longitude = midpoint.x()
         latitude = midpoint.y()
 
-    e_msg = lv_ug_length + ',' + str(device_id) + ',' + layer_name + ': ' + str(
+    e_msg = lv_ug_length_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' length less than 1.5' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
@@ -480,6 +481,7 @@ def lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom):
                 if out_lv_db_device_id and distance_0 < 1:
                         # print(device_id + '/' + out_lv_db_device_id + ' outgoing distance is ' + str(distance_0))
                         arr.append(device_id)
+
             except Exception as e:
                 arr.append(device_id)
 
@@ -559,8 +561,8 @@ def lv_ug_self_intersect(arr_exclude_geom):
                     # remove duplicate device_id
                     if no_of_intersect > 2 and device_id not in arr:
                         arr.append(device_id)
-        except:
-            print('I found one error SELF INTERSECT! ' + device_id)
+        except Exception as e:
+            # print('I found one error SELF INTERSECT! ' + device_id)
             arr.append(device_id)
 
     return arr
@@ -924,6 +926,153 @@ def lv_ug_buffer_message(device_id, arr_lv_ug_exclude_geom):
     e_msg = lv_ug_buffer_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' is too close to another conductor! (distance < 0.3m) ' + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'
+    return e_msg
+
+
+# ***********************************************
+# ******* Check for Wrong flow direction  *******
+# ***********************************************
+
+def get_all_lv_ug_vector_outgoing(arr_lv_ug_exclude_geom, device_id_exclude):
+    arr_lv_oh = []
+    # get vectors of all LV OH (for comparison)
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    feat = layer.getFeatures()
+    for f in feat:
+        device_id = f.attribute('device_id')
+        if device_id not in arr_lv_ug_exclude_geom and device_id != device_id_exclude:
+            geom = f.geometry()
+            if geom:
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # if only have 2 vectors, do not add any vectors
+                if len(polyline_y) > 0:
+                    # add vector 0 (outgoing vector)
+                   arr_lv_oh.append(polyline_y[0])
+
+    return arr_lv_oh
+
+def get_all_lv_ug_vector_incoming(arr_lv_ug_exclude_geom, device_id_exclude):
+    arr_lv_ug = []
+    # get vectors of all LV OH (for comparison)
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    feat = layer.getFeatures()
+    for f in feat:
+        device_id = f.attribute('device_id')
+        if device_id not in arr_lv_ug_exclude_geom and device_id != device_id_exclude:
+            geom = f.geometry()
+            if geom:
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # if only have 2 vectors, do not add any vectors
+                if len(polyline_y) > 0:
+                    # add vector last (incoming vector)
+                    total_vector = len(polyline_y)
+                    arr_lv_ug.append(polyline_y[total_vector - 1])
+
+    return arr_lv_ug
+
+def lv_ug_wrong_flow(arr_lv_ug_exclude_geom):
+    arr = []
+
+    # qgis distanceArea
+    distance = QgsDistanceArea()
+    distance.setEllipsoid('WGS84')
+
+    # main function
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    feat = layer.getFeatures()
+    # temporary: for testing
+    # device_id_test = 'RPS6122ohc364'
+    # query = '"device_id" = \'' + str(device_id_test) + '\''
+    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+
+    for f in feat:
+        # get all vectors
+        device_id = f.attribute('device_id')
+        if device_id not in arr_lv_ug_exclude_geom:
+            geom = f.geometry()
+            if geom:
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # if only have 2 vectors, do not add any vectors
+                if len(polyline_y) > 0:
+                    # add vector 0 (outgoing vector)
+                    total_vector = len(polyline_y)
+                    vector_last = polyline_y[total_vector - 1]
+                    # check if any incoming LV OH vertex nearby
+                    arr_lv_ug_incoming = get_all_lv_ug_vector_incoming(arr_lv_oh_exclude_geom, device_id)
+                    count = arr_lv_ug_incoming.count(vector_last)
+                    if count > 1:
+                        # check if there is any outgoing
+                        total_outgoing = 0
+                        arr_lv_ug_outgoing = get_all_lv_oh_vector_outgoing(arr_lv_oh_exclude_geom, device_id)
+                        for geom_lv_ug in arr_lv_ug_outgoing:
+                            m = distance.measureLine(vector_last, geom_lv_ug)
+                            if m < 0.001:
+                                total_outgoing += 1
+                                # print(device_id + ' has 2 incoming but ' + total_outgoing + ' outgoing geom.')
+                        if total_outgoing == 0:
+                            # print(device_id + ' has no outgoing! ')
+                            arr.append(device_id)
+
+    # add demand point wrong flow error
+    # print('before adding demand point wrong flow error is ' + str(len(arr)))
+    arr.extend(lv_ug_wrong_flow_dmd_pt(arr_lv_ug_exclude_geom))
+    # print('total wrong flow error is ' + str(len(arr)))
+
+    return arr
+
+def lv_ug_wrong_flow_dmd_pt(arr_lv_ug_exclude_geom):
+    # Special condition: all conductors connected to demand point MUST be INCOMING.
+    arr = []
+
+    arr_dmd_pt = rps_get_all_dmd_pt()
+
+    # qgis distanceArea
+    distance = QgsDistanceArea()
+    distance.setEllipsoid('WGS84')
+
+    # main function
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    feat = layer.getFeatures()
+    # temporary: for testing
+    # device_id_test = 'RPS6122ohc364'
+    # query = '"device_id" = \'' + str(device_id_test) + '\''
+    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+
+    for f in feat:
+        device_id = f.attribute('device_id')
+        if device_id not in arr_lv_ug_exclude_geom:
+            geom = f.geometry()
+            if geom:
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # if only have 2 vectors, do not add any vectors
+                if len(polyline_y) > 0:
+                    # check distance vector 0 (outgoing) to demand point
+                    vertex_zero = polyline_y[0]
+                    # print('vertex zero is :' + str(vertex_zero))
+                    for geom_dmd_pt in arr_dmd_pt:
+                        m = distance.measureLine(vertex_zero, geom_dmd_pt)
+                        if m < 0.001:
+                            # means it is outgoing lv_ug, so we add lv ug's device id
+                            arr.append(device_id)
+
+    return arr
+
+def lv_ug_wrong_flow_message(device_id):
+    longitude = 0
+    latitude = 0
+    error_code = lv_ug_wrong_flow_code
+    error_desc = str(device_id) + ' has wrong flow direction! '
+
+    first_point = rps_get_firstpoint(layer_name, device_id)
+    if first_point:
+        longitude = first_point.x()
+        latitude = first_point.y()
+
+    e_msg = rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude)
     return e_msg
 
 # **********************************

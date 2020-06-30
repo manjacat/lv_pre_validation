@@ -256,10 +256,10 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
     distance = QgsDistanceArea()
     distance.setEllipsoid('WGS84')
 
-    layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+    layer_lv_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
     # query = '"device_id" = \'R6142ohc120\''
     # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    feat_01 = layerLV_01.getFeatures()
+    feat_01 = layer_lv_01.getFeatures()
     for f in feat_01:
         device_temp = f.attribute('device_id')
         if device_temp not in arr_lv_oh_exclude_geom:
@@ -312,9 +312,10 @@ def lv_fuse_snapping_message(device_id):
     latitude = 0
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
-        longitude = point.x()
-        latitude = point.y()
+        if geom:
+            point = geom.asPoint()
+            longitude = point.x()
+            latitude = point.y()
 
     e_msg = lv_fuse_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' LV Fuse is not near LV OH vertex' + ',' + str(longitude) + ',' + str(latitude) + ' \n'

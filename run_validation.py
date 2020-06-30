@@ -73,17 +73,17 @@ def exec_validation(self):
     e_msg = ''
 
     # col flag
-    lv_ug_column_check = False
-    lv_oh_column_check = False
-    lv_fuse_column_check = False
-    lv_cj_column_check = False
-    lvdb_fp_column_check = False
-    pole_column_check = False
-    dmd_pt_column_check = False
-    st_light_column_check = False
-    manhole_column_check = False
-    st_duct_column_check = False
-    customer_column_check = False
+    lv_ug_check_flag = False
+    lv_oh_check_flag = False
+    lv_fuse_check_flag = False
+    lv_cj_check_flag = False
+    lvdb_fp_check_flag = False
+    pole_check_flag = False
+    dmd_pt_check_flag = False
+    st_light_check_flag = False
+    manhole_check_flag = False
+    st_duct_check_flag = False
+    customer_check_flag = False
 
     # error geom
     arr_lv_ug_exclude_geom = []
@@ -93,17 +93,34 @@ def exec_validation(self):
     # ***********     KHAIRIL TESTING STUFF    ***********
     # ****************************************************
 
-    # layer_test = QgsProject.instance().mapLayersByName('Demand_Point')[0]
-    # device_id_test = 'N79E45013dmd85'
+    # distance = QgsDistanceArea()
+    # distance.setEllipsoid('WGS84')
+    #
+    # layer_test = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+    # device_id_test = 'N79E45013ohc1504'
+    # query_test = '"device_id" = \'' + str(device_id_test) + '\''
+    # feat_test_2 = layer_test.getFeatures(QgsFeatureRequest().setFilterExpression(query_test))
+    # for f in feat_test_2:
+    #     line_geom = f.geometry()
+    #     if line_geom:
+    #         polyline_geom = line_geom.mergeLines().asPolyline()
+    #         print('line geom found')
+    #         print(polyline_geom)
+    #
+    # layer_test = QgsProject.instance().mapLayersByName('Pole')[0]
+    # device_id_test = 'N79E45013pol257'
     # query_test = '"device_id" = \'' + str(device_id_test) + '\''
     # feat_test = layer_test.getFeatures(QgsFeatureRequest().setFilterExpression(query_test))
-    # for field in layer_test.fields():
-    #     print(field.name())
     # for f in feat_test:
-    #     geom = f.geometry()
-    #     if geom:
-    #         point_geom = rps_get_qgspoint(geom)
-    #         print('output point geom is ' + str(point_geom))
+    #     p_geom = f.geometry()
+    #     if p_geom:
+    #         point_geom = rps_get_qgspoint(p_geom)
+    #         # print('output point geom is ' + str(point_geom))
+    #         # print('output line geom is ' + str(line_geom))
+    #         dist_pl = p_geom.distance(line_geom)
+    #         print('distance is ' + str(dist_pl))
+    #         m = distance.measureLine(polyline_geom, point_geom)
+    #         print('QgsDistanceArea distance is ' + str(m))
 
     # ***************************************************************
     # ***********     CHECK HOW MANY FEATURES SELECTED    ***********
@@ -170,38 +187,196 @@ def exec_validation(self):
         print(arr_feat_count)
 
     # ******************************************************
-    # **********     MANDATORY COLUMN CHECKING    **********
+    # ******     MANDATORY COLUMN/FIELD CHECKING    ********
     # ******************************************************
 
     if lv_ug_flag:
         arr_lv_ug = rps_column_name_check('LV_UG_Conductor')
-        if len(arr_lv_ug) > 0:
-            for device_id in arr_lv_ug:
-                e_msg += rps_column_name_check_message(device_id)
+        # check missing layers
+        lv_ug_layer_name = 'LV_UG_Conductor'
+        arr_layers = rps_get_arr_layers(lv_ug_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(lv_ug_layer_name, missing_layer)
                 lv_ug_error += 1
                 total_error += 1
         else:
-            lv_ug_column_check = True
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(lv_ug_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(lv_ug_layer_name, col_miss)
+                    lv_ug_error += 1
+                    total_error += 1
+            else:
+                lv_ug_check_flag = True
+                lv_oh_check_flag = True
 
     if lv_oh_flag:
-        arr_lv_oh = rps_column_name_check('LV_OH_Conductor')
-        if len(arr_lv_oh) > 0:
-            for device_id in arr_lv_oh:
-                e_msg += rps_column_name_check_message(device_id)
+        # check missing layers
+        lv_oh_layer_name = 'LV_OH_Conductor'
+        arr_layers =  rps_get_arr_layers(lv_oh_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(lv_oh_layer_name, missing_layer)
                 lv_oh_error += 1
                 total_error += 1
         else:
-            lv_oh_column_check = True
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(lv_oh_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(lv_oh_layer_name, col_miss)
+                    lv_oh_error += 1
+                    total_error += 1
+            else:
+                lv_ug_check_flag = True
+                lv_oh_check_flag = True
+
+    if lv_fuse_flag:
+        # check missing layers
+        lv_fuse_layer_name = 'LV_Fuse'
+        arr_layers =  rps_get_arr_layers(lv_fuse_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(lv_fuse_layer_name, missing_layer)
+                lv_fuse_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(lv_fuse_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(lv_fuse_layer_name, col_miss)
+                    lv_fuse_error += 1
+                    total_error += 1
+            else:
+                lv_fuse_check_flag = True
+                lv_oh_check_flag = True
+
+    if lv_cj_flag:
+        # check missing layers
+        lv_cj_layer_name = 'LV_Fuse'
+        arr_layers =  rps_get_arr_layers(lv_cj_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(lv_cj_layer_name, missing_layer)
+                lv_cj_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(lv_cj_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(lv_cj_layer_name, col_miss)
+                    lv_cj_error += 1
+                    total_error += 1
+            else:
+                lv_cj_check_flag = True
+                lv_ug_check_flag = True
+                lv_oh_check_flag = True
+
+    if lvdb_fp_flag:
+        # check missing layers
+        lvdb_fp_layer_name = 'LVDB-FP'
+        arr_layers =  rps_get_arr_layers(lvdb_fp_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(lvdb_fp_layer_name, missing_layer)
+                lvdb_fp_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(lvdb_fp_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(lvdb_fp_layer_name, col_miss)
+                    lvdb_fp_error += 1
+                    total_error += 1
+            else:
+                lvdb_fp_check_flag= True
+                lv_ug_check_flag = True
+                lv_oh_check_flag = True
+
+    if pole_flag:
+        # check missing layers
+        pole_layer_name = 'Pole'
+        arr_layers =  rps_get_arr_layers(pole_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(pole_layer_name, missing_layer)
+                pole_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(pole_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(pole_layer_name, col_miss)
+                    pole_error += 1
+                    total_error += 1
+            else:
+                pole_check_flag = True
+                lv_oh_check_flag = True
 
     if dmd_pt_flag:
-        arr_dmd_pt = rps_column_name_check('Demand_Point')
-        if len(arr_dmd_pt) > 0:
-            for device_id in arr_dmd_pt:
-                e_msg += rps_column_name_check_message(device_id)
+        # check missing layers
+        dmd_pt_layer_name = 'Demand_Point'
+        arr_layers = rps_get_arr_layers(dmd_pt_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(dmd_pt_layer_name, missing_layer)
                 dmd_pt_error += 1
                 total_error += 1
         else:
-            dmd_pt_column_check = True
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(dmd_pt_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(dmd_pt_layer_name, col_miss)
+                    dmd_pt_error += 1
+                    total_error += 1
+            else:
+                dmd_pt_check_flag = True
+                lv_ug_check_flag = True
+                lv_oh_check_flag = True
+
+    if st_light_flag:
+        # check missing layers
+        st_light_layer_name = 'Street_Light'
+        arr_layers = rps_get_arr_layers(layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(st_light_layer_name, missing_layer)
+                st_light_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(st_light_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(st_light_layer_name, col_miss)
+                    st_light_error += 1
+                    total_error += 1
+            else:
+                st_light_check_flag = True
+                pole_check_flag = True
 
     # ******************************************************
     # **********     DEVICE ID CHECKING    *****************
@@ -348,28 +523,30 @@ def exec_validation(self):
     arr_lv_ug = []
 
     # check z-m shapefile
-    arr_lv_ug = lv_ug_z_m_shapefile()
-    arr_lv_ug_exclude_geom = arr_lv_ug
-    # print(len(arr_lv_ug_exclude_geom))
-    for device_id in arr_lv_ug:
-        if device_id:
-            device_id = device_id.strip()
-        e_msg += lv_ug_z_m_shapefile_message(device_id)
-        lv_ug_error += 1
-        total_error += 1
+    if lv_ug_check_flag:
+        arr_lv_ug = lv_ug_z_m_shapefile()
+        arr_lv_ug_exclude_geom = arr_lv_ug
+        # print(len(arr_lv_ug_exclude_geom))
+        for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
+            e_msg += lv_ug_z_m_shapefile_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
 
     arr_lv_oh = []
 
     # check z-m shapefile
-    arr_lv_oh = lv_oh_z_m_shapefile()
-    arr_lv_oh_exclude_geom = arr_lv_oh
-    # print(len(arr_lv_oh_exclude_geom))
-    for device_id in arr_lv_oh:
-        if device_id:
-            device_id = device_id.strip()
-        e_msg += lv_oh_z_m_shapefile_message(device_id)
-        lv_oh_error += 1
-        total_error += 1
+    if lv_oh_check_flag:
+        arr_lv_oh = lv_oh_z_m_shapefile()
+        arr_lv_oh_exclude_geom = arr_lv_oh
+        # print(len(arr_lv_oh_exclude_geom))
+        for device_id in arr_lv_oh:
+            if device_id:
+                device_id = device_id.strip()
+            e_msg += lv_oh_z_m_shapefile_message(device_id)
+            lv_oh_error += 1
+            total_error += 1
 
     # print('current total error is (zm check):' + str(total_error))
 
@@ -378,7 +555,7 @@ def exec_validation(self):
     # ****************************************************************
 
     # check for duplicates
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_duplicate()
         for device_id in arr_lv_ug:
             if device_id:
@@ -399,8 +576,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
+        for field_name in field_name_arr:
             arr_lv_ug = lv_ug_field_not_null(field_name)
             for device_id in arr_lv_ug:
                 if device_id:
@@ -419,8 +596,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
+        for field_name in field_name_arr:
             arr_lv_ug = lv_ug_field_enum(field_name)
             for device_id in arr_lv_ug:
                 if device_id:
@@ -430,7 +607,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for incoming lv ug vs in_lvdb_id
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lv_db_in(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -440,7 +617,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for outgoing lv ug vs out_lvdb_id
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lv_db_out(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -449,7 +626,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LVDB in out VS LVDB no
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lvdb_id_in_check()
         for device_id in arr_lv_ug:
             if device_id:
@@ -458,7 +635,7 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lvdb_id_out_check()
         for device_id in arr_lv_ug:
             if device_id:
@@ -466,7 +643,7 @@ def exec_validation(self):
             e_msg += lv_ug_lvdb_id_check_message(device_id)
             total_error += 1
 
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lvdb_no_in_check()
         for device_id in arr_lv_ug:
             if device_id:
@@ -475,7 +652,7 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_lvdb_no_out_check()
         for device_id in arr_lv_ug:
             if device_id:
@@ -485,7 +662,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LV UG length
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_length_check()
         for device_id in arr_lv_ug:
             if device_id:
@@ -495,7 +672,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for self intersect geometry
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_self_intersect(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -505,7 +682,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for distance between 2nd vertex to LVDB-FP
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_1_2_incoming(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -514,7 +691,7 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_1_2_outgoing(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -524,7 +701,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LV UG hanging
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -534,7 +711,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LV UG buffer
-    if lv_ug_flag:
+    if lv_ug_flag and lv_ug_check_flag:
         arr_lv_ug = lv_ug_buffer(arr_lv_ug_exclude_geom)
         for device_id in arr_lv_ug:
             if device_id:
@@ -558,7 +735,7 @@ def exec_validation(self):
     # moved z_m checking to top
 
     # check for duplicates
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_duplicate()
         for device_id in arr_lv_oh:
             if device_id:
@@ -578,8 +755,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
+        for field_name in field_name_arr:
             arr_lv_oh = lv_oh_field_not_null(field_name)
             for device_id in arr_lv_oh:
                 if device_id:
@@ -597,8 +774,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
+        for field_name in field_name_arr:
             arr_lv_oh = lv_oh_field_enum(field_name)
             for device_id in arr_lv_oh:
                 if device_id:
@@ -608,7 +785,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for LV OH length
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_length_check()
         for device_id in arr_lv_oh:
             if device_id:
@@ -618,7 +795,7 @@ def exec_validation(self):
             total_error += 1
 
     # check LV OH self intersect
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_self_intersect(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             if device_id:
@@ -628,7 +805,7 @@ def exec_validation(self):
             total_error += 1
 
     # check LV OH hanging
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             if device_id:
@@ -638,7 +815,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LV OH buffer
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_buffer(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             if device_id:
@@ -648,7 +825,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for wrong flow direction
-    if lv_oh_flag:
+    if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_wrong_flow(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             if device_id:
@@ -664,7 +841,7 @@ def exec_validation(self):
     arr_lv_fuse = []
 
     # check for z-m value
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         arr_lv_fuse = lv_fuse_z_m_shapefile()
         for device_id in arr_lv_fuse:
             if device_id:
@@ -674,7 +851,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         arr_lv_fuse = lv_fuse_duplicate()
         for device_id in arr_lv_fuse:
             if device_id:
@@ -693,7 +870,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         for field_name in field_name_arr:
             arr_lv_fuse = lv_fuse_field_not_null(field_name)
             for device_id in arr_lv_fuse:
@@ -712,7 +889,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         for field_name in field_name_arr:
             arr_lv_fuse = lv_fuse_field_enum(field_name)
             for device_id in arr_lv_fuse:
@@ -723,7 +900,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for nearby Pole
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         arr_lv_fuse = lv_fuse_pole_distance()
         for device_id in arr_lv_fuse:
             if device_id:
@@ -733,7 +910,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for LV Fuse(Blackbox) Snapping Error
-    if lv_fuse_flag:
+    if lv_fuse_flag and lv_fuse_check_flag:
         arr_lv_fuse = lv_fuse_snapping(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_fuse:
             if device_id:
@@ -751,7 +928,7 @@ def exec_validation(self):
     arr_lv_cj = []
 
     # check for z-m value
-    if lv_cj_flag:
+    if lv_cj_flag and lv_cj_check_flag:
         arr_lv_cj = lv_cj_z_m_shapefile()
         for device_id in arr_lv_cj:
             if device_id:
@@ -761,7 +938,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if lv_cj_flag:
+    if lv_cj_flag and lv_cj_check_flag:
         arr_lv_cj = lv_cj_duplicate()
         for device_id in arr_lv_cj:
             if device_id:
@@ -779,7 +956,7 @@ def exec_validation(self):
         , 'device_id'
     ]
 
-    if lv_cj_flag:
+    if lv_cj_flag and lv_cj_check_flag:
         for field_name in field_name_arr:
             arr_lv_cj = lv_cj_field_not_null(field_name)
             for device_id in arr_lv_cj:
@@ -797,7 +974,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if lv_cj_flag:
+    if lv_cj_flag and lv_cj_check_flag:
         for field_name in field_name_arr:
             arr_lv_cj = lv_cj_field_enum(field_name)
             for device_id in arr_lv_cj:
@@ -808,7 +985,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for snapping with LV OH/LV UG
-    if lv_cj_flag:
+    if lv_cj_flag and lv_cj_check_flag:
         arr_lv_cj = lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lv_cj:
             if device_id:
@@ -826,7 +1003,7 @@ def exec_validation(self):
     arr_lvdb_fp = []
 
     # check for z-m value
-    if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
         arr_lvdb_fp = lvdb_fp_z_m_shapefile()
         for device_id in arr_lvdb_fp:
             if device_id:
@@ -836,7 +1013,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
         arr_lvdb_fp = lvdb_fp_duplicate()
         for device_id in arr_lvdb_fp:
             if device_id:
@@ -855,8 +1032,8 @@ def exec_validation(self):
         , 'lvdb_angle'
     ]
 
-    for field_name in field_name_arr:
-        if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
+        for field_name in field_name_arr:
             arr_lvdb_fp = lvdb_fp_field_not_null(field_name)
             for device_id in arr_lvdb_fp:
                 if device_id:
@@ -873,8 +1050,8 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    for field_name in field_name_arr:
-        if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
+        for field_name in field_name_arr:
             arr_lvdb_fp = lvdb_fp_field_enum(field_name)
             for device_id in arr_lvdb_fp:
                 if device_id:
@@ -884,7 +1061,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for remarks/db_oper mismatch
-    if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
         arr_lvdb_fp = lvdb_fp_remarks_db_oper()
         for device_id in arr_lvdb_fp:
             if device_id:
@@ -894,7 +1071,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for lvf/design mismatch
-    if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
         arr_lvdb_fp = lvdb_fp_lvf_design()
         for device_id in arr_lvdb_fp:
             if device_id:
@@ -904,7 +1081,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for lvdb-fp hanging/snapping
-    if lvdb_fp_flag:
+    if lvdb_fp_flag and lvdb_fp_check_flag:
         arr_lvdb_fp = lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
         for device_id in arr_lvdb_fp:
             if device_id:
@@ -922,7 +1099,7 @@ def exec_validation(self):
     arr_pole = []
 
     # check for z-m value
-    if pole_flag:
+    if pole_flag and pole_check_flag:
         arr_pole = pole_z_m_shapefile()
         for device_id in arr_pole:
             if device_id:
@@ -932,7 +1109,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if pole_flag:
+    if pole_flag and pole_check_flag:
         arr_pole = pole_duplicate()
         for device_id in arr_pole:
             if device_id:
@@ -952,8 +1129,8 @@ def exec_validation(self):
         , 'lv_ptc'
     ]
 
-    for field_name in field_name_arr:
-        if pole_flag:
+    if pole_flag and pole_check_flag:
+        for field_name in field_name_arr:
             arr_pole = pole_field_not_null(field_name)
         for device_id in arr_pole:
             if device_id:
@@ -971,8 +1148,8 @@ def exec_validation(self):
         , 'lv_ptc'
     ]
 
-    for field_name in field_name_arr:
-        if pole_flag:
+    if pole_flag and pole_check_flag:
+        for field_name in field_name_arr:
             arr_pole = pole_field_enum(field_name)
             for device_id in arr_pole:
                 if device_id:
@@ -982,7 +1159,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for Pole/LV OH vertex
-    if pole_flag:
+    if pole_flag and pole_check_flag:
         arr_pole = pole_lv_oh_vertex(arr_lv_oh_exclude_geom)
         for device_id in arr_pole:
             if device_id:
@@ -998,7 +1175,7 @@ def exec_validation(self):
     arr_dmd_pt = []
 
     # check z-m shapefile
-    if dmd_pt_flag and dmd_pt_column_check:
+    if dmd_pt_flag and dmd_pt_check_flag:
         arr_dmd_pt = dmd_pt_z_m_shapefile()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -1008,7 +1185,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if dmd_pt_flag and dmd_pt_column_check:
+    if dmd_pt_flag and dmd_pt_check_flag:
         arr_dmd_pt = dmd_pt_duplicate()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -1027,7 +1204,7 @@ def exec_validation(self):
         , 'str_name'
     ]
 
-    if dmd_pt_flag and dmd_pt_column_check:
+    if dmd_pt_flag and dmd_pt_check_flag:
         for field_name in field_name_arr:
             arr_dmd_pt = dmd_pt_field_not_null(field_name)
             for device_id in arr_dmd_pt:
@@ -1043,7 +1220,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if dmd_pt_flag and dmd_pt_column_check:
+    if dmd_pt_flag and dmd_pt_check_flag:
         for field_name in field_name_arr:
             arr_dmd_pt = dmd_pt_field_enum(field_name)
             for device_id in arr_dmd_pt:
@@ -1054,7 +1231,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for Remarks
-    if dmd_pt_flag and dmd_pt_column_check:
+    if dmd_pt_flag and dmd_pt_check_flag:
         arr_dmd_pt = dmd_pt_remarks()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -1064,7 +1241,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for demand point snapping
-    if dmd_pt_flag:
+    if dmd_pt_flag and dmd_pt_check_flag:
         arr_dmd_pt = dmd_pt_snapping()
         for device_id in arr_dmd_pt:
             if device_id:
@@ -1080,7 +1257,7 @@ def exec_validation(self):
     arr_st_light = []
 
     # check for duplicates
-    if st_light_flag:
+    if st_light_flag and st_light_check_flag:
         arr_st_light = st_light_z_m_shapefile()
         for device_id in arr_st_light:
             if device_id:
@@ -1090,7 +1267,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicates
-    if st_light_flag:
+    if st_light_flag and st_light_check_flag:
         arr_st_light = st_light_duplicate()
         for device_id in arr_st_light:
             if device_id:
@@ -1109,8 +1286,8 @@ def exec_validation(self):
         , 'device_id'
     ]
 
-    for field_name in field_name_arr:
-        if st_light_flag:
+    if st_light_flag and st_light_check_flag:
+        for field_name in field_name_arr:
             arr_st_light = st_light_field_not_null(field_name)
             for device_id in arr_st_light:
                 if device_id:
@@ -1126,8 +1303,8 @@ def exec_validation(self):
         , 'cont_dev'
     ]
 
-    for field_name in field_name_arr:
-        if st_light_flag:
+    if st_light_flag and st_light_check_flag:
+        for field_name in field_name_arr:
             arr_st_light = st_light_field_enum(field_name)
             for device_id in arr_st_light:
                 if device_id:
@@ -1137,7 +1314,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check for phasing must be 'R'   
-    if st_light_flag:
+    if st_light_flag and st_light_check_flag:
         arr_st_light = st_light_phasing()
         for device_id in arr_st_light:
             if device_id:
@@ -1147,7 +1324,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for Control Device
-    if st_light_flag:
+    if st_light_flag and st_light_check_flag:
         arr_st_light = st_light_cont_dev()
         for device_id in arr_st_light:
             if device_id:
@@ -1157,7 +1334,7 @@ def exec_validation(self):
             total_error += 1
 
     # Geom check: Street Light overlap Pole
-    if st_light_flag:
+    if st_light_flag and st_light_check_flag:
         arr_st_light = st_light_overlap_pole()
         for device_id in arr_st_light:
             if device_id:
@@ -1173,7 +1350,7 @@ def exec_validation(self):
     arr_manhole = []
 
     # check for z-m value
-    if manhole_flag:
+    if manhole_flag and manhole_check_flag:
         arr_manhole = manhole_z_m_shapefile()
         for device_id in arr_manhole:
             if device_id:
@@ -1183,7 +1360,7 @@ def exec_validation(self):
             total_error += 1
 
     # check for duplicate
-    if manhole_flag:
+    if manhole_flag and manhole_check_flag:
         arr_manhole = manhole_duplicate()
         for device_id in arr_manhole:
             if device_id:
@@ -1202,8 +1379,8 @@ def exec_validation(self):
         , 'device_id'
     ]
 
-    for field_name in field_name_arr:
-        if manhole_flag:
+    if manhole_flag and manhole_check_flag:
+        for field_name in field_name_arr:
             arr_manhole = manhole_field_not_null(field_name)
             for device_id in arr_manhole:
                 if device_id:
@@ -1220,8 +1397,8 @@ def exec_validation(self):
         , 'cont_dev'
     ]
 
-    for field_name in field_name_arr:
-        if manhole_flag:
+    if manhole_flag and manhole_check_flag:
+        for field_name in field_name_arr:
             arr_manhole = manhole_field_enum(field_name)
             for device_id in arr_manhole:
                 if device_id:
@@ -1237,7 +1414,7 @@ def exec_validation(self):
     arr_st_duct = []
 
     # check for duplicates
-    if st_duct_flag:
+    if st_duct_flag and st_duct_check_flag:
         arr_st_duct = st_duct_duplicate()
         for device_id in arr_st_duct:
             if device_id:
@@ -1256,7 +1433,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if st_duct_flag:
+    if st_duct_flag and st_duct_check_flag:
         for field_name in field_name_arr:
             arr_st_duct = st_duct_field_not_null(field_name)
             for device_id in arr_st_duct:
@@ -1275,7 +1452,7 @@ def exec_validation(self):
         , 'db_oper'
     ]
 
-    if st_duct_flag:
+    if st_duct_flag and st_duct_check_flag:
         for field_name in field_name_arr:
             arr_st_duct = st_duct_field_enum(field_name)
             for device_id in arr_st_duct:
@@ -1294,7 +1471,7 @@ def exec_validation(self):
         'device_id'
         ,'meter_no'
     ]
-    if customer_flag:
+    if customer_flag and customer_check_flag:
         for field_name in field_name_arr:
             arr_customer = customer_field_not_null(field_name)
             for device_id in arr_customer:
@@ -1305,7 +1482,7 @@ def exec_validation(self):
                 total_error += 1
 
     # check device id vs demand point device id
-    if customer_flag:
+    if customer_flag and customer_check_flag:
         arr_customer = customer_dmd_pt_id_missing()
         for device_id in arr_customer:
             if device_id:
