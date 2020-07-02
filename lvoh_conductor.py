@@ -57,7 +57,7 @@ def lv_oh_device_id_format():
 def lv_oh_device_id_format_message(device_id):
     # print('lv oh device id mesej')
     e_msg = rps_device_id_format_message(layer_name, device_id, lv_oh_device_id_format_code)
-    print(e_msg)
+    # print(e_msg)
     return e_msg
 
 
@@ -343,16 +343,16 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     distance.setEllipsoid('WGS84')
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    # query = '"device_id" = \'' + 'R6142ugc017' + '\''
-    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    query = '"device_id" = \'' + 'N78E46#08ohc172' + '\''
+    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    # feat = layer.getFeatures()
     feat_count = layer.featureCount()
-    # print(feat_count)
+    print('feat count is ' + str(feat_count))
 
     # skip check if feat count is too many
     if feat_count > lv_oh_max_count:
         print('too many objects: skipped checking for LV OH hanging')
     else:
-        feat = layer.getFeatures()
         for f in feat:
             device_id = f.attribute('device_id')
             if device_id not in arr_lv_oh_exclude_geom:
@@ -377,6 +377,8 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                         geom_g = g.geometry()
                         y_g = geom_g.mergeLines()
                         polyline_y_g = y_g.asPolyline()
+                        if device_temp == 'N78E46#08ohc177':
+                            print('total polyline in ' + device_temp + ' is ' + str(len(polyline_y_g)))
                         for g1 in range(len(polyline_y_g)):
                             if polyline_y_g[g1] not in arr_point:
                                 arr_point.append(polyline_y_g[g1])
@@ -427,16 +429,17 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                     distance_v_one = distance.measureLine(v_one, v_point)
                     if distance_v_one <= 0.001:
                         # print(j)
-                        # print('distance is ' + format(distance_xy,'.9f') + 'm')
+                        print('distance is ' + format(distance_v_one, '.9f') + 'm')
                         arr_snap_v_one.append(device_id)
                     # print('v point to check:' + str(v_point))
                     distance_v_last = distance.measureLine(v_last, v_point)
                     if distance_v_last <= 0.001:
                         # print('v last is ' + str(v_last))
                         # print('lv point is ' + str(v_point))
-                        # print('distance is ' + format(distance_v_last,'.9f') + 'm')
+                        print('distance is ' + format(distance_v_last, '.9f') + 'm')
                         arr_snap_v_last.append(device_id)
-                        # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
                 if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
                     arr.append(device_id)
     return arr
