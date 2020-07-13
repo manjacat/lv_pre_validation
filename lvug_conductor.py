@@ -846,7 +846,8 @@ def lv_ug_buffer(arr_lv_ug_exclude_geom):
                             vector = arr_cur_lv_ug[i]
                             m = distance.measureLine(vector, vector_all)
                             if 0.29 > m > 0.005:
-                                # print(device_id + '[' + str(i + 1) + '/' + str(len(arr_cur_lv_oh)) + ']' + ' is too close to another conductor!')
+                                # print(device_id + '[' + str(i + 1) + '/' + str(len(arr_cur_lv_oh)) + ']' + ' is too
+                                # close to another conductor!')
                                 arr_too_close.append(device_id)
                             elif 0.31 < m < 0.5:
                                 # print(device_id + ' is too far from another conductor')
@@ -955,6 +956,7 @@ def get_all_lv_ug_vector_outgoing(arr_lv_ug_exclude_geom, device_id_exclude):
 
     return arr_lv_oh
 
+
 def get_all_lv_ug_vector_incoming(arr_lv_ug_exclude_geom, device_id_exclude):
     arr_lv_ug = []
     # get vectors of all LV OH (for comparison)
@@ -974,6 +976,7 @@ def get_all_lv_ug_vector_incoming(arr_lv_ug_exclude_geom, device_id_exclude):
                     arr_lv_ug.append(polyline_y[total_vector - 1])
 
     return arr_lv_ug
+
 
 def lv_ug_wrong_flow(arr_lv_ug_exclude_geom):
     arr = []
@@ -1014,7 +1017,7 @@ def lv_ug_wrong_flow(arr_lv_ug_exclude_geom):
                             m = distance.measureLine(vector_last, geom_lv_ug)
                             if m < 0.001:
                                 total_outgoing += 1
-                                # print(device_id + ' has 2 incoming but ' + total_outgoing + ' outgoing geom.')
+                                # print(device_id + ' has 2 incoming but ' + str(total_outgoing) + ' outgoing geom.')
                         if total_outgoing == 0:
                             # print(device_id + ' has no outgoing! ')
                             arr.append(device_id)
@@ -1025,6 +1028,7 @@ def lv_ug_wrong_flow(arr_lv_ug_exclude_geom):
     # print('total wrong flow error is ' + str(len(arr)))
 
     return arr
+
 
 def lv_ug_wrong_flow_dmd_pt(arr_lv_ug_exclude_geom):
     # Special condition: all conductors connected to demand point MUST be INCOMING.
@@ -1063,6 +1067,7 @@ def lv_ug_wrong_flow_dmd_pt(arr_lv_ug_exclude_geom):
                             arr.append(device_id)
 
     return arr
+
 
 def lv_ug_wrong_flow_message(device_id):
     longitude = 0

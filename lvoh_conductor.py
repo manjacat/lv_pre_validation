@@ -641,15 +641,15 @@ def lv_oh_wrong_flow(arr_lv_oh_exclude_geom):
                             m = distance.measureLine(vector_last, geom_lv_oh)
                             if m < 0.001:
                                 total_outgoing += 1
-                                print(device_id + ' has 2 incoming but ' + total_outgoing + ' outgoing geom.')
+                                # print(device_id + ' has 2 incoming but ' + str(total_outgoing) + ' outgoing geom.')
                         if total_outgoing == 0:
                             print(device_id + ' has no outgoing! ')
                             arr.append(device_id)
 
     # add demand point wrong flow error
-    print('before adding demand point wrong flow error is ' + str(len(arr)))
+    # print('before adding demand point wrong flow error is ' + str(len(arr)))
     arr.extend(lv_oh_wrong_flow_dmd_pt(arr_lv_oh_exclude_geom))
-    print('total wrong flow error is ' + str(len(arr)))
+    # print('total wrong flow error is ' + str(len(arr)))
 
     return arr
 
