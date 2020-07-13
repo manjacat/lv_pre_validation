@@ -344,9 +344,9 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     distance.setEllipsoid('WGS84')
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"device_id" = \'' + 'N78E46#08ohc172' + '\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    # feat = layer.getFeatures()
+    # query = '"device_id" = \'' + 'N78E46#08ohc172' + '\''
+    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    feat = layer.getFeatures()
     feat_count = layer.featureCount()
     print('feat count is ' + str(feat_count))
 
@@ -439,8 +439,8 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                         # print('lv point is ' + str(v_point))
                         print('distance is ' + format(distance_v_last, '.9f') + 'm')
                         arr_snap_v_last.append(device_id)
-                print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
-                print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
+                # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                # print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
                 if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
                     arr.append(device_id)
     return arr
