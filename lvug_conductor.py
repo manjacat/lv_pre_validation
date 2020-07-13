@@ -189,16 +189,17 @@ def lv_ug_lv_db_in(arr_lv_ug_exclude_geom):
                 feat_lv_db = layer_lv_db.getFeatures(QgsFeatureRequest().setFilterExpression(query))
                 for lv_db in feat_lv_db:
                     geom = lv_db.geometry()
-                    geom_x = geom.asPoint()
-                    distance = QgsDistanceArea()
-                    distance.setEllipsoid('WGS84')
-                    distance_xy = distance.measureLine(y.asPolyline()[len(y.asPolyline()) - 1], geom_x)
-                    if distance_xy > 0.001:
-                        # print("WARNING: incoming distance > 0")
-                        # print("Point1 (LVUG):", y.asPolyline()[len(y.asPolyline())-1])
-                        # print("Point2 (LVDB):", geom_x)
-                        # print("difference:", format(distance_xy,'.9f'))
-                        arr.append(device_id)
+                    if geom:
+                        geom_x = rps_get_qgspoint(geom)
+                        distance = QgsDistanceArea()
+                        distance.setEllipsoid('WGS84')
+                        distance_xy = distance.measureLine(y.asPolyline()[len(y.asPolyline()) - 1], geom_x)
+                        if distance_xy > 0.001:
+                            # print("WARNING: incoming distance > 0")
+                            # print("Point1 (LVUG):", y.asPolyline()[len(y.asPolyline())-1])
+                            # print("Point2 (LVDB):", geom_x)
+                            # print("difference:", format(distance_xy,'.9f'))
+                            arr.append(device_id)
     return arr
 
 
@@ -235,14 +236,15 @@ def lv_ug_lv_db_out(arr_lv_ug_exclude_geom):
                 feat_lvdb = layer_lvdb.getFeatures(QgsFeatureRequest().setFilterExpression(query))
                 for lvdb in feat_lvdb:
                     geom = lvdb.geometry()
-                    geom_x = geom.asPoint()
-                    distance_xy = distance.measureLine(y.asPolyline()[0], geom_x)
-                    if distance_xy > 0.001:
-                        # print("WARNING: outgoing distance > 0:")
-                        # print("Point1 (LVUG):",y.asPolyline()[0])
-                        # print("Point2 (LVDB):",geom_x)
-                        # print("difference:", format(distance_xy, '.9f'))
-                        arr.append(device_id)
+                    if geom:
+                        geom_x = rps_get_qgspoint(geom)
+                        distance_xy = distance.measureLine(y.asPolyline()[0], geom_x)
+                        if distance_xy > 0.001:
+                            # print("WARNING: outgoing distance > 0:")
+                            # print("Point1 (LVUG):",y.asPolyline()[0])
+                            # print("Point2 (LVDB):",geom_x)
+                            # print("difference:", format(distance_xy, '.9f'))
+                            arr.append(device_id)
     return arr
 
 
@@ -679,10 +681,11 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                     layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
                     feat_dmd_pt = layer_dmd_pt.getFeatures()
                     for j in feat_dmd_pt:
-                        devide_temp = j.attribute('device_id')
+                        # devide_temp = j.attribute('device_id')
                         geom_j = j.geometry()
-                        j_point = geom_j.asPoint()
-                        arr_point.append(j_point)
+                        if geom_j:
+                            j_point = rps_get_qgspoint(geom_j)
+                            arr_point.append(j_point)
 
                     # print('arr point is:' + str(len(arr_point)))
 

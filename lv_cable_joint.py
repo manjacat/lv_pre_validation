@@ -71,7 +71,7 @@ def lv_cj_duplicate_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
 
@@ -121,7 +121,7 @@ def lv_cj_field_enum_message(device_id, field_name):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
+        point = rps_get_qgspoint(geom)
         longitude = point.x()
         latitude = point.y()
 
@@ -148,7 +148,7 @@ def lv_cj_field_not_null_message(device_id, field_name):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
 
@@ -210,7 +210,7 @@ def lv_cj_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         device_id = f.attribute('device_id')
         geom = f.geometry()
         if geom:
-            geom_x = geom.asPoint()
+            geom_x = rps_get_qgspoint(geom)
             # new arr_snapping each loop
             arr_snapping = []
             for geom_lv in arr_lv:
@@ -231,7 +231,7 @@ def lv_cj_snapping_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
 

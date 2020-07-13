@@ -72,7 +72,7 @@ def lv_fuse_duplicate_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     if not device_id:
@@ -125,7 +125,7 @@ def lv_fuse_field_enum_message(device_id, field_name):
     for f in feat:
         try:
             geom = f.geometry()
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
         except Exception as e:
@@ -155,7 +155,7 @@ def lv_fuse_field_not_null_message(device_id, field_name):
     for f in feat:
         try:
             geom = f.geometry()
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
         except Exception as e:
@@ -188,7 +188,7 @@ def lv_fuse_pole_distance():
     for f in feat_pole:
         geom = f.geometry()
         if geom:
-            geom_pole = geom.asPoint()
+            geom_pole = rps_get_qgspoint(geom)
             arr_pole_geom.append(geom_pole)
 
     # get lv fuse geom
@@ -201,7 +201,7 @@ def lv_fuse_pole_distance():
             # new arr_snapping each loop
             arr_snapping = []
             if geom:
-                geom_lv_fuse = geom.asPoint()
+                geom_lv_fuse = rps_get_qgspoint(geom)
                 for pole_geom in arr_pole_geom:
                     m = distance.measureLine(pole_geom, geom_lv_fuse)
                     # print('distance in meters',m)
@@ -224,7 +224,7 @@ def lv_fuse_pole_distance_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = lv_fuse_pole_distance_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -285,7 +285,7 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
         # print('device_id insert:', device_id)
         geom_lvf = f.geometry()
         if geom_lvf:
-            geom_x = geom_lvf.asPoint()
+            geom_x = rps_get_qgspoint(geom_lvf)
             # my_buffer = geom_lvf.buffer(0.1, 5)
             # print(geom_lvf)
             # print(geom_lvf)
@@ -313,7 +313,7 @@ def lv_fuse_snapping_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
 

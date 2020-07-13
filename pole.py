@@ -69,7 +69,7 @@ def pole_duplicate_message(device_id):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
+        point = rps_get_qgspoint(geom)
         longitude = point.x()
         latitude = point.y()
     e_msg = pole_duplicate_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -116,7 +116,7 @@ def pole_field_enum_message(device_id, field_name):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = pole_enum_valid + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -143,7 +143,7 @@ def pole_field_not_null_message(device_id, field_name):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = pole_field_null + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -192,7 +192,7 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
         arr_snapping = []
         device_id = f.attribute('device_id')
         geom = f.geometry()
-        geom_pole = geom.asPoint()
+        geom_pole = rps_get_qgspoint(geom)
         for vertex in arr_lv_oh:
             m = distance.measureLine(geom_pole, vertex)
             # user feedback: changed upper limit to 2.6 (previously 1.15)
@@ -215,7 +215,7 @@ def pole_lv_oh_vertex_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = pole_lv_oh_vertex_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(

@@ -9,9 +9,9 @@ from qgis.core import *
 from .dropdown_enum import *
 import re
 
-
 rps_column_name_check_code = 'ERR_COLUMN_NAME'
 rps_check_layer_name_code = 'ERR_MISSING_LAYER'
+
 
 # *********************************************
 # ****** Return Point from MultiPoint *********
@@ -53,11 +53,10 @@ def rps_get_arr_layers(layer_name):
 
     return arr
 
-
-
 # *********************************************
 # ****** Return Point from MultiPoint *********
 # *********************************************
+
 
 def rps_get_qgspoint(geom):
     geom_type = QgsWkbTypes.displayString(geom.wkbType())
@@ -73,13 +72,16 @@ def rps_get_qgspoint(geom):
 
     return return_geom
 
+
 # ********************************************
 # ****** Output E MSG in correct format ******
 # ********************************************
 
 def rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude):
-    e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + error_desc + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+    e_msg = error_code + ',' + str(device_id) + ',' + layer_name + ': ' + error_desc + ',' + str(longitude) + ',' + str(
+        latitude) + ' \n'
     return e_msg
+
 
 # *****************************************************
 # ****** Check for List of Mandatory Layer Names ******
@@ -94,10 +96,11 @@ def rps_check_layer_name(arr_layers):
             arr.append(layer_name_zero)
     return arr
 
+
 def rps_check_layer_name_message(layer_name, layer_miss):
     longitude = 0
     latitude = 0
-    error_desc = ' These layers are required for ' + layer_name + '! ' +  '[' + str(layer_miss) + ']'
+    error_desc = ' These layers are required for ' + layer_name + '! ' + '[' + str(layer_miss) + ']'
 
     e_msg = rps_write_line(rps_check_layer_name_code, layer_name, layer_name, error_desc, longitude, latitude)
     # print(e_msg)
@@ -217,6 +220,7 @@ def rps_get_field_name(layer_name):
         arr = arr_col_st_duct
     return arr
 
+
 # returns any fields which are required, but missing
 def rps_column_name_check(layer_name):
     arr_col_list = rps_get_field_name(layer_name)
@@ -236,6 +240,7 @@ def rps_column_name_check(layer_name):
 
     return arr_col_missing
 
+
 def rps_column_name_check_message(layer_name, col_miss):
     longitude = 0
     latitude = 0
@@ -245,6 +250,7 @@ def rps_column_name_check_message(layer_name, col_miss):
     print(e_msg)
 
     return e_msg
+
 
 # *********************************************
 # ****** Check for Field not null or N/A ******
@@ -264,6 +270,7 @@ def rps_field_not_null(layer_name, field_name):
         device_id = f.attribute('device_id')
         arr.append(device_id)
     return arr
+
 
 def rps_field_not_null_message(device_id, field_name, layer_name, error_code):
     longitude = 0
@@ -297,6 +304,7 @@ def rps_field_not_null_message(device_id, field_name, layer_name, error_code):
         device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
+
 # ****************************************
 # ****** Check for Device_Id format ******
 # ****************************************
@@ -317,6 +325,8 @@ code_st_duct = 'std'
 # Step 2: Generate pattern: vendor code + station code + object code + running number
 # Step 3: test device_id against pattern
 '''
+
+
 def rps_device_id_format(layer_name):
     arr = []
     object_code = ''
@@ -518,7 +528,7 @@ def rps_z_m_shapefile_message(layer_name, device_id, error_code):
                 device_id) + ' geometry ERROR. Unable to read geometry.'
         else:
             err_detail = layer_name + ': ' + str(
-            device_id) + ' geometry ERROR. Geometry is ' + geom_type + ' (correct is ' + wkb_type + ') '
+                device_id) + ' geometry ERROR. Geometry is ' + geom_type + ' (correct is ' + wkb_type + ') '
     e_msg = error_code + ',' + str(device_id) + ',' + err_detail + ',' + str(longitude) + ',' + str(
         latitude) + ' \n'
     print(e_msg)
@@ -586,7 +596,7 @@ def rps_get_firstpoint(layer_name, device_id):
                     # print('midpoint is ', divide2)
                     vector_first_point = polyline_y[first_point]
                 else:
-                    vector_first_point = QgsPoint(0,0)
+                    vector_first_point = QgsPoint(0, 0)
 
         return vector_first_point
     except Exception as e:
@@ -662,6 +672,7 @@ def rps_get_lastpoint(layer_name, device_id):
         return vector_last_point
     except Exception as e:
         return QgsPoint(0, 0)
+
 
 # ********************************************
 # ********* LV UG / LV OH Functions  *********

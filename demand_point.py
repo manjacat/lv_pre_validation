@@ -73,7 +73,7 @@ def dmd_pt_duplicate_message(device_id):
         try:
             geom = f.geometry()
             if geom:
-                point = geom.asPoint()
+                point = rps_get_qgspoint(geom)
                 longitude = point.x()
                 latitude = point.y()
         except Exception as e:
@@ -118,7 +118,7 @@ def dmd_pt_field_enum_message(device_id, field_name):
         try:
             geom = f.geometry()
             if geom:
-                point = geom.asPoint()
+                point = rps_get_qgspoint(geom)
                 longitude = point.x()
                 latitude = point.y()
         except Exception as e:
@@ -191,7 +191,7 @@ def dmd_pt_remarks_message(device_id):
         try:
             geom = f.geometry()
             if geom:
-                point = geom.asPoint()
+                point = rps_get_qgspoint(geom)
                 longitude = point.x()
                 latitude = point.y()
         except Exception as e:

@@ -72,7 +72,7 @@ def st_light_duplicate_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = st_light_duplicate_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -115,7 +115,7 @@ def st_light_field_enum_message(device_id, field_name):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
+        point = rps_get_qgspoint(geom)
         longitude = point.x()
         latitude = point.y()
     e_msg = st_light_enum_valid + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -155,7 +155,7 @@ def st_light_cont_dev_message(device_id):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
+        point = rps_get_qgspoint(geom)
         longitude = point.x()
         latitude = point.y()
     e_msg = st_light_cont_dev_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -181,7 +181,7 @@ def st_light_field_not_null_message(device_id, field_name):
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         geom = f.geometry()
-        point = geom.asPoint()
+        point = rps_get_qgspoint(geom)
         longitude = point.x()
         latitude = point.y()
     e_msg = st_light_field_null + ',' + str(device_id) + ',' + layer_name + ': ' + str(
@@ -218,7 +218,7 @@ def st_light_phasing_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
 
@@ -266,16 +266,19 @@ def st_light_overlap_pole():
         # compare with geom pole array
         for geom_p in arr_geom_pole:
             geom_st_light = f.geometry()
-            # print('geom pole is :', geom_p)
-            # print('geom st_light is :',geom_st_light)
-            m = distance.measureLine(geom_p.asPoint(), geom_st_light.asPoint())
-            touches1 = QgsGeometry.touches(geom_p, geom_st_light)
-            if touches1:
-                print('geom pole is :', geom_p)
-                print('geom st_light is :', geom_st_light)
-                no_touches += 1
-            if m < max_distance_m:
-                no_touches += 1
+            if geom_st_light:
+                # print('geom pole is :', geom_p)
+                # print('geom st_light is :',geom_st_light)
+                geom_p_point = rps_get_qgspoint(geom_p)
+                geom_st_point = rps_get_qgspoint(geom_st_light)
+                m = distance.measureLine(geom_p_point, geom_st_point)
+                touches1 = QgsGeometry.touches(geom_p, geom_st_light)
+                if touches1:
+                    # print('geom pole is :', geom_p)
+                    # print('geom st_light is :', geom_st_light)
+                    no_touches += 1
+                if m < max_distance_m:
+                    no_touches += 1
         # print('total touches ' + str(device_id) + ': ' + str(no_touches))
         if no_touches == 0:
             arr.append(device_id)
@@ -291,7 +294,7 @@ def st_light_overlap_pole_message(device_id):
     for f in feat:
         geom = f.geometry()
         if geom:
-            point = geom.asPoint()
+            point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()
     e_msg = st_light_overlap_pole_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
