@@ -23,8 +23,9 @@ customer_field_not_null_code = 'ERR_CUSTOMER_02'
 The customer should be associated with the captured demand point.
 the device id should contain the device id of the associated demand point.
 """
-def customer_dmd_pt_id_missing():
 
+
+def customer_dmd_pt_id_missing():
     # get list of demand point ids
     arr_dmd = []
     layer_dmd = QgsProject.instance().mapLayersByName('Demand_Point')[0]
@@ -52,19 +53,23 @@ def customer_dmd_pt_id_missing():
 
     return arr
 
+
 def customer_dmd_pt_id_missing_message(device_id):
     longitude = 0
     latitude = 0
     error_desc = 'Customer device_id: ' + str(device_id) + '. No Demand Point has this device_id. '
-    e_msg = customer_dmd_pt_id_missing_code + ', ' + str(device_id) + ', ' + error_desc + ', ' + str(longitude) + ',' + str(latitude) + ' \n'
+    e_msg = customer_dmd_pt_id_missing_code + ', ' + str(device_id) + ', ' + error_desc + ', ' + str(
+        longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
-"""
-    meter_no should not be empty and should not provide “N/A”
-"""
+
+#  meter_no should not be empty and should not provide “N/A”
+#
+
 def customer_field_not_null(field_name):
     arr = rps_field_not_null(layer_name, field_name)
     return arr
+
 
 def customer_field_not_null_message(device_id, field_name):
     e_msg = rps_field_not_null_message(device_id, field_name, layer_name, customer_field_not_null_code)

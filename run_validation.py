@@ -263,7 +263,7 @@ def exec_validation(self):
     if lv_cj_flag:
         # check missing layers
         lv_cj_layer_name = 'LV_Fuse'
-        arr_layers =  rps_get_arr_layers(lv_cj_layer_name)
+        arr_layers = rps_get_arr_layers(lv_cj_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -311,7 +311,7 @@ def exec_validation(self):
     if pole_flag:
         # check missing layers
         pole_layer_name = 'Pole'
-        arr_layers =  rps_get_arr_layers(pole_layer_name)
+        arr_layers = rps_get_arr_layers(pole_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -358,7 +358,7 @@ def exec_validation(self):
     if st_light_flag:
         # check missing layers
         st_light_layer_name = 'Street_Light'
-        arr_layers = rps_get_arr_layers(layer_name)
+        arr_layers = rps_get_arr_layers(st_light_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -377,6 +377,29 @@ def exec_validation(self):
             else:
                 st_light_check_flag = True
                 pole_check_flag = True
+
+    if customer_flag:
+        # check missing layer
+        customer_layer_name = 'Customer'
+        arr_layers = rps_get_arr_layers(customer_layer_name)
+        arr_missing_layer = rps_check_layer_name(arr_layers)
+
+        if len(arr_missing_layer) > 0:
+            for missing_layer in arr_missing_layer:
+                e_msg += rps_check_layer_name_message(customer_layer_name, missing_layer)
+                customer_error += 1
+                total_error += 1
+        else:
+            # check missing columns
+            arr_missing_columns = rps_column_name_check(customer_layer_name)
+            if len(arr_missing_columns) > 0:
+                for col_miss in arr_missing_columns:
+                    e_msg += rps_column_name_check_message(customer_layer_name, col_miss)
+                    customer_error += 1
+                    total_error += 1
+            else:
+                customer_check_flag = True
+                dmd_pt_check_flag = True
 
     # ******************************************************
     # **********     DEVICE ID CHECKING    *****************

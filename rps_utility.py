@@ -29,6 +29,7 @@ def rps_get_arr_layers(layer_name):
     arr_layers_lv_ug = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LVDB-FP']
     arr_layers_manhole = ['Manhole']
     arr_layers_st_duct = ['Structure_Duct']
+    arr_layers_customer = ['Customer', 'Demand_Point']
 
     if layer_name == 'LV_UG_Conductor':
         arr = arr_layers_lv_ug
@@ -50,6 +51,8 @@ def rps_get_arr_layers(layer_name):
         arr = arr_layers_manhole
     elif layer_name == 'Structure_Duct':
         arr = arr_layers_st_duct
+    elif layer_name == 'Customer':
+        arr = arr_layers_customer
 
     return arr
 
@@ -92,7 +95,7 @@ def rps_check_layer_name(arr_layers):
     for layer_name_zero in arr_layers:
         try:
             layer_test = QgsProject.instance().mapLayersByName(layer_name_zero)[0]
-        except  Exception as e:
+        except Exception as e:
             arr.append(layer_name_zero)
     return arr
 
@@ -198,6 +201,11 @@ def rps_get_field_name(layer_name):
         , 'device_id'
         , 'db_oper'
     ]
+    arr_customer = [
+        'device_id'
+        , 'meter_no'
+    ]
+
     if layer_name == 'LV_UG_Conductor':
         arr = arr_col_lv_ug
     elif layer_name == 'LV_OH_Conductor':
@@ -218,6 +226,8 @@ def rps_get_field_name(layer_name):
         arr = arr_col_manhole
     elif layer_name == 'Structure_Duct':
         arr = arr_col_st_duct
+    elif layer_name == 'Customer':
+        arr = arr_customer
     return arr
 
 
