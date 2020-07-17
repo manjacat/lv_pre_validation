@@ -24,7 +24,7 @@ lv_oh_wrong_flow_code = 'ERR_LVOHCOND_03'
 
 # this number is the max number to test for hanging.
 # if total LV OH is more than this number, test for hanging is skipped
-lv_oh_max_count = 600
+lv_oh_max_count = 2800
 
 
 # *****************************************
@@ -338,6 +338,8 @@ def lv_oh_self_intersect_message(device_id):
 
 
 def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
+    print('lvoh hanging check started!')
+
     arr = []
     # qgis distanceArea
     distance = QgsDistanceArea()
@@ -354,96 +356,122 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     if feat_count > lv_oh_max_count:
         print('too many objects: skipped checking for LV OH hanging')
     else:
+        # collection of arr_point
+        arr_point = []
+
+        # add lv ug vertex to list: (1st point and last point is enough)
+        layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
+        feat_lv_ug = layer_lv_ug.getFeatures()
+        for h in feat_lv_ug:
+            device_temp = h.attribute('device_id')
+            if device_temp not in arr_lv_ug_exclude_geom:
+                geom_h = h.geometry()
+                if geom_h:
+                    y_h = geom_h.mergeLines()
+                    polyline_y = y_h.asPolyline()
+                    v1_one = polyline_y[0]
+                    v1_last = polyline_y[len(polyline_y) - 1]
+                    arr_point.append(v1_one)
+                    arr_point.append(v1_last)
+        print('LV UG vertex added.')
+
+        # add demand point vertex list
+        layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+        feat_dmd_pt = layer_dmd_pt.getFeatures()
+        for j in feat_dmd_pt:
+            devide_temp = j.attribute('device_id')
+            geom_j = j.geometry()
+            if geom_j:
+                j_point = rps_get_qgspoint(geom_j)
+                arr_point.append(j_point)
+        print('Demand Point vertex added.')
+
+        # add LV Cable Joint vertex to list
+        layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
+        feat_lv_cj = layer_lv_cj.getFeatures()
+        for j in feat_lv_cj:
+            devide_temp = j.attribute('device_id')
+            geom_j = j.geometry()
+            if geom_j:
+                j_point = rps_get_qgspoint(geom_j)
+                arr_point.append(j_point)
+        print('LV Cable Joint added.')
+
+        # get LV OH vertex to this list
+        arr_device_id = []
+        layer_lv_oh = QgsProject.instance().mapLayersByName(layer_name)[0]
+        # query = '"device_id" != \'' + str(device_id) + '\''
+        # feat_lv_oh = layer_lv_oh.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+        feat_lv_oh = layer_lv_oh.getFeatures()
+        for g in feat_lv_oh:
+            device_temp = g.attribute('device_id')
+            if device_temp not in arr_lv_oh_exclude_geom:
+                arr_device_id.append(device_temp)
+                geom_g = g.geometry()
+                if geom_g:
+                    y_g = geom_g.mergeLines()
+                    polyline_y_g = y_g.asPolyline()
+                    v1_one = polyline_y_g[0]
+                    v1_last = polyline_y_g[len(polyline_y_g) - 1]
+                    arr_point.append(v1_one)
+                    arr_point.append(v1_last)
+                    # if device_temp == 'N78E46#08ohc177':
+                    #    print('total polyline in ' + device_temp + ' is ' + str(len(polyline_y_g)))
+                    # for g1 in range(len(polyline_y_g)):
+                    #    if polyline_y_g[g1] not in arr_point:
+                    #        arr_point.append(polyline_y_g[g1])
+                            # print(arr_device_id)
+        print('LV OH vertex added.')
+
+        # actual checking
+        print('arr point is:' + str(len(arr_point)))
+        print('arr lv oh exclude geom = ' + str(len(arr_lv_oh_exclude_geom)))
+
         for f in feat:
             device_id = f.attribute('device_id')
+            # print('device id is ' + str(device_id))
             if device_id not in arr_lv_oh_exclude_geom:
                 geom = f.geometry()
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                v_one = polyline_y[0]
-                v_last = polyline_y[len(polyline_y) - 1]
-                # print('len polyline is ', len(polyline_y))
-                # print(v_one)
+                # print('check point 2')
+                if geom:
+                    y = geom.mergeLines()
+                    polyline_y = y.asPolyline()
+                    v_one = polyline_y[0]
+                    v_last = polyline_y[len(polyline_y) - 1]
+                    # print('len polyline is ', len(polyline_y))
+                    # print(v_one)
 
-                # get other vertex of LV OH
-                arr_point = []
-                arr_device_id = []
-                layer_lv_oh = QgsProject.instance().mapLayersByName(layer_name)[0]
-                query = '"device_id" != \'' + str(device_id) + '\''
-                feat_lv_oh = layer_lv_oh.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-                for g in feat_lv_oh:
-                    device_temp = g.attribute('device_id')
-                    if device_temp not in arr_lv_oh_exclude_geom:
-                        arr_device_id.append(device_temp)
-                        geom_g = g.geometry()
-                        y_g = geom_g.mergeLines()
-                        polyline_y_g = y_g.asPolyline()
-                        if device_temp == 'N78E46#08ohc177':
-                            print('total polyline in ' + device_temp + ' is ' + str(len(polyline_y_g)))
-                        for g1 in range(len(polyline_y_g)):
-                            if polyline_y_g[g1] not in arr_point:
-                                arr_point.append(polyline_y_g[g1])
-                                # print(arr_device_id)
-                # print(arr_point)
-
-                # get lv ug vector: (1st point and last point is enough)
-                layer_lv_ug = QgsProject.instance().mapLayersByName('LV_UG_Conductor')[0]
-                feat_lv_ug = layer_lv_ug.getFeatures()
-                for h in feat_lv_ug:
-                    device_temp = h.attribute('device_id')
-                    if device_temp not in arr_lv_ug_exclude_geom:
-                        geom_h = h.geometry()
-                        if geom_h:
-                            y_h = geom_h.mergeLines()
-                            polyline_y = y_h.asPolyline()
-                            v1_one = polyline_y[0]
-                            v1_last = polyline_y[len(polyline_y) - 1]
-                            arr_point.append(v1_one)
-                            arr_point.append(v1_last)
-
-                # get demand point point
-                layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
-                feat_dmd_pt = layer_dmd_pt.getFeatures()
-                for j in feat_dmd_pt:
-                    devide_temp = j.attribute('device_id')
-                    geom_j = j.geometry()
-                    if geom_j:
-                        j_point = rps_get_qgspoint(geom_j)
-                        arr_point.append(j_point)
-
-                # get LV Cable Joint
-                layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
-                feat_lv_cj = layer_lv_cj.getFeatures()
-                for j in feat_lv_cj:
-                    devide_temp = j.attribute('device_id')
-                    geom_j = j.geometry()
-                    if geom_j:
-                        j_point = rps_get_qgspoint(geom_j)
-                        arr_point.append(j_point)
-
-                # print('arr point is:' + str(len(arr_point)))
-
-                # check distance between v_one / v_last with arr_point
-                arr_snap_v_one = []
-                arr_snap_v_last = []
-                for v_point in arr_point:
-                    distance_v_one = distance.measureLine(v_one, v_point)
-                    if distance_v_one <= 0.001:
-                        # print(j)
-                        print('distance is ' + format(distance_v_one, '.9f') + 'm')
-                        arr_snap_v_one.append(device_id)
-                    # print('v point to check:' + str(v_point))
-                    distance_v_last = distance.measureLine(v_last, v_point)
-                    if distance_v_last <= 0.001:
-                        # print('v last is ' + str(v_last))
-                        # print('lv point is ' + str(v_point))
-                        print('distance is ' + format(distance_v_last, '.9f') + 'm')
-                        arr_snap_v_last.append(device_id)
-                # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
-                # print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
-                if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
-                    arr.append(device_id)
-    return arr
+                    # check distance between v_one / v_last with arr_point
+                    arr_snap_v_one = []
+                    arr_snap_v_last = []
+                    # print('start check hanging?')
+                    for v_point in arr_point:
+                        bool_test = rps_is_too_close(v_one, v_point)
+                        if bool_test:
+                            # print('bool test vone is ' + str(bool_test))
+                            distance_v_one = distance.measureLine(v_one, v_point)
+                            if distance_v_one <= 0.001:
+                                # print(j)
+                                # print('distance is ' + format(distance_v_one, '.9f') + 'm')
+                                arr_snap_v_one.append(device_id)
+                        # print('v point to check:' + str(v_point))
+                        bool_test = rps_is_too_close(v_last, v_point)
+                        if bool_test:
+                            # print('bool test vlast is ' + str(bool_test))
+                            distance_v_last = distance.measureLine(v_last, v_point)
+                            if distance_v_last <= 0.001:
+                                # print('v last is ' + str(v_last))
+                                # print('lv point is ' + str(v_point))
+                                # print('distance is ' + format(distance_v_last, '.9f') + 'm')
+                                arr_snap_v_last.append(device_id)
+                        if len(arr_snap_v_one) > 0 and len(arr_snap_v_last) > 0:
+                            break  # break out of for loop
+                    # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
+                    # print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
+                    if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
+                        arr.append(device_id)
+        print('total hanging caught are.. ' + str(len(arr)))
+        return arr
 
 
 def lv_oh_hanging_message(device_id):

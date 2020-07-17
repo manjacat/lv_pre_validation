@@ -14,6 +14,34 @@ rps_check_layer_name_code = 'ERR_MISSING_LAYER'
 
 
 # *********************************************
+# ************** Is Too Close *****************
+# *********************************************
+
+def rps_is_too_close(geom1, geom2):
+    ret_bool = False
+
+    x1 = geom1.x()
+    x2 = geom2.x()
+    y1 = geom1.y()
+    y2 = geom2.y()
+
+    distance_x = x2 - x1
+    if x1 > x2:
+        distance_x = x1 - x2
+
+    distance_y = y2 - y1
+    if y1 > y2:
+        distance_y = y1 - y2
+
+    if distance_x < 0.0000000001 and distance_y < 0.0000000001:
+        # print('distance_x is ' + str(distance_x))
+        # print('distance_y is ' + str(distance_y))
+        ret_bool = True
+
+    return ret_bool
+
+
+# *********************************************
 # ****** Return Point from MultiPoint *********
 # *********************************************
 

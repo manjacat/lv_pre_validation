@@ -544,9 +544,10 @@ def exec_validation(self):
     # *******************************************************
 
     arr_lv_ug = []
+    testing_flag = True
 
     # check z-m shapefile
-    if lv_ug_check_flag:
+    if lv_ug_check_flag or testing_flag:
         arr_lv_ug = lv_ug_z_m_shapefile()
         arr_lv_ug_exclude_geom = arr_lv_ug
         # print(len(arr_lv_ug_exclude_geom))
@@ -560,7 +561,7 @@ def exec_validation(self):
     arr_lv_oh = []
 
     # check z-m shapefile
-    if lv_oh_check_flag:
+    if lv_oh_check_flag or testing_flag:
         arr_lv_oh = lv_oh_z_m_shapefile()
         arr_lv_oh_exclude_geom = arr_lv_oh
         # print(len(arr_lv_oh_exclude_geom))
@@ -572,6 +573,20 @@ def exec_validation(self):
             total_error += 1
 
     # print('current total error is (zm check):' + str(total_error))
+
+    # ****************************************************************
+    # ***************   KHAIRIL TESTING CODE AREA    *****************
+    # ****************************************************************
+
+    # check LV OH hanging
+    # if lv_oh_flag and lv_oh_check_flag:
+    arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+    for device_id in arr_lv_oh:
+        if device_id:
+            device_id = device_id.strip()
+        e_msg += lv_oh_hanging_message(device_id)
+        lv_oh_error += 1
+        total_error += 1
 
     # ****************************************************************
     # ***************     LV UG COND VALIDATION    *******************
