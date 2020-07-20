@@ -32,14 +32,11 @@ lv_oh_max_count = 2800
 # *****************************************
 
 def lv_oh_z_m_shapefile():
-    arr = []
     arr = rps_z_m_shapefile(layer_name)
     return arr
 
 
 def lv_oh_z_m_shapefile_message(device_id):
-    longitude = 0
-    latitude = 0
     e_msg = rps_z_m_shapefile_message(layer_name, device_id, lv_oh_z_m_shapefile_code)
     return e_msg
 
@@ -49,7 +46,6 @@ def lv_oh_z_m_shapefile_message(device_id):
 # ****************************************
 
 def lv_oh_device_id_format():
-    arr = []
     arr = rps_device_id_format(layer_name)
     return arr
 
@@ -66,9 +62,7 @@ def lv_oh_device_id_format_message(device_id):
 # **********************************
 
 def lv_oh_duplicate():
-    arr = []
     arr = rps_duplicate_device_id(layer_name)
-
     return arr
 
 
@@ -149,7 +143,7 @@ def lv_oh_field_not_null_message(device_id, field_name):
         latitude = midpoint.y()
 
     e_msg = lv_oh_field_null + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' Mandatory field NOT NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        device_id) + ' Mandatory field NULL at: ' + field_name + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
 
@@ -208,7 +202,7 @@ def get_pole_geom():
 
 def lv_oh_vertex_pole():
     arr = []
-
+    # not included in testing
     # qgis distanceArea
     distance = QgsDistanceArea()
     distance.setEllipsoid('WGS84')
@@ -338,7 +332,7 @@ def lv_oh_self_intersect_message(device_id):
 
 
 def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
-    print('lvoh hanging check started!')
+    print('lv oh hanging check started!')
 
     arr = []
     # qgis distanceArea
@@ -350,7 +344,7 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     feat = layer.getFeatures()
     feat_count = layer.featureCount()
-    print('feat count is ' + str(feat_count))
+    # print('feat count is ' + str(feat_count))
 
     # skip check if feat count is too many
     if feat_count > lv_oh_max_count:
@@ -379,7 +373,6 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         layer_dmd_pt = QgsProject.instance().mapLayersByName('Demand_Point')[0]
         feat_dmd_pt = layer_dmd_pt.getFeatures()
         for j in feat_dmd_pt:
-            devide_temp = j.attribute('device_id')
             geom_j = j.geometry()
             if geom_j:
                 j_point = rps_get_qgspoint(geom_j)
@@ -390,7 +383,6 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
         feat_lv_cj = layer_lv_cj.getFeatures()
         for j in feat_lv_cj:
-            devide_temp = j.attribute('device_id')
             geom_j = j.geometry()
             if geom_j:
                 j_point = rps_get_qgspoint(geom_j)
@@ -411,21 +403,13 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                 if geom_g:
                     y_g = geom_g.mergeLines()
                     polyline_y_g = y_g.asPolyline()
-                    v1_one = polyline_y_g[0]
-                    v1_last = polyline_y_g[len(polyline_y_g) - 1]
-                    arr_point.append(v1_one)
-                    arr_point.append(v1_last)
-                    # if device_temp == 'N78E46#08ohc177':
-                    #    print('total polyline in ' + device_temp + ' is ' + str(len(polyline_y_g)))
-                    # for g1 in range(len(polyline_y_g)):
-                    #    if polyline_y_g[g1] not in arr_point:
-                    #        arr_point.append(polyline_y_g[g1])
-                            # print(arr_device_id)
+                    for g1 in range(len(polyline_y_g)):
+                        arr_point.append(polyline_y_g[g1])
         print('LV OH vertex added.')
 
         # actual checking
-        print('arr point is:' + str(len(arr_point)))
-        print('arr lv oh exclude geom = ' + str(len(arr_lv_oh_exclude_geom)))
+        # print('arr point is:' + str(len(arr_point)))
+        # print('arr lv oh exclude geom = ' + str(len(arr_lv_oh_exclude_geom)))
 
         for f in feat:
             device_id = f.attribute('device_id')
@@ -438,8 +422,6 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                     polyline_y = y.asPolyline()
                     v_one = polyline_y[0]
                     v_last = polyline_y[len(polyline_y) - 1]
-                    # print('len polyline is ', len(polyline_y))
-                    # print(v_one)
 
                     # check distance between v_one / v_last with arr_point
                     arr_snap_v_one = []
@@ -464,13 +446,13 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                                 # print('lv point is ' + str(v_point))
                                 # print('distance is ' + format(distance_v_last, '.9f') + 'm')
                                 arr_snap_v_last.append(device_id)
-                        if len(arr_snap_v_one) > 0 and len(arr_snap_v_last) > 0:
+                        if len(arr_snap_v_one) > 1 and len(arr_snap_v_last) > 1:
                             break  # break out of for loop
                     # print(device_id + ': total arr_snap_v_one ' + str(len(arr_snap_v_one)))
                     # print(device_id + ': total arr_snap_v_last ' + str(len(arr_snap_v_last)))
-                    if len(arr_snap_v_one) == 0 or len(arr_snap_v_last) == 0 and device_id not in arr:
+                    if len(arr_snap_v_one) <= 1 or len(arr_snap_v_last) <= 1 and device_id not in arr:
                         arr.append(device_id)
-        print('total hanging caught are.. ' + str(len(arr)))
+        # print('total hanging caught are.. ' + str(len(arr)))
         return arr
 
 
@@ -534,7 +516,7 @@ def lv_oh_buffer(arr_lv_oh_exclude_geom):
         arr_temp.extend(arr_lv_oh)
         arr_cur_lv_oh = []
 
-        # get arr_cur_lv_oh (list of vectors to in one deviceid)
+        # get arr_cur_lv_oh (list of vectors to in one device id)
         device_id = f.attribute('device_id')
         if device_id not in arr_lv_oh_exclude_geom:
             geom = f.geometry()

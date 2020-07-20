@@ -93,34 +93,7 @@ def exec_validation(self):
     # ***********     KHAIRIL TESTING STUFF    ***********
     # ****************************************************
 
-    # distance = QgsDistanceArea()
-    # distance.setEllipsoid('WGS84')
-    #
-    # layer_test = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-    # device_id_test = 'N79E45013ohc1504'
-    # query_test = '"device_id" = \'' + str(device_id_test) + '\''
-    # feat_test_2 = layer_test.getFeatures(QgsFeatureRequest().setFilterExpression(query_test))
-    # for f in feat_test_2:
-    #     line_geom = f.geometry()
-    #     if line_geom:
-    #         polyline_geom = line_geom.mergeLines().asPolyline()
-    #         print('line geom found')
-    #         print(polyline_geom)
-    #
-    # layer_test = QgsProject.instance().mapLayersByName('Pole')[0]
-    # device_id_test = 'N79E45013pol257'
-    # query_test = '"device_id" = \'' + str(device_id_test) + '\''
-    # feat_test = layer_test.getFeatures(QgsFeatureRequest().setFilterExpression(query_test))
-    # for f in feat_test:
-    #     p_geom = f.geometry()
-    #     if p_geom:
-    #         point_geom = rps_get_qgspoint(p_geom)
-    #         # print('output point geom is ' + str(point_geom))
-    #         # print('output line geom is ' + str(line_geom))
-    #         dist_pl = p_geom.distance(line_geom)
-    #         print('distance is ' + str(dist_pl))
-    #         m = distance.measureLine(polyline_geom, point_geom)
-    #         print('QgsDistanceArea distance is ' + str(m))
+    # future testing area
 
     # ***************************************************************
     # ***********     CHECK HOW MANY FEATURES SELECTED    ***********
@@ -212,12 +185,12 @@ def exec_validation(self):
                     total_error += 1
             else:
                 lv_ug_check_flag = True
-                lv_oh_check_flag = True
+                # lv_oh_check_flag = True
 
     if lv_oh_flag:
         # check missing layers
         lv_oh_layer_name = 'LV_OH_Conductor'
-        arr_layers =  rps_get_arr_layers(lv_oh_layer_name)
+        arr_layers = rps_get_arr_layers(lv_oh_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -234,13 +207,13 @@ def exec_validation(self):
                     lv_oh_error += 1
                     total_error += 1
             else:
-                lv_ug_check_flag = True
+                # lv_ug_check_flag = True
                 lv_oh_check_flag = True
 
     if lv_fuse_flag:
         # check missing layers
         lv_fuse_layer_name = 'LV_Fuse'
-        arr_layers =  rps_get_arr_layers(lv_fuse_layer_name)
+        arr_layers = rps_get_arr_layers(lv_fuse_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -258,7 +231,7 @@ def exec_validation(self):
                     total_error += 1
             else:
                 lv_fuse_check_flag = True
-                lv_oh_check_flag = True
+                # lv_oh_check_flag = True
 
     if lv_cj_flag:
         # check missing layers
@@ -281,13 +254,13 @@ def exec_validation(self):
                     total_error += 1
             else:
                 lv_cj_check_flag = True
-                lv_ug_check_flag = True
-                lv_oh_check_flag = True
+                # lv_ug_check_flag = True
+                # lv_oh_check_flag = True
 
     if lvdb_fp_flag:
         # check missing layers
         lvdb_fp_layer_name = 'LVDB-FP'
-        arr_layers =  rps_get_arr_layers(lvdb_fp_layer_name)
+        arr_layers = rps_get_arr_layers(lvdb_fp_layer_name)
         arr_missing_layer = rps_check_layer_name(arr_layers)
 
         if len(arr_missing_layer) > 0:
@@ -304,9 +277,9 @@ def exec_validation(self):
                     lvdb_fp_error += 1
                     total_error += 1
             else:
-                lvdb_fp_check_flag= True
-                lv_ug_check_flag = True
-                lv_oh_check_flag = True
+                lvdb_fp_check_flag = True
+                # lv_ug_check_flag = True
+                # lv_oh_check_flag = True
 
     if pole_flag:
         # check missing layers
@@ -329,7 +302,7 @@ def exec_validation(self):
                     total_error += 1
             else:
                 pole_check_flag = True
-                lv_oh_check_flag = True
+                # lv_oh_check_flag = True
 
     if dmd_pt_flag:
         # check missing layers
@@ -352,8 +325,8 @@ def exec_validation(self):
                     total_error += 1
             else:
                 dmd_pt_check_flag = True
-                lv_ug_check_flag = True
-                lv_oh_check_flag = True
+                # lv_ug_check_flag = True
+                # lv_oh_check_flag = True
 
     if st_light_flag:
         # check missing layers
@@ -376,7 +349,7 @@ def exec_validation(self):
                     total_error += 1
             else:
                 st_light_check_flag = True
-                pole_check_flag = True
+                # pole_check_flag = True
 
     if customer_flag:
         # check missing layer
@@ -399,7 +372,7 @@ def exec_validation(self):
                     total_error += 1
             else:
                 customer_check_flag = True
-                dmd_pt_check_flag = True
+                # dmd_pt_check_flag = True
 
     # ******************************************************
     # **********     DEVICE ID CHECKING    *****************
@@ -580,13 +553,13 @@ def exec_validation(self):
 
     # check LV OH hanging
     # if lv_oh_flag and lv_oh_check_flag:
-    arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
-    for device_id in arr_lv_oh:
-        if device_id:
-            device_id = device_id.strip()
-        e_msg += lv_oh_hanging_message(device_id)
-        lv_oh_error += 1
-        total_error += 1
+    # arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+    # for device_id in arr_lv_oh:
+    #    if device_id:
+    #        device_id = device_id.strip()
+    #    e_msg += lv_oh_hanging_message(device_id)
+    #    lv_oh_error += 1
+    #    total_error += 1
 
     # ****************************************************************
     # ***************     LV UG COND VALIDATION    *******************
@@ -758,13 +731,13 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
-    ##    # check for coincidence geometry
-    ##    if lv_ug_flag:
-    ##        arr_lv_ug = lv_ug_coin()
-    ##        for device_id in arr_lv_ug:
-    ##            e_msg += lv_ug_self_intersect_message(device_id)
-    ##            lv_ug_error += 1
-    ##            total_error += 1
+    #  # check for coincidence geometry
+    #  if lv_ug_flag:
+    #        arr_lv_ug = lv_ug_coin()
+    #        for device_id in arr_lv_ug:
+    #            e_msg += lv_ug_self_intersect_message(device_id)
+    #            lv_ug_error += 1
+    #            total_error += 1
 
     # ****************************************************************
     # ***************     LV OH COND VALIDATION     ******************
@@ -1507,7 +1480,7 @@ def exec_validation(self):
     # customer_meter_empty_code
     field_name_arr = [
         'device_id'
-        ,'meter_no'
+        , 'meter_no'
     ]
     if customer_flag and customer_check_flag:
         for field_name in field_name_arr:
@@ -1528,8 +1501,6 @@ def exec_validation(self):
             e_msg += customer_dmd_pt_id_missing_message(device_id)
             customer_error += 1
             total_error += 1
-
-
 
     # ****************************************************************
     # ******************     END OF VALIDATION     *******************
