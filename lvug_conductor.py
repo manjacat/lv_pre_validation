@@ -640,6 +640,15 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
             j_point = rps_get_qgspoint(geom_j)
             arr_point.append(j_point)
 
+    # 14/8/2020: get all LVDB-FP vertex
+    layer_lv_db_fp = QgsProject.instance().mapLayersByName('LVDB-FP')[0]
+    feat_lv_db_fp = layer_lv_db_fp.getFeatures()
+    for j in feat_lv_db_fp:
+        geom_j = j.geometry()
+        if geom_j:
+            j_point = rps_get_qgspoint(geom_j)
+            arr_point.append(j_point)
+
     # 29/6/2020 - changed from only read start and end of LV OH, instead check all vectors
     # 20/7/2020 - get all LV OH vertex (1st and last)
     layer_lv_oh = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
