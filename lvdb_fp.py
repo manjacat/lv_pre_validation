@@ -104,6 +104,7 @@ def lvdb_fp_duplicate_message(device_id):
 # ****** Check for Enum Value ******
 # **********************************
 
+# test commit
 def lvdb_fp_field_enum(field_name):
     arr = []
     arr_dropdown = []
