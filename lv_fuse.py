@@ -261,8 +261,8 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
     distance.setEllipsoid('WGS84')
 
     layer_lv_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-    # query = '"device_id" = \'R6142ohc120\''
-    # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    #query = '"device_id" = \'RPS6122ohc913\''
+    #feat_01 = layer_lv_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     feat_01 = layer_lv_01.getFeatures()
     for f in feat_01:
         device_temp = f.attribute('device_id')
@@ -279,10 +279,10 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
     # print('arr lv vector')
     # print(arr_lv_vector)
 
-    # get geom of lv fuse layer
+    # get geoms of lv fuse layer
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    # query = '"device_id" = \'R6142fus02\''
-    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    #query = '"device_id" = \'RPS6122fus102\''
+    #feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
@@ -297,7 +297,7 @@ def lv_fuse_snapping(arr_lv_oh_exclude_geom):
             arr_snapping = []
             for geom_lv in arr_lv_vector:
                 m = distance.measureLine(geom_lv, geom_x)
-                if m < 0.35:
+                if m < 0.001:
                     # print('distance is '+  str(m) + 'm')
                     arr_snapping.append(device_id)
                     # print('LV fuse ' + str(device_id) + ' is touching lv oh vector!!')

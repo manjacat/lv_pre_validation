@@ -196,7 +196,7 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
         for vertex in arr_lv_oh:
             m = distance.measureLine(geom_pole, vertex)
             # user feedback: changed upper limit to 2.6 (previously 1.15)
-            if 0.85 <= m <= 2.5:
+            if 0.9 <= m <= 1.1:
                 arr_snapping.append(device_id)
                 # elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
             #        print('WARNING: ' + str(device_id) + ' distance is ' + str(m) + 'm')

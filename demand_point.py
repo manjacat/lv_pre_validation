@@ -232,48 +232,34 @@ def dmd_pt_snapping():
         # query = '"device_id" = \'' + 'RPS6122ohc724' + '\''
         # feat_lv_01 = layer_lv_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f in feat_lv_01:
-            dev_id_temp = f.attribute('device_id')
-            geom = f.geometry()
-            display_str = QgsWkbTypes.displayString(geom.wkbType())
-            geom_get = geom.get()
-            if display_str != 'Unknown' and geom_get.isEmpty() == False:
-                y = geom.mergeLines()
-                y_type = QgsWkbTypes.displayString(y.wkbType())
-                # if y_type != 'LineString':
-                #        print(dev_id_temp + ' ' + QgsWkbTypes.displayString(y.wkbType()))
-                if y_type != 'MultiLineString':
-                    # Get first vertex
-                    arr_lv_vertex.append(y.asPolyline()[0])
-                    # Get last vertex
-                    arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline()) - 1])
+        for f_lvug in feat_lv_01:
+            device_id_lvug = f_lvug.attribute('device_id')
+            geom_lvug = f_lvug.geometry()
+            merge_lvug = geom_lvug.mergeLines()
+            polyline_lvug = merge_lvug.asPolyline()
+            arr_lv_vertex.append(polyline_lvug[-1])
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     feat = layer.getFeatures()
 
-    err_counter = 0
-    for f in feat:
-        device_id = f.attribute('device_id')
-        geom = f.geometry()
-        display_str = QgsWkbTypes.displayString(geom.wkbType())
-        # new arr_snapping each loop
+    for f_dmd in feat:
+        #err_something = False
+        device_id_dmd = f_dmd.attribute('device_id')
+        geom_dmd = f_dmd.geometry()
+        geom_x_dmd = rps_get_qgspoint(geom_dmd)
+
         arr_snapping = []
-        # loop through all LV OH & LV UG
-        for geom_lv in arr_lv_vertex:
-            try:
-                geom_x = rps_get_qgspoint(geom)
-                m = distance.measureLine(geom_lv, geom_x)
-                # if m < 0.001 or str(m) == 'nan':
-                if m < 0.001:
-                    arr_snapping.append(device_id)
-                # elif m >= 0.001 and m < 0.01:
-                #        print(device_id + ' distance is ' + str("{:.5f}".format(m)))
-            except Exception as e:
-                err_counter += 1
+        for x in arr_lv_vertex:
+            m = distance.measureLine(x, geom_x_dmd)
+
+            if m < 1.5:
+                #err_something = True
+                #break
+                arr_snapping.append(device_id_dmd)
 
         if len(arr_snapping) == 0:
-            arr.append(device_id)
-    print('total error is ' + str(err_counter))
+            arr.append(device_id_dmd)
+
     return arr
 
 
