@@ -18,6 +18,8 @@ dmd_pt_remarks_code = 'ERR_DEMANDPT_04'
 dmd_pt_snapping_code = 'ERR_DEMANDPT_03'
 dmd_pt_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 
+# TODO: check dist_tx value. if Unknown = Allow. If UNKNOWN = dont allow
+# TODO: house number, street name (allow N/A)
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****

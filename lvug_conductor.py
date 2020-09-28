@@ -27,6 +27,7 @@ lv_ug_wrong_flow_code = 'ERR_LVUGCOND_11'
 lv_ug_duplicate_code = 'ERR_DUPLICATEID'
 lv_ug_device_id_format_code = 'ERR_DEVICE_ID'
 lv_ug_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+lv_ug_angle_mismatch_code = 'ERR_LVUGCOND_12'
 
 # this number is the max number to test for hanging.
 # if total LV UG is more than this number, test for hanging is skipped
@@ -648,6 +649,15 @@ def lv_ug_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         if geom_j:
             j_point = rps_get_qgspoint(geom_j)
             arr_point.append(j_point)
+    
+    # 14/8/2020: get all LV Cable Joint vertex
+    layer_lv_cj = QgsProject.instance().mapLayersByName('LV_Cable_Joint')[0]
+    feat_lv_cj = layer_lv_cj.getFeatures()
+    for j in feat_lv_cj:
+        geom_j = j.geometry()
+        if geom_j:
+            j_point = rps_get_qgspoint(geom_j)
+            arr_point.append(j_point)
 
     # 29/6/2020 - changed from only read start and end of LV OH, instead check all vectors
     # 20/7/2020 - get all LV OH vertex (1st and last)
@@ -1026,6 +1036,29 @@ def lv_ug_wrong_flow_message(device_id):
 
     e_msg = rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude)
     return e_msg
+
+# *************************************************
+# ****** Angle ******
+# *************************************************
+
+def lv_ug_angle_mismatch():
+    arr = []
+    return arr
+
+def lv_ug_angle_mismatch_message(device_id):
+    longitude = 0
+    latitude = 0
+    error_code = lv_ug_wrong_flow_code
+    error_desc = str(device_id) + ' has wrong flow direction! '
+
+    first_point = rps_get_firstpoint(layer_name, device_id)
+    if first_point:
+        longitude = first_point.x()
+        latitude = first_point.y()
+
+    e_msg = lv_ug_angle_mismatch_code + '' + '' + ''
+    return e_msg
+
 
 # **********************************
 # ******* End of Validation  *******

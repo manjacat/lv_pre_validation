@@ -731,6 +731,15 @@ def exec_validation(self):
             lv_ug_error += 1
             total_error += 1
 
+    if lv_ug_flag and lv_ug_check_flag:
+        arr_lv_ug = lv_ug_angle_mismatch()
+        for device_id in arr_lv_ug:
+            if device_id:
+                device_id = device_id.strip()
+            e_msg += lv_ug_angle_mismatch_message(device_id)
+            lv_ug_error += 1
+            total_error += 1
+
     #  # check for coincidence geometry
     #  if lv_ug_flag:
     #        arr_lv_ug = lv_ug_coin()
@@ -818,6 +827,8 @@ def exec_validation(self):
     # check LV OH hanging
     if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+        print('arr_lv_oh is..')
+        print(arr_lv_oh)
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
@@ -1002,6 +1013,15 @@ def exec_validation(self):
             if device_id:
                 device_id = device_id.strip()
             e_msg += lv_cj_snapping_message(device_id)
+            lv_cj_error += 1
+            total_error += 1
+    
+    if lv_cj_flag and lv_cj_check_flag:
+        arr_lv_cj = lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
+        for device_id in arr_lv_cj:
+            if device_id:
+                device_id = device_id.strip()
+            e_msg += lv_cj_class_mismatch_message(device_id)
             lv_cj_error += 1
             total_error += 1
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
-All checkings related to LV Cable Joint 
+All checkings related to LV Cable Joint
  ***************************************************************************/
 """
 from qgis.core import *
@@ -13,10 +13,21 @@ layer_name = 'LV_Cable_Joint'
 lv_cj_field_null = 'ERR_LVCJOINT_01'
 lv_cj_enum_valid = 'ERR_LVCJOINT_02'
 lv_cj_snapping_code = 'ERR_LVCJOINT_04'
+lv_cj_class_mismatch_code = 'ERR_LVCJOINT_05'
 lv_cj_duplicate_code = 'ERR_DUPLICATE_ID'
 lv_cj_device_id_format_code = 'ERR_DEVICE_ID'
-
 lv_cj_z_m_shapefile_code = 'ERR_Z_M_VALUE'
+
+# TODO: CLASS_FIELD_MISMATCH
+# - Wrong combination of class and usage for device_id RPS6122lcj5. OH Conductor
+# usage is LV LINE and class is SL POT END should be LV POT LINE
+# TODO: LV_CABLE_JOINT_SNAPPING_ERROR
+# -	LV Cable Joint must be snapped to either lv ugc or lv ohc
+# TODO: check LV OH class connected to LV Cable Joint
+# if Service Line, then LV Cable Joint is SL Pot End
+# if LV Line, then LV Cable Joint is LV Pot End
+
+
 
 
 # *****************************************
@@ -238,6 +249,77 @@ def lv_cj_snapping_message(device_id):
     e_msg = lv_cj_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
         device_id) + ' LV Cable joint not snap to LV OH/LV UG ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
+
+# ******************************************
+# ****** LV Cable Joint Class Mismatch *****
+# ******************************************
+
+# get LV OH closest to LV Cable Joint
+# if got LV OH, get its USAGE
+# compare with LV CJ's CLASS
+
+def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
+    arr = []
+    arr_lv = []
+    # qgis distanceArea
+    distance = QgsDistanceArea()
+    distance.setEllipsoid('WGS84')
+
+    layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
+    feat_01 = layerLV_01.getFeatures()
+    for f in feat_01:
+        device_temp = f.attribute('device_id')
+        if device_temp not in arr_lv_oh_exclude_geom:
+            geom = f.geometry()
+            y = geom.mergeLines()
+            polyline_y = y.asPolyline()
+            # loop all vertex in this line
+            for geom_01 in polyline_y:
+                # store in multidimension array (LV OH device id, geom)
+                arr_lv.append([device_temp, geom_01])
+    
+    # get geom of LV Cable Joint
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    feat = layer.getFeatures()
+    for f in feat:
+        device_id = f.attribute('device_id')
+        geom = f.geometry()
+        if geom:
+            geom_x = rps_get_qgspoint(geom)
+            # new arr_snapping each loop
+            arr_snapping = []
+            for arr_device_geom in arr_lv:
+                device_id_lv = arr_device_geom[0]
+                geom_lv = arr_device_geom[1]
+                m = distance.measureLine(geom_lv, geom_x)
+                if m < 0.001:
+                    # TODO
+                    arr_snapping.append(device_id)
+                    print('LVCJ id is ' + str(device_id) + ' and LVOH id is ' + str(device_id_lv))
+            if len(arr_snapping) == 0:
+                arr.append(device_id)
+
+    print(str(len(arr)))
+          
+    return arr
+
+def lv_cj_class_mismatch_message(device_id):
+    longitude = 0
+    latitude = 0
+    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    query = '"device_id" = \'' + str(device_id) + '\''
+    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    for f in feat:
+        geom = f.geometry()
+        if geom:
+            point = rps_get_qgspoint(geom)
+            longitude = point.x()
+            latitude = point.y()
+    e_msg = lv_cj_class_mismatch_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
+        device_id) + ' Wrong combination of class and usage for ' + str(device_id) + ' and its LV OH ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+
+    return e_msg
+
 
 # **********************************
 # ******* End of Validation  *******

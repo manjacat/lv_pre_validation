@@ -25,6 +25,9 @@ lvdb_fp_duplicate_code = 'ERR_DUPLICATE_ID'
 lvdb_fp_device_id_format_code = 'ERR_DEVICE_ID'
 lvdb_fp_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 
+# TODO: LVDB_ANGLE_NOT_A_NUMBER
+# - the field should only be numbers ranging from 0-360 and not be left blank.
+
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****
