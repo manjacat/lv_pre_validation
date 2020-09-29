@@ -19,9 +19,6 @@ lv_fuse_device_id_format_code = 'ERR_DEVICE_ID'
 lv_fuse_z_m_shapefile_code = 'ERR_Z_M_VALUE'
 
 
-# TODO:
-# - check LV fuse snapping error
-
 
 # *****************************************
 # ****** Check Z-M Value in shapefile *****

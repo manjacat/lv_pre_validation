@@ -276,7 +276,7 @@ def dmd_pt_snapping_message(device_id):
             longitude = point.x()
             latitude = point.y()
     e_msg = dmd_pt_snapping_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' hanging' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        device_id) + ' is hanging or have a wrong flow direction.' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
     return e_msg
 
 # **********************************

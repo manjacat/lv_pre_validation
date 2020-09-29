@@ -294,16 +294,17 @@ def rps_column_name_check_message(layer_name, col_miss):
 # ****** Check for Field not null or N/A ******
 # *********************************************
 
+
 def rps_field_not_null(layer_name, field_name):
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    # TODO : if Pole No, allow N/A but don't allow NA
-    query = ''
+    # if Pole No, allow N/A but don't allow NA
     if field_name == 'pole_no' and layer_name == 'Pole':
         query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'NA\''
     # if Demand Point House Number/Street Name, allow N/A
     elif field_name in ('house_no','str_name') and layer_name == 'Demand_Point':
         query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'NA\''
+    # for others not null fields, do not allow NULL or N/A (but allow Unknown, for example)
     else:
         query = '"' + field_name + '" is null OR ' + '"' + field_name + '" =  \'N/A\''
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
