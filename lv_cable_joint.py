@@ -265,18 +265,20 @@ def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     distance = QgsDistanceArea()
     distance.setEllipsoid('WGS84')
 
-    layerLV_01 = QgsProject.instance().mapLayersByName('LV_OH_Conductor')[0]
-    feat_01 = layerLV_01.getFeatures()
-    for f in feat_01:
-        device_temp = f.attribute('device_id')
-        if device_temp not in arr_lv_oh_exclude_geom:
-            geom = f.geometry()
-            y = geom.mergeLines()
-            polyline_y = y.asPolyline()
-            # loop all vertex in this line
-            for geom_01 in polyline_y:
-                # store in multidimension array (LV OH device id, geom)
-                arr_lv.append([device_temp, geom_01])
+    arr_layer = ['LV_OH_Conductor', 'LV_UG_Conductor']
+    for arr_layer_name in arr_layer:
+        layerLV_01 = QgsProject.instance().mapLayersByName(arr_layer_name)[0]
+        feat_01 = layerLV_01.getFeatures()
+        for f in feat_01:
+            device_temp = f.attribute('device_id')
+            if device_temp not in arr_lv_oh_exclude_geom:
+                geom = f.geometry()
+                y = geom.mergeLines()
+                polyline_y = y.asPolyline()
+                # loop all vertex in this line
+                for geom_01 in polyline_y:
+                    # store in multidimension array (LV OH device id, geom)
+                    arr_lv.append([device_temp, geom_01])
     
     # get geom of LV Cable Joint
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]

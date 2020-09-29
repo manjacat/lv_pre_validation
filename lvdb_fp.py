@@ -200,7 +200,8 @@ def lvdb_fp_remarks_db_oper():
         db_oper = f.attribute('db_oper')
         if remarks:
             # 9 digit pattern: SW ID
-            pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+            #pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+            pattern = '[0-9]{8}'
             check = re.search(pattern, remarks)
             if check and db_oper == 'Insert':
                 arr.append(device_id)
