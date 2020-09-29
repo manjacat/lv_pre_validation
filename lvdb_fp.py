@@ -198,10 +198,12 @@ def lvdb_fp_remarks_db_oper():
         device_id = f.attribute('device_id')
         remarks = f.attribute('remarks')
         db_oper = f.attribute('db_oper')
+
+        # 9 digit pattern: SW ID
+        # pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+        pattern = '[0-9]{8}'
+
         if remarks:
-            # 9 digit pattern: SW ID
-            #pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-            pattern = '[0-9]{8}'
             check = re.search(pattern, remarks)
             if check and db_oper == 'Insert':
                 arr.append(device_id)
@@ -211,6 +213,9 @@ def lvdb_fp_remarks_db_oper():
                 # do nothing
                 rem2 = f.attribute('remarks')
                 # print('pattern match:' + str(device_id) + ': ' + remarks + ', ' + db_oper)
+        elif db_oper == 'Update' and not remarks:
+            arr.append(device_id)
+
     return arr
 
 
@@ -374,8 +379,10 @@ def lvdb_fp_snapping(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
 
     # get geom of lvdb-fp layer
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"db_oper" =  \'Insert\''
-    feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    #query = '"db_oper" =  \'Insert\''
+    #feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    feat = layer.getFeatures()
+
     for f in feat:
         device_id = f.attribute('device_id')
         # print('device_id insert:', device_id)
