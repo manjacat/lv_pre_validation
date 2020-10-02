@@ -232,12 +232,19 @@ def dmd_pt_snapping():
         # query = '"device_id" = \'' + 'RPS6122ohc724' + '\''
         # feat_lv_01 = layer_lv_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
 
-        for f_lvug in feat_lv_01:
-            device_id_lvug = f_lvug.attribute('device_id')
-            geom_lvug = f_lvug.geometry()
-            merge_lvug = geom_lvug.mergeLines()
-            polyline_lvug = merge_lvug.asPolyline()
-            arr_lv_vertex.append(polyline_lvug[-1])
+        for f in feat_lv_01:
+            device_id = f.attribute('device_id')
+            geom = f.geometry()
+            display_str = QgsWkbTypes.displayString(geom.wkbType())
+            geom_get = geom.get()
+            if display_str != 'Unknown' and geom_get.isEmpty() == False:
+                y = geom.mergeLines()
+                y_type = QgsWkbTypes.displayString(y.wkbType())
+                # if y_type != 'LineString':
+                #        print(dev_id_temp + ' ' + QgsWkbTypes.displayString(y.wkbType()))
+                if y_type != 'MultiLineString':
+                    # Get last vertex
+                    arr_lv_vertex.append(y.asPolyline()[len(y.asPolyline()) - 1])
 
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
     feat = layer.getFeatures()
