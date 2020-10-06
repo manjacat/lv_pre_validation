@@ -268,9 +268,12 @@ def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
     arr_layer = ['LV_OH_Conductor', 'LV_UG_Conductor']
     for arr_layer_name in arr_layer:
         layerLV_01 = QgsProject.instance().mapLayersByName(arr_layer_name)[0]
+        # query = 'device_id in (\'RPS6122ohc862\', \'RPS6122ugc461\')'
+        # feat_01 = layerLV_01.getFeatures(QgsFeatureRequest().setFilterExpression(query))
         feat_01 = layerLV_01.getFeatures()
         for f in feat_01:
             device_temp = f.attribute('device_id')
+            usage_temp = f.attribute('usage')
             if device_temp not in arr_lv_oh_exclude_geom:
                 geom = f.geometry()
                 y = geom.mergeLines()
@@ -278,27 +281,40 @@ def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                 # loop all vertex in this line
                 for geom_01 in polyline_y:
                     # store in multidimension array (LV OH device id, geom)
-                    arr_lv.append([device_temp, geom_01])
+                    arr_lv.append([device_temp, geom_01, usage_temp, arr_layer_name])
     
     # get geom of LV Cable Joint
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    # query = 'device_id in (\'RPS6122lcj70\', \'RPS6122lcj47\')'
+    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
+        class_id = f.attribute('class')
         geom = f.geometry()
         if geom:
             geom_x = rps_get_qgspoint(geom)
             # new arr_snapping each loop
-            arr_snapping = []
+            arr_mismatch = []
             for arr_device_geom in arr_lv:
                 device_id_lv = arr_device_geom[0]
                 geom_lv = arr_device_geom[1]
                 m = distance.measureLine(geom_lv, geom_x)
                 if m < 0.001:
                     # TODO
-                    arr_snapping.append(device_id)
-                    print('LVCJ id is ' + str(device_id) + ' and LVOH id is ' + str(device_id_lv))
-            if len(arr_snapping) == 0:
+                    usage = arr_device_geom[2]
+                    layer_type = arr_device_geom[3]
+                    if layer_type == 'LV_OH_Conductor' and usage == 'SERVICE LINE':
+                        if class_id != 'SL POT END':
+                            arr_mismatch.append(device_id)
+                    elif layer_type == 'LV_OH_Conductor' and usage == 'LV LINE':
+                        if class_id != 'END POINT':
+                            arr_mismatch.append(device_id)
+                    elif layer_type == 'LV_UG_Conductor':
+                        if class_id != 'END POINT':
+                            arr_mismatch.append(device_id)
+
+            if len(arr_mismatch) != 0:
                 arr.append(device_id)
 
     print(str(len(arr)))
@@ -318,7 +334,7 @@ def lv_cj_class_mismatch_message(device_id):
             longitude = point.x()
             latitude = point.y()
     e_msg = lv_cj_class_mismatch_code + ',' + str(device_id) + ',' + layer_name + ': ' + str(
-        device_id) + ' Wrong combination of class and usage for ' + str(device_id) + ' and its LV OH ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
+        device_id) + ' Wrong combination of class and usage for ' + str(device_id) + ' and its LV OH/LV UG ' + ',' + str(longitude) + ',' + str(latitude) + ' \n'
 
     return e_msg
 
