@@ -251,6 +251,10 @@ def lvdb_fp_remarks_db_oper_message(device_id):
 def lvdb_fp_lvf_design():
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+    #RPS6122lvdb52  2 8
+    #RPS6122lvdb211 2 5
+    #query = 'device_id in (\'RPS6122lvdb162\')'
+    #feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     feat = layer.getFeatures()
     for f in feat:
         device_id = f.attribute('device_id')
@@ -280,20 +284,34 @@ def lvdb_fp_lvf_design():
             lvs = arr_lvs[index_in]
             # print('lvs_'+ str(index_in + 1) +' value is = ' + str(lvs))
             if lvs:
-                count_in += 1
+                if lvs.startswith('CLOSED') or lvs.find('OPEN:SPARE') == 0:
+                    count_in += 1
 
         # check null values in lvf (out)
         for index_out in range(lv_out):
             lvf = arr_lvf[index_out]
             # print('lvf_'+ str(index_out + 1) +' value is = ' + str(lvf))
             if lvf:
-                count_out += 1
+                if lvf.startswith('CLOSED:'):
+                    lvf = lvf.replace('CLOSED:', '')
+                    lvf_contain_blank = lvf.startswith(' ')
+                    if lvf_contain_blank == False:
+                        count_out += 1
+                elif lvf.find('OPEN:SPARE') == 0:
+                    count_out += 1
 
         # print('count_out = ' + str(count_out) + ' lv_out = ' + str(lv_out))
         # print('count_in = ' + str(count_in) + ' lv_in = ' + str(lv_in))
         # if count mismatch with design, add to error list
         if count_out != lv_out or count_in != lv_in:
             arr.append(device_id)
+
+        lv_out_should_empty = 10 - lv_out
+        for index_out_should_empty in range(lv_out_should_empty):
+            lvf_should_empty = arr_lvf[index_out_should_empty + lv_out]
+            if lvf_should_empty:
+                arr.append(device_id)
+                break
 
     return arr
 
