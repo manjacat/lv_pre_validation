@@ -201,6 +201,7 @@ def lv_ug_lv_db_in(arr_lv_ug_exclude_geom):
                             # print("Point2 (LVDB):", geom_x)
                             # print("difference:", format(distance_xy,'.9f'))
                             arr.append(device_id)
+
     return arr
 
 
@@ -270,16 +271,17 @@ def lvug_lvdb_out_message(device_id):
 def lv_ug_lvdb_id_in_check():
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+    # query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+    query = '"in_lvdb_id" is not null'
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         device_id = f.attribute('device_id')
         in_lvdb_id = f.attribute('in_lvdb_id')
         lvdb_in_no = f.attribute('lvdb_in_no')
-        out_lvdb_i = f.attribute('out_lvdb_i')
-        lvdb_out_no = f.attribute('lvdb_ot_no')
+        # out_lvdb_i = f.attribute('out_lvdb_i')
+        # lvdb_out_no = f.attribute('lvdb_ot_no')
         if in_lvdb_id:
-            if lvdb_in_no is None:
+            if not lvdb_in_no:
                 arr.append(device_id)
     return arr
 
@@ -287,16 +289,17 @@ def lv_ug_lvdb_id_in_check():
 def lv_ug_lvdb_id_out_check():
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+    # query = '"in_lvdb_id" is not null OR "out_lvdb_i" is not null'
+    query = '"out_lvdb_i" is not null'
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         device_id = f.attribute('device_id')
-        in_lvdb_id = f.attribute('in_lvdb_id')
-        lvdb_in_no = f.attribute('lvdb_in_no')
+        # in_lvdb_id = f.attribute('in_lvdb_id')
+        # lvdb_in_no = f.attribute('lvdb_in_no')
         out_lvdb_i = f.attribute('out_lvdb_i')
         lvdb_out_no = f.attribute('lvdb_ot_no')
         if out_lvdb_i:
-            if lvdb_out_no is None:
+            if not lvdb_out_no:
                 arr.append(device_id)
     return arr
 
@@ -304,16 +307,17 @@ def lv_ug_lvdb_id_out_check():
 def lv_ug_lvdb_no_in_check():
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
+    # query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
+    query = '"lvdb_in_no" is not null'
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         device_id = f.attribute('device_id')
         in_lvdb_id = f.attribute('in_lvdb_id')
         lvdb_in_no = f.attribute('lvdb_in_no')
-        out_lvdb_i = f.attribute('out_lvdb_i')
-        lvdb_out_no = f.attribute('lvdb_ot_no')
-        if lvdb_in_no is None:
-            if in_lvdb_id:
+        # out_lvdb_i = f.attribute('out_lvdb_i')
+        # lvdb_out_no = f.attribute('lvdb_ot_no')
+        if lvdb_in_no:
+            if not in_lvdb_id:
                 arr.append(device_id)
     return arr
 
@@ -321,16 +325,16 @@ def lv_ug_lvdb_no_in_check():
 def lv_ug_lvdb_no_out_check():
     arr = []
     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    query = '"lvdb_in_no" is not null OR "lvdb_ot_no" is not null'
+    query = '"lvdb_ot_no" is not null'
     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
     for f in feat:
         device_id = f.attribute('device_id')
-        in_lvdb_id = f.attribute('in_lvdb_id')
-        lvdb_in_no = f.attribute('lvdb_in_no')
+        # in_lvdb_id = f.attribute('in_lvdb_id')
+        # lvdb_in_no = f.attribute('lvdb_in_no')
         out_lvdb_i = f.attribute('out_lvdb_i')
         lvdb_out_no = f.attribute('lvdb_ot_no')
-        if lvdb_out_no is None:
-            if out_lvdb_i:
+        if lvdb_out_no:
+            if not out_lvdb_i:
                 arr.append(device_id)
     return arr
 
