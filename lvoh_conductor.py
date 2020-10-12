@@ -742,7 +742,7 @@ def lv_oh_buffer_message(device_id):
 #     e_msg = rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude)
 #     return e_msg
 
-def lv_oh_wrong_direction():
+def lv_oh_wrong_direction(arr_lv_oh_exclude_geom):
     # qgis distanceArea
     distance = QgsDistanceArea()
     distance.setEllipsoid('WGS84')
@@ -754,11 +754,13 @@ def lv_oh_wrong_direction():
     feat_lv_oh_last_vertex = layer_lv_oh_last_vertex.getFeatures()
     for lv_oh_last_vertex in feat_lv_oh_last_vertex:
         device_id_lv_oh_last_vertex = lv_oh_last_vertex.attribute('device_id')
-        geom_lv_oh_last_vertex = lv_oh_last_vertex.geometry()
-        if geom_lv_oh_last_vertex:
-            merge_lv_oh_last_vertex = geom_lv_oh_last_vertex.mergeLines()
-            polyline_lv_oh_last_vertex = merge_lv_oh_last_vertex.asPolyline()
-            arr_lv_oh_last_vertex.append([device_id_lv_oh_last_vertex, polyline_lv_oh_last_vertex[-1]])
+        #check for invalid LV OH geom
+        if device_id_lv_oh_last_vertex not in arr_lv_oh_exclude_geom:
+            geom_lv_oh_last_vertex = lv_oh_last_vertex.geometry()
+            if geom_lv_oh_last_vertex:
+                merge_lv_oh_last_vertex = geom_lv_oh_last_vertex.mergeLines()
+                polyline_lv_oh_last_vertex = merge_lv_oh_last_vertex.asPolyline()
+                arr_lv_oh_last_vertex.append([device_id_lv_oh_last_vertex, polyline_lv_oh_last_vertex[-1]])
 
     arr_lv_oh_first_vertex = []
     layer_lv_oh_first_vertex = QgsProject.instance().mapLayersByName(layer_name)[0]
@@ -767,11 +769,13 @@ def lv_oh_wrong_direction():
     feat_lv_oh_first_vertex = layer_lv_oh_first_vertex.getFeatures()
     for lv_oh_first_vertex in feat_lv_oh_first_vertex:
         device_id_lv_oh_first_vertex = lv_oh_first_vertex.attribute('device_id')
-        geom_lv_oh_first_vertex = lv_oh_first_vertex.geometry()
-        if geom_lv_oh_first_vertex:
-            merge_lv_oh_first_vertex = geom_lv_oh_first_vertex.mergeLines()
-            polyline_lv_oh_first_vertex = merge_lv_oh_first_vertex.asPolyline()
-            arr_lv_oh_first_vertex.append([device_id_lv_oh_first_vertex, polyline_lv_oh_first_vertex[0]])
+        # check for invalid LV OH geom
+        if device_id_lv_oh_first_vertex not in arr_lv_oh_exclude_geom:
+            geom_lv_oh_first_vertex = lv_oh_first_vertex.geometry()
+            if geom_lv_oh_first_vertex:
+                merge_lv_oh_first_vertex = geom_lv_oh_first_vertex.mergeLines()
+                polyline_lv_oh_first_vertex = merge_lv_oh_first_vertex.asPolyline()
+                arr_lv_oh_first_vertex.append([device_id_lv_oh_first_vertex, polyline_lv_oh_first_vertex[0]])
 
     arr = []
     layer_main = QgsProject.instance().mapLayersByName(layer_name)[0]
@@ -782,24 +786,26 @@ def lv_oh_wrong_direction():
         arr_correct = []
         is_connected_to = True
         device_id_main = main.attribute('device_id')
-        geom_main = main.geometry()
-        if geom_main:
-            merge_main = geom_main.mergeLines()
-            polyline_main = merge_main.asPolyline()
-            for lv_oh_last_vertex_comparison in arr_lv_oh_last_vertex:
-                if lv_oh_last_vertex_comparison[0] != device_id_main:
-                    distance_comparison_last_vertex = distance.measureLine(polyline_main[-1], lv_oh_last_vertex_comparison[1])
-                    if distance_comparison_last_vertex < 0.001:
-                        # arr.append(device_id_main)
-                        is_connected_to = False
-                        for lv_oh_first_vertex_comparison in arr_lv_oh_first_vertex:
-                            if lv_oh_first_vertex_comparison[0] != device_id_main:
-                                distance_comparison_first_vertex = distance.measureLine(lv_oh_last_vertex_comparison[1], lv_oh_first_vertex_comparison[1])
-                                if distance_comparison_first_vertex < 0.001:
-                                    arr_correct.append(device_id_main)
+        # check for invalid LV OH geom
+        if device_id_main not in arr_lv_oh_exclude_geom:
+            geom_main = main.geometry()
+            if geom_main:
+                merge_main = geom_main.mergeLines()
+                polyline_main = merge_main.asPolyline()
+                for lv_oh_last_vertex_comparison in arr_lv_oh_last_vertex:
+                    if lv_oh_last_vertex_comparison[0] != device_id_main:
+                        distance_comparison_last_vertex = distance.measureLine(polyline_main[-1], lv_oh_last_vertex_comparison[1])
+                        if distance_comparison_last_vertex < 0.001:
+                            # arr.append(device_id_main)
+                            is_connected_to = False
+                            for lv_oh_first_vertex_comparison in arr_lv_oh_first_vertex:
+                                if lv_oh_first_vertex_comparison[0] != device_id_main:
+                                    distance_comparison_first_vertex = distance.measureLine(lv_oh_last_vertex_comparison[1], lv_oh_first_vertex_comparison[1])
+                                    if distance_comparison_first_vertex < 0.001:
+                                        arr_correct.append(device_id_main)
 
-            if len(arr_correct) == 0 and is_connected_to == False:
-                arr.append(device_id_main)
+                if len(arr_correct) == 0 and is_connected_to == False:
+                    arr.append(device_id_main)
 
     return arr
 

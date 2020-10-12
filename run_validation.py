@@ -857,7 +857,7 @@ def exec_validation(self):
     #         total_error += 1
 
     if lv_oh_flag and lv_oh_check_flag:
-        arr_lv_oh = lv_oh_wrong_direction()
+        arr_lv_oh = lv_oh_wrong_direction(arr_lv_oh_exclude_geom)
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()

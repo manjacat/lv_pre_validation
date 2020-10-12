@@ -45,6 +45,15 @@ def rps_is_too_close(geom1, geom2):
 # ****** Return Point from MultiPoint *********
 # *********************************************
 
+"""
+    Check what layer is need before performing QAQC.
+    for example, for LV OH, you will relationship between other layers, 
+    such as LV UG, Demand Point, LV Cable Joint, Pole and LV Fuse
+    
+    below array will list down all the extra required layers.
+"""
+
+
 def rps_get_arr_layers(layer_name):
     arr = []
     arr_layers_st_light = ['Street_Light', 'Pole']
@@ -53,7 +62,7 @@ def rps_get_arr_layers(layer_name):
     arr_layers_lvdb_fp = ['LVDB-FP', 'LV_OH_Conductor', 'LV_UG_Conductor']
     arr_layers_lv_cj = ['LV_Cable_Joint', 'LV_OH_Conductor', 'LV_UG_Conductor']
     arr_layers_lv_fuse = ['LV_Fuse', 'LV_OH_Conductor', 'Pole']
-    arr_layers_lv_oh = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LV_Cable_Joint', 'Pole']
+    arr_layers_lv_oh = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LV_Cable_Joint', 'Pole','LV_Fuse']
     arr_layers_lv_ug = ['LV_OH_Conductor', 'LV_UG_Conductor', 'Demand_Point', 'LVDB-FP']
     arr_layers_manhole = ['Manhole']
     arr_layers_st_duct = ['Structure_Duct']
