@@ -847,12 +847,21 @@ def exec_validation(self):
             total_error += 1
 
     # check for wrong flow direction
+    # if lv_oh_flag and lv_oh_check_flag:
+    #     arr_lv_oh = lv_oh_wrong_flow(arr_lv_oh_exclude_geom)
+    #     for device_id in arr_lv_oh:
+    #         if device_id:
+    #             device_id = device_id.strip()
+    #         e_msg += lv_oh_wrong_flow_message(device_id)
+    #         lv_oh_error += 1
+    #         total_error += 1
+
     if lv_oh_flag and lv_oh_check_flag:
-        arr_lv_oh = lv_oh_wrong_flow(arr_lv_oh_exclude_geom)
+        arr_lv_oh = lv_oh_wrong_direction()
         for device_id in arr_lv_oh:
             if device_id:
                 device_id = device_id.strip()
-            e_msg += lv_oh_wrong_flow_message(device_id)
+            e_msg += lv_oh_wrong_direction_message(device_id)
             lv_oh_error += 1
             total_error += 1
 

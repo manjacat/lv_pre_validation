@@ -571,157 +571,239 @@ def lv_oh_buffer_message(device_id):
 # ******* Check for Wrong flow direction  *******
 # ***********************************************
 
-def get_all_lv_oh_vector_outgoing(arr_lv_oh_exclude_geom, device_id_exclude):
-    arr_lv_oh = []
-    # get vectors of all LV OH (for comparison)
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    feat = layer.getFeatures()
-    for f in feat:
-        device_id = f.attribute('device_id')
-        if device_id not in arr_lv_oh_exclude_geom and device_id != device_id_exclude:
-            geom = f.geometry()
-            if geom:
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # if only have 2 vectors, do not add any vectors
-                if len(polyline_y) > 0:
-                    # add vector 0 (outgoing vector)
-                    arr_lv_oh.append(polyline_y[0])
+# def get_all_lv_oh_vector_outgoing(arr_lv_oh_exclude_geom, device_id_exclude):
+#     arr_lv_oh = []
+#     # get vectors of all LV OH (for comparison)
+#     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+#     query = 'device_id in (\'RPS6122ohc985\', \'RPS6122ohc1135\')'
+#     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+#     #feat = layer.getFeatures()
+#     for f in feat:
+#         device_id = f.attribute('device_id')
+#         if device_id not in arr_lv_oh_exclude_geom and device_id != device_id_exclude:
+#             geom = f.geometry()
+#             if geom:
+#                 y = geom.mergeLines()
+#                 polyline_y = y.asPolyline()
+#                 print(polyline_y)
+#                 # if only have 2 vectors, do not add any vectors
+#                 if len(polyline_y) > 0:
+#                     # add vector 0 (outgoing vector)
+#                     arr_lv_oh.append(polyline_y[0])
+#                     print(f'1 {arr_lv_oh}')
+#
+#     return arr_lv_oh
+#
+#
+# def get_all_lv_oh_vector_incoming(arr_lv_oh_exclude_geom, device_id_exclude):
+#     arr_lv_oh = []
+#     # get vectors of all LV OH (for comparison)
+#     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+#     query = 'device_id in (\'RPS6122ohc985\', \'RPS6122ohc1135\')'
+#     feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+#     # feat = layer.getFeatures()
+#     for f in feat:
+#         device_id = f.attribute('device_id')
+#         if device_id not in arr_lv_oh_exclude_geom and device_id != device_id_exclude:
+#             geom = f.geometry()
+#             if geom:
+#                 y = geom.mergeLines()
+#                 polyline_y = y.asPolyline()
+#                 # if only have 2 vectors, do not add any vectors
+#                 if len(polyline_y) > 0:
+#                     # add vector last (incoming vector)
+#                     total_vector = len(polyline_y)
+#                     arr_lv_oh.append(polyline_y[total_vector - 1])
+#                     print(f'2 {arr_lv_oh}')
+#
+#     return arr_lv_oh
+#
+#
+# def lv_oh_wrong_flow(arr_lv_oh_exclude_geom):
+#     arr = []
+#
+#     # qgis distanceArea
+#     distance = QgsDistanceArea()
+#     distance.setEllipsoid('WGS84')
+#
+#     # main function
+#     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+#     feat = layer.getFeatures()
+#     # temporary: for testing
+#     # device_id_test = 'RPS6122ohc364'
+#     # query = '"device_id" = \'' + str(device_id_test) + '\''
+#     # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+#
+#     for f in feat:
+#         # get all vectors
+#         device_id = f.attribute('device_id')
+#         if device_id not in arr_lv_oh_exclude_geom:
+#             geom = f.geometry()
+#             if geom:
+#                 y = geom.mergeLines()
+#                 polyline_y = y.asPolyline()
+#                 # if only have 2 vectors, do not add any vectors
+#                 if len(polyline_y) > 0:
+#                     # add vector 0 (outgoing vector)
+#                     total_vector = len(polyline_y)
+#                     vector_last = polyline_y[total_vector - 1]
+#                     # check if any incoming LV OH vertex nearby
+#                     arr_lv_oh_incoming = get_all_lv_oh_vector_incoming(arr_lv_oh_exclude_geom, device_id)
+#                     count = arr_lv_oh_incoming.count(vector_last)
+#                     if count > 1:
+#                         # check if there is any outgoing
+#                         total_outgoing = 0
+#                         arr_lv_oh_outgoing = get_all_lv_oh_vector_outgoing(arr_lv_oh_exclude_geom, device_id)
+#                         for geom_lv_oh in arr_lv_oh_outgoing:
+#                             m = distance.measureLine(vector_last, geom_lv_oh)
+#                             if m < 0.001:
+#                                 total_outgoing += 1
+#                                 # print(device_id + ' has 2 incoming but ' + str(total_outgoing) + ' outgoing geom.')
+#                         if total_outgoing == 0:
+#                             print(device_id + ' has no outgoing! ')
+#                             arr.append(device_id)
+#
+#     # add demand point wrong flow error
+#     # print('before adding demand point wrong flow error is ' + str(len(arr)))
+#     arr.extend(lv_oh_wrong_flow_dmd_pt(arr_lv_oh_exclude_geom))
+#     # print('total wrong flow error is ' + str(len(arr)))
+#
+#     return arr
+#
+#
+# def get_all_dmd_pt():
+#     arr_dmd_pt = []
+#     layer = QgsProject.instance().mapLayersByName('Demand_Point')[0]
+#     feat = layer.getFeatures()
+#     # temporary: for testing
+#     # device_id_test = 'RPS6122ohc364'
+#     # query = '"device_id" = \'' + str(device_id_test) + '\''
+#     # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+#     for f in feat:
+#         # get demand point vectors
+#         geom = f.geometry()
+#         if geom:
+#             geom_point = rps_get_qgspoint(geom)
+#             arr_dmd_pt.append(geom_point)
+#
+#     return arr_dmd_pt
+#
+#
+# def lv_oh_wrong_flow_dmd_pt(arr_lv_oh_exclude_geom):
+#     # Special condition: all conductors connected to demand point MUST be INCOMING.
+#     arr = []
+#
+#     arr_dmd_pt = get_all_dmd_pt()
+#
+#     # qgis distanceArea
+#     distance = QgsDistanceArea()
+#     distance.setEllipsoid('WGS84')
+#
+#     # main function
+#     layer = QgsProject.instance().mapLayersByName(layer_name)[0]
+#     feat = layer.getFeatures()
+#     # temporary: for testing
+#     # device_id_test = 'RPS6122ohc364'
+#     # query = '"device_id" = \'' + str(device_id_test) + '\''
+#     # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+#
+#     for f in feat:
+#         device_id = f.attribute('device_id')
+#         if device_id not in arr_lv_oh_exclude_geom:
+#             geom = f.geometry()
+#             if geom:
+#                 y = geom.mergeLines()
+#                 polyline_y = y.asPolyline()
+#                 # if only have 2 vectors, do not add any vectors
+#                 if len(polyline_y) > 0:
+#                     # check distance vector 0 (outgoing) to demand point
+#                     vertex_zero = polyline_y[0]
+#                     # print('vertex zero is :' + str(vertex_zero))
+#                     for geom_dmd_pt in arr_dmd_pt:
+#                         m = distance.measureLine(vertex_zero, geom_dmd_pt)
+#                         if m < 0.001:
+#                             # means it is outgoing lv_oh, so we add lv oh's device id
+#                             arr.append(device_id)
+#
+#     return arr
+#
+#
+# def lv_oh_wrong_flow_message(device_id):
+#     longitude = 0
+#     latitude = 0
+#     error_code = lv_oh_wrong_flow_code
+#     error_desc = str(device_id) + ' has wrong flow direction! '
+#
+#     midpoint = rps_get_firstpoint(layer_name, device_id)
+#     if midpoint:
+#         longitude = midpoint.x()
+#         latitude = midpoint.y()
+#
+#     e_msg = rps_write_line(error_code, device_id, layer_name, error_desc, longitude, latitude)
+#     return e_msg
 
-    return arr_lv_oh
-
-
-def get_all_lv_oh_vector_incoming(arr_lv_oh_exclude_geom, device_id_exclude):
-    arr_lv_oh = []
-    # get vectors of all LV OH (for comparison)
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    feat = layer.getFeatures()
-    for f in feat:
-        device_id = f.attribute('device_id')
-        if device_id not in arr_lv_oh_exclude_geom and device_id != device_id_exclude:
-            geom = f.geometry()
-            if geom:
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # if only have 2 vectors, do not add any vectors
-                if len(polyline_y) > 0:
-                    # add vector last (incoming vector)
-                    total_vector = len(polyline_y)
-                    arr_lv_oh.append(polyline_y[total_vector - 1])
-
-    return arr_lv_oh
-
-
-def lv_oh_wrong_flow(arr_lv_oh_exclude_geom):
-    arr = []
-
+def lv_oh_wrong_direction():
     # qgis distanceArea
     distance = QgsDistanceArea()
     distance.setEllipsoid('WGS84')
 
-    # main function
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    feat = layer.getFeatures()
-    # temporary: for testing
-    # device_id_test = 'RPS6122ohc364'
-    # query = '"device_id" = \'' + str(device_id_test) + '\''
-    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
+    arr_lv_oh_last_vertex = []
+    layer_lv_oh_last_vertex = QgsProject.instance().mapLayersByName(layer_name)[0]
+    # query_lv_oh_last_vertex = 'device_id in (\'RPS6122ohc985\', \'RPS6122ohc1135\', \'RPS6122ohc2752\', \'RPS6122ohc2753\', \'RPS6122ohc2754\')'
+    # feat_lv_oh_last_vertex = layer_lv_oh_last_vertex.getFeatures(QgsFeatureRequest().setFilterExpression(query_lv_oh_last_vertex))
+    feat_lv_oh_last_vertex = layer_lv_oh_last_vertex.getFeatures()
+    for lv_oh_last_vertex in feat_lv_oh_last_vertex:
+        device_id_lv_oh_last_vertex = lv_oh_last_vertex.attribute('device_id')
+        geom_lv_oh_last_vertex = lv_oh_last_vertex.geometry()
+        if geom_lv_oh_last_vertex:
+            merge_lv_oh_last_vertex = geom_lv_oh_last_vertex.mergeLines()
+            polyline_lv_oh_last_vertex = merge_lv_oh_last_vertex.asPolyline()
+            arr_lv_oh_last_vertex.append([device_id_lv_oh_last_vertex, polyline_lv_oh_last_vertex[-1]])
 
-    for f in feat:
-        # get all vectors
-        device_id = f.attribute('device_id')
-        if device_id not in arr_lv_oh_exclude_geom:
-            geom = f.geometry()
-            if geom:
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # if only have 2 vectors, do not add any vectors
-                if len(polyline_y) > 0:
-                    # add vector 0 (outgoing vector)
-                    total_vector = len(polyline_y)
-                    vector_last = polyline_y[total_vector - 1]
-                    # check if any incoming LV OH vertex nearby
-                    arr_lv_oh_incoming = get_all_lv_oh_vector_incoming(arr_lv_oh_exclude_geom, device_id)
-                    count = arr_lv_oh_incoming.count(vector_last)
-                    if count > 1:
-                        # check if there is any outgoing
-                        total_outgoing = 0
-                        arr_lv_oh_outgoing = get_all_lv_oh_vector_outgoing(arr_lv_oh_exclude_geom, device_id)
-                        for geom_lv_oh in arr_lv_oh_outgoing:
-                            m = distance.measureLine(vector_last, geom_lv_oh)
-                            if m < 0.001:
-                                total_outgoing += 1
-                                # print(device_id + ' has 2 incoming but ' + str(total_outgoing) + ' outgoing geom.')
-                        if total_outgoing == 0:
-                            print(device_id + ' has no outgoing! ')
-                            arr.append(device_id)
+    arr_lv_oh_first_vertex = []
+    layer_lv_oh_first_vertex = QgsProject.instance().mapLayersByName(layer_name)[0]
+    # query_lv_oh_first_vertex = 'device_id in (\'RPS6122ohc985\', \'RPS6122ohc1135\', \'RPS6122ohc2752\', \'RPS6122ohc2753\', \'RPS6122ohc2754\')'
+    # feat_lv_oh_first_vertex = layer_lv_oh_first_vertex.getFeatures(QgsFeatureRequest().setFilterExpression(query_lv_oh_first_vertex))
+    feat_lv_oh_first_vertex = layer_lv_oh_first_vertex.getFeatures()
+    for lv_oh_first_vertex in feat_lv_oh_first_vertex:
+        device_id_lv_oh_first_vertex = lv_oh_first_vertex.attribute('device_id')
+        geom_lv_oh_first_vertex = lv_oh_first_vertex.geometry()
+        if geom_lv_oh_first_vertex:
+            merge_lv_oh_first_vertex = geom_lv_oh_first_vertex.mergeLines()
+            polyline_lv_oh_first_vertex = merge_lv_oh_first_vertex.asPolyline()
+            arr_lv_oh_first_vertex.append([device_id_lv_oh_first_vertex, polyline_lv_oh_first_vertex[0]])
 
-    # add demand point wrong flow error
-    # print('before adding demand point wrong flow error is ' + str(len(arr)))
-    arr.extend(lv_oh_wrong_flow_dmd_pt(arr_lv_oh_exclude_geom))
-    # print('total wrong flow error is ' + str(len(arr)))
-
-    return arr
-
-
-def get_all_dmd_pt():
-    arr_dmd_pt = []
-    layer = QgsProject.instance().mapLayersByName('Demand_Point')[0]
-    feat = layer.getFeatures()
-    # temporary: for testing
-    # device_id_test = 'RPS6122ohc364'
-    # query = '"device_id" = \'' + str(device_id_test) + '\''
-    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-    for f in feat:
-        # get demand point vectors
-        geom = f.geometry()
-        if geom:
-            geom_point = rps_get_qgspoint(geom)
-            arr_dmd_pt.append(geom_point)
-
-    return arr_dmd_pt
-
-
-def lv_oh_wrong_flow_dmd_pt(arr_lv_oh_exclude_geom):
-    # Special condition: all conductors connected to demand point MUST be INCOMING.
     arr = []
+    layer_main = QgsProject.instance().mapLayersByName(layer_name)[0]
+    # query_main = 'device_id in (\'RPS6122ohc985\', \'RPS6122ohc1135\', \'RPS6122ohc2752\', \'RPS6122ohc2753\', \'RPS6122ohc2754\')'
+    # feat_main = layer_main.getFeatures(QgsFeatureRequest().setFilterExpression(query_main))
+    feat_main = layer_main.getFeatures()
+    for main in feat_main:
+        arr_correct = []
+        is_connected_to = True
+        device_id_main = main.attribute('device_id')
+        geom_main = main.geometry()
+        if geom_main:
+            merge_main = geom_main.mergeLines()
+            polyline_main = merge_main.asPolyline()
+            for lv_oh_last_vertex_comparison in arr_lv_oh_last_vertex:
+                if lv_oh_last_vertex_comparison[0] != device_id_main:
+                    distance_comparison_last_vertex = distance.measureLine(polyline_main[-1], lv_oh_last_vertex_comparison[1])
+                    if distance_comparison_last_vertex < 0.001:
+                        # arr.append(device_id_main)
+                        is_connected_to = False
+                        for lv_oh_first_vertex_comparison in arr_lv_oh_first_vertex:
+                            if lv_oh_first_vertex_comparison[0] != device_id_main:
+                                distance_comparison_first_vertex = distance.measureLine(lv_oh_last_vertex_comparison[1], lv_oh_first_vertex_comparison[1])
+                                if distance_comparison_first_vertex < 0.001:
+                                    arr_correct.append(device_id_main)
 
-    arr_dmd_pt = get_all_dmd_pt()
-
-    # qgis distanceArea
-    distance = QgsDistanceArea()
-    distance.setEllipsoid('WGS84')
-
-    # main function
-    layer = QgsProject.instance().mapLayersByName(layer_name)[0]
-    feat = layer.getFeatures()
-    # temporary: for testing
-    # device_id_test = 'RPS6122ohc364'
-    # query = '"device_id" = \'' + str(device_id_test) + '\''
-    # feat = layer.getFeatures(QgsFeatureRequest().setFilterExpression(query))
-
-    for f in feat:
-        device_id = f.attribute('device_id')
-        if device_id not in arr_lv_oh_exclude_geom:
-            geom = f.geometry()
-            if geom:
-                y = geom.mergeLines()
-                polyline_y = y.asPolyline()
-                # if only have 2 vectors, do not add any vectors
-                if len(polyline_y) > 0:
-                    # check distance vector 0 (outgoing) to demand point
-                    vertex_zero = polyline_y[0]
-                    # print('vertex zero is :' + str(vertex_zero))
-                    for geom_dmd_pt in arr_dmd_pt:
-                        m = distance.measureLine(vertex_zero, geom_dmd_pt)
-                        if m < 0.001:
-                            # means it is outgoing lv_oh, so we add lv oh's device id
-                            arr.append(device_id)
+            if len(arr_correct) == 0 and is_connected_to == False:
+                arr.append(device_id_main)
 
     return arr
 
-
-def lv_oh_wrong_flow_message(device_id):
+def lv_oh_wrong_direction_message(device_id):
     longitude = 0
     latitude = 0
     error_code = lv_oh_wrong_flow_code
@@ -739,3 +821,5 @@ def lv_oh_wrong_flow_message(device_id):
 # **********************************
 # ******* End of Validation  *******
 # **********************************
+
+

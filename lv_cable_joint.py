@@ -308,7 +308,7 @@ def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
                         if class_id != 'SL POT END':
                             arr_mismatch.append(device_id)
                     elif layer_type == 'LV_OH_Conductor' and usage == 'LV LINE':
-                        if class_id != 'END POINT':
+                        if class_id != 'LV POT END':
                             arr_mismatch.append(device_id)
                     elif layer_type == 'LV_UG_Conductor':
                         if class_id != 'END POINT':
