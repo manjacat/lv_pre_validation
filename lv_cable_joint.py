@@ -274,7 +274,7 @@ def lv_cj_class_mismatch(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         for f in feat_01:
             device_temp = f.attribute('device_id')
             usage_temp = f.attribute('usage')
-            if device_temp not in arr_lv_oh_exclude_geom:
+            if device_temp not in arr_lv_oh_exclude_geom and device_temp not in arr_lv_ug_exclude_geom:
                 geom = f.geometry()
                 y = geom.mergeLines()
                 polyline_y = y.asPolyline()
