@@ -192,14 +192,15 @@ def pole_lv_oh_vertex(arr_lv_oh_exclude_geom):
         arr_snapping = []
         device_id = f.attribute('device_id')
         geom = f.geometry()
-        geom_pole = rps_get_qgspoint(geom)
-        for vertex in arr_lv_oh:
-            m = distance.measureLine(geom_pole, vertex)
-            # user feedback: changed upper limit to 2.6 (previously 1.15)
-            if 0.9 <= m <= 1.1:
-                arr_snapping.append(device_id)
-                # elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
-            #        print('WARNING: ' + str(device_id) + ' distance is ' + str(m) + 'm')
+        if geom:
+            geom_pole = rps_get_qgspoint(geom)
+            for vertex in arr_lv_oh:
+                m = distance.measureLine(geom_pole, vertex)
+                # user feedback: changed upper limit to 2.6 (previously 1.15)
+                if 0.9 <= m <= 1.1:
+                    arr_snapping.append(device_id)
+                    # elif m < 0.85 and m > 1.15 and m > 0.8 and m < 1.5:
+                #        print('WARNING: ' + str(device_id) + ' distance is ' + str(m) + 'm')
         if len(arr_snapping) == 0:
             # print(device_id + ' arr_snapping is ' + str(len(arr_snapping)))
             arr.append(device_id)
@@ -214,7 +215,7 @@ def pole_lv_oh_vertex_message(device_id):
     latitude = 0
     for f in feat:
         geom = f.geometry()
-        if geom:
+        if geom and geom != 'Unknown':
             point = rps_get_qgspoint(geom)
             longitude = point.x()
             latitude = point.y()

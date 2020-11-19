@@ -414,7 +414,8 @@ def lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom):
         for f in feat:
             device_id = f.attribute('device_id')
             # print('device id is ' + str(device_id))
-            if device_id not in arr_lv_oh_exclude_geom:
+            # 19/11/2020: khairil exclude lv ug exclude geom
+            if device_id not in arr_lv_oh_exclude_geom and device_id not in arr_lv_ug_exclude_geom:
                 geom = f.geometry()
                 # print('check point 2')
                 if geom:

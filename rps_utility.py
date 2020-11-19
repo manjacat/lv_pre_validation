@@ -101,6 +101,7 @@ def rps_get_arr_layers(layer_name):
 def rps_get_qgspoint(geom):
     geom_type = QgsWkbTypes.displayString(geom.wkbType())
     # print('geom is : ' + geom_type)
+    return_geom = QgsPointXY(0, 0)
     if geom_type == 'MultiPoint':
         multi_point = geom.asMultiPoint()
         return_geom = multi_point[0]
@@ -109,6 +110,8 @@ def rps_get_qgspoint(geom):
         point = geom.asPoint()
         # print(point)
         return_geom = point
+    else:
+        print('rps_get_qgspoint: geom point is ' + geom_type)
 
     return return_geom
 

@@ -827,7 +827,7 @@ def exec_validation(self):
     # check LV OH hanging
     if lv_oh_flag and lv_oh_check_flag:
         arr_lv_oh = lv_oh_hanging(arr_lv_ug_exclude_geom, arr_lv_oh_exclude_geom)
-        print('arr_lv_oh is..')
+        # print('arr_lv_oh is..')
         print(arr_lv_oh)
         for device_id in arr_lv_oh:
             if device_id:
