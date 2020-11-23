@@ -7,7 +7,7 @@
  ---------
  18/5/2020: require geometry checks for LV OH/LV UG to prevent it throws error in other checks (demand point, lvdb, pole etc)
  27/5/2020: allow 'N/A' for [pole number] column
- 4/6/2020: seperate device id error as seperate checks
+ 4/6/2020: separate device id error as separate checks
  11/6/2020: added device_id.strip() to remove carriage return (/r/n) in device_id
  11/6/2020: added try/catch for all object when checking for device id format error
  18/6/2020: added param to lv_ug_self_intersect_message and lv_oh_self_intersect_message
@@ -164,7 +164,8 @@ def exec_validation(self):
     # ******************************************************
 
     if lv_ug_flag:
-        arr_lv_ug = rps_column_name_check('LV_UG_Conductor')
+        #arr_lv_ug = rps_column_name_check('LV_UG_Conductor')
+        arr_lv_ug = []
         # check missing layers
         lv_ug_layer_name = 'LV_UG_Conductor'
         arr_layers = rps_get_arr_layers(lv_ug_layer_name)
@@ -1172,12 +1173,12 @@ def exec_validation(self):
     if pole_flag and pole_check_flag:
         for field_name in field_name_arr:
             arr_pole = pole_field_not_null(field_name)
-        for device_id in arr_pole:
-            if device_id:
-                device_id = device_id.strip()
-            e_msg += pole_field_not_null_message(device_id, field_name)
-            pole_error += 1
-            total_error += 1
+            for device_id in arr_pole:
+                if device_id:
+                    device_id = device_id.strip()
+                e_msg += pole_field_not_null_message(device_id, field_name)
+                pole_error += 1
+                total_error += 1
 
     # check for ENUM values
     field_name_arr = [
@@ -1480,7 +1481,7 @@ def exec_validation(self):
                 if device_id:
                     device_id = device_id.strip()
                 e_msg += st_duct_field_not_null_message(device_id, field_name)
-                arr_st_duct_error += 1
+                st_duct_error += 1
                 total_error += 1
 
     # check for ENUM values

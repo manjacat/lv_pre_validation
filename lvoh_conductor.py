@@ -24,7 +24,7 @@ lv_oh_wrong_flow_code = 'ERR_LVOHCOND_03'
 
 # this number is the max number to test for hanging.
 # if total LV OH is more than this number, test for hanging is skipped
-lv_oh_max_count = 13000
+lv_oh_max_count = 14000
 
 
 # *****************************************
